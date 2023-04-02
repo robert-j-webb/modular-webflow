@@ -1,4 +1,6 @@
-// attribute value checker
+import { animateChartGraph } from '$utils/globalFunctions';
+
+// Marquee Strip
 function attr(defaultVal, attrVal) {
   const defaultValType = typeof defaultVal;
   if (typeof attrVal !== 'string' || attrVal.trim() === '') return defaultVal;
@@ -9,7 +11,7 @@ function attr(defaultVal, attrVal) {
   return defaultVal;
 }
 // marquee component
-$("[tr-marquee-element='component']").each(function (index) {
+$("[tr-marquee-element='component']").each(function () {
   const componentEl = $(this),
     panelEl = componentEl.find("[tr-marquee-element='panel']"),
     triggerHoverEl = componentEl.find("[tr-marquee-element='triggerhover']"),
@@ -90,4 +92,28 @@ $("[tr-marquee-element='component']").each(function (index) {
   triggerClickEl.on('click', function () {
     !$(this).hasClass('is-paused') ? pauseMarquee(true) : pauseMarquee(false);
   });
+});
+
+// Graph Animation
+
+$('.graphd').each(function () {
+  let triggerElement = $(this);
+  let tl = gsap.timeline({
+    ease: Power2.easeOut,
+    paused: true,
+    scrollTrigger: {
+      trigger: triggerElement,
+      // trigger element - viewport
+      start: 'top bottom',
+      onEnter: () => {
+        // Play the timeline when the trigger element enters the viewport
+        tl.play();
+      },
+    },
+  });
+  tl.add(animateChartGraph($(this), triggerElement));
+});
+
+$('.graphd').each(function () {
+  animateChartGraph($(this), $(this));
 });

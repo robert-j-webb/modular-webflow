@@ -31,30 +31,41 @@ export const wrapLetters = (element) => {
 };
 
 const revealLetters = (elements, letterDelay) => {
-  let letters = $(elements).find('.letter').not('.line-numbers-row .code-letter');
   const codeTimeline = gsap.timeline(); // create a child timeline based on the defaults
-  letters.each((index, element) => {
-    const wordHighlight = $(element).closest('.word-highlight');
-    if (wordHighlight.length) {
-      codeTimeline
-        .fromTo(
-          element,
-          { display: 'none' }, // from value
-          { display: 'inline' }, // to value
-          index * letterDelay,
-          '<' // delay
-        )
-        .to(wordHighlight, { opacity: 1, duration: 0.2 }, '<');
-    } else {
-      codeTimeline.fromTo(
-        element,
-        { visibility: 'hidden' }, // from value
-        { visibility: 'initial' }, // to value
-        index * letterDelay, // delay
-        '<'
-      );
-    }
+
+  // Iterate over each element passed
+  $(elements).each((elementIndex, element) => {
+    const letters = $(element).find('.letter').not('.line-numbers-row .code-letter');
+    const elementTimeline = gsap.timeline(); // create a separate timeline for each element
+
+    // Animate each letter in the current element
+    letters.each((letterIndex, letter) => {
+      const wordHighlight = $(letter).closest('.word-highlight');
+      if (wordHighlight.length) {
+        elementTimeline
+          .fromTo(
+            letter,
+            { display: 'none' },
+            { display: 'inline' },
+            letterIndex * letterDelay,
+            '<'
+          )
+          .to(wordHighlight, { opacity: 1, duration: 0.2 }, '<');
+      } else {
+        elementTimeline.fromTo(
+          letter,
+          { visibility: 'hidden' },
+          { visibility: 'initial' },
+          letterIndex * letterDelay,
+          '<'
+        );
+      }
+    });
+
+    // Add the element timeline to the parent timeline with no delay between them
+    codeTimeline.add(elementTimeline, 0);
   });
+
   return codeTimeline;
 };
 
@@ -100,7 +111,7 @@ export const typeText = (element, text) => {
 
 // ---- Graphs
 // Animate Stats
-export const animateCounter = ($element) => {
+const animateCounter = ($element) => {
   const Cont = { val: 0 };
   const targetValue = parseFloat($element.text());
 
@@ -115,7 +126,8 @@ export const animateCounter = ($element) => {
   });
 };
 
-export const animateGraphRow = (targets) => {
+// Graphs Inner Animations
+const animateGraphRow = (targets) => {
   const masterTimeline = gsap.timeline();
 
   $(targets).each(function (index) {
@@ -137,6 +149,20 @@ export const animateGraphRow = (targets) => {
   return masterTimeline;
 };
 
+const animateGraphChart = (target) => {
+  let tl = gsap.timeline();
+
+  tl.fromTo(
+    target,
+    {
+      scaleY: 0,
+    },
+    { scaleY: 1, duration: 1 },
+    '<'
+  );
+};
+
+// Graph Types Animations
 export const animateHorizontalGraph = (target, trigger) => {
   let triggerElement = $(trigger);
   let tl = gsap.timeline({
@@ -144,7 +170,6 @@ export const animateHorizontalGraph = (target, trigger) => {
     paused: true,
     scrollTrigger: {
       trigger: triggerElement,
-      // trigger element - viewport
       start: '50% bottom',
       onEnter: () => {
         // Play the timeline when the trigger element enters the viewport
@@ -152,8 +177,33 @@ export const animateHorizontalGraph = (target, trigger) => {
       },
     },
   });
-  // Add the animation to the timeline
   tl.add(animateGraphRow(target));
+
+  return tl;
+};
+
+export const animateChartGraph = (target, trigger) => {
+  let triggerElement = $(trigger);
+  let tl = gsap.timeline({
+    ease: Power2.easeOut,
+    paused: true,
+    scrollTrigger: {
+      trigger: triggerElement,
+      start: '50% bottom',
+      onEnter: () => {
+        // Play the timeline when the trigger element enters the viewport
+        tl.play();
+      },
+    },
+  });
+
+  let labels = $(target).find('.text-size-label');
+  let labelDot = $(trigger).find('.graphd_legend-dot');
+  let chart = $(target).find('.graph-charts');
+
+  tl.add(letterAnimation(labels, 'label'), '<')
+    .add(animateGraphChart(chart), '<')
+    .fromTo(labelDot, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1 }, '<');
 
   return tl;
 };
