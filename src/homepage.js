@@ -1,7 +1,6 @@
 gsap.registerPlugin(ScrollTrigger);
 
 import {
-  animateGraphRow,
   animateHorizontalGraph,
   codeAnimation,
   letterAnimation,
@@ -104,8 +103,8 @@ $(document).ready(function () {
   // Initial Reveal
   main
     .addLabel('heroText')
-    .add(letterAnimation(heroLabel))
-    .add(letterAnimation(heroHeading, `.${hightlightClass}`), '<')
+    .add(letterAnimation(heroLabel, 'label'))
+    .add(letterAnimation(heroHeading + ' span', 'heading'), '<')
     .from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, '<0.1')
     .addLabel('modularBox')
     .fromTo(
@@ -114,7 +113,7 @@ $(document).ready(function () {
       { width: '12.2em', opacity: 1, duration: baseDuration },
       'modularBox'
     )
-    .add(letterAnimation($(modularBox).find(metadata).find('div')));
+    .add(letterAnimation($(modularBox).find(metadata).find('div'), 'label'));
 
   // Hero Boxes on Left
   main
@@ -124,7 +123,10 @@ $(document).ready(function () {
       { opacity: 0, left: '-6em', stagger: 0.15, duration: baseDuration / 2 },
       'heroBoxesLeft'
     )
-    .add(letterAnimation($(heroBoxesLeft).closest(heroBox).find(metadata).children()), '<');
+    .add(
+      letterAnimation($(heroBoxesLeft).closest(heroBox).find(metadata).children(), 'label'),
+      '<'
+    );
 
   // Hero Boxes on Right
   main
@@ -135,7 +137,10 @@ $(document).ready(function () {
       'heroBoxesLeft'
     )
     .add(
-      letterAnimation($(heroBoxesRight).closest('.hero-devices_box').find(metadata).children()),
+      letterAnimation(
+        $(heroBoxesRight).closest('.hero-devices_box').find(metadata).children(),
+        'label'
+      ),
       '<'
     );
 
@@ -193,7 +198,7 @@ $(document).ready(function () {
       'showDashboard'
     )
     .to(closeCircles, { opacity: 1, stagger: 0.1, duration: baseDuration })
-    .add(letterAnimation(dashboardTitle + ' div'), '<')
+    .add(letterAnimation(dashboardTitle + ' div', 'label'), '<')
     .to([dashboardTitle, langTab], { opacity: 1, duration: baseDuration, stagger: 0.2 }, '<')
     .to(dashboardCode, { opacity: 1, duration: baseDuration }, '<');
 
@@ -250,7 +255,7 @@ $(document).ready(function () {
 
   // Animate Graphs
   const animateLabel = (element) => {
-    main.set(element, { opacity: 1 }).add(letterAnimation(element), '<');
+    main.set(element, { opacity: 1 }).add(letterAnimation(element, 'label'), '<');
   };
   const animateGraph = (parent) => {
     main
@@ -280,7 +285,7 @@ $(document).ready(function () {
   });
 
   //--- Discord Animation
-  $('.discord_box').each(function (index) {
+  $('.discord_box').each(function () {
     let triggerElement = $(this);
     let tl = gsap.timeline({
       ease: Power2.easeOut,
@@ -318,11 +323,11 @@ $(document).ready(function () {
         },
         '<'
       )
-      .add(letterAnimation($(this).find('.discord_message-text').eq(1)));
+      .add(letterAnimation($(this).find('.discord_message-text').eq(1), 0.03));
   });
 
   //-- Animate Graph
-  $('.grapha_row').each(function (index) {
+  $('.grapha_row').each(function () {
     animateHorizontalGraph($(this), '.grapha');
   });
 

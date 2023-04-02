@@ -30,7 +30,7 @@ export const wrapLetters = (element) => {
     });
 };
 
-const revealLetters = (elements) => {
+const revealLetters = (elements, letterDelay) => {
   let letters = $(elements).find('.letter').not('.line-numbers-row .code-letter');
   const codeTimeline = gsap.timeline(); // create a child timeline based on the defaults
   letters.each((index, element) => {
@@ -41,7 +41,8 @@ const revealLetters = (elements) => {
           element,
           { display: 'none' }, // from value
           { display: 'inline' }, // to value
-          index * 0.01 // delay
+          index * letterDelay,
+          '<' // delay
         )
         .to(wordHighlight, { opacity: 1, duration: 0.2 }, '<');
     } else {
@@ -49,7 +50,8 @@ const revealLetters = (elements) => {
         element,
         { visibility: 'hidden' }, // from value
         { visibility: 'initial' }, // to value
-        index * 0.01 // delay
+        index * letterDelay, // delay
+        '<'
       );
     }
   });
@@ -58,9 +60,19 @@ const revealLetters = (elements) => {
 
 // --- Text Animations
 // Letter Animation
-export const letterAnimation = (elements) => {
+export const letterAnimation = (elements, letterType) => {
+  let letterDelay;
+  if (letterType === 'label') {
+    letterDelay = 0.03;
+  } else if (letterType === 'heading') {
+    letterDelay = 0.02;
+  } else if (typeof letterType === 'number') {
+    letterDelay = letterType;
+  } else {
+    letterDelay = 0.01;
+  }
   wrapLetters(elements);
-  return revealLetters(elements);
+  return revealLetters(elements, letterDelay);
 };
 
 // CodeAnimation
@@ -70,15 +82,19 @@ export const codeAnimation = (className) => {
   codeBlock.find('.line-numbers-rows').remove();
   wrapLetters(codeBlock);
   codeBlock.prepend(lineNumbers);
-  return revealLetters(codeBlock);
+  return revealLetters(codeBlock, 0.01);
 };
 
 // Typewrite
 export const typeText = (element, text) => {
   const codeTimeline = gsap.timeline(); // create a child timeline based on the defaults
-  codeTimeline.to(element, {
-    text: { value: text, ease: 'none', speed: 1 },
-  });
+  codeTimeline.to(
+    element,
+    {
+      text: { value: text, ease: 'none', speed: 1 },
+    },
+    '<'
+  );
   return codeTimeline;
 };
 
@@ -111,7 +127,7 @@ export const animateGraphRow = (targets) => {
 
     codeTimeline
       .from(row, { scaleX: 0, duration: 1 })
-      .add(letterAnimation(label))
+      .add(letterAnimation(label, 'label'))
       .add(animateCounter(number));
 
     // Stagger animations using the add() method

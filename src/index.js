@@ -130,42 +130,55 @@ $(document).ready(function () {
 
   // Menu Animation
   let menuText = 'Close';
-  let navReveal = gsap
-    .timeline()
-    .call(function () {
-      menuOpenAnim = false;
-    })
-    .add(typeText(menuButton + ' div', () => menuText)) // Use a function that returns menuText value
-    .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
-    .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
-    .from(menuLinksItems, revealAnim, '-=0.2')
-    .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' })
-    .call(function () {
-      menuOpenAnim = true;
-    });
 
-  // Define Master Timeline
-  let menuAnimation = gsap.timeline({ paused: true });
-  menuAnimation.add(navReveal, '<');
+  function createNavReveal() {
+    let navReveal = gsap
+      .timeline({ paused: true })
+      .call(function () {
+        menuOpenAnim = false;
+      })
+      .add(typeText(menuButton + ' div', () => menuText)) // Use a function that returns menuText value
+      .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
+      .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
+      .from(menuLinksItems, revealAnim, '-=0.2')
+      .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' }, '<')
+      .call(function () {
+        menuOpenAnim = true;
+      });
+    return navReveal;
+  }
 
-  // Actionss
+  let navReveal;
+
+  // GSAP's matchMedia
+  ScrollTrigger.matchMedia({
+    '(max-width: 991px)': function () {
+      // Apply the animation only on screens with a max-width of 991px
+      navReveal = createNavReveal();
+    },
+  });
+
+  // Actions
   // Open on Click
   $('.navbar_menu-btn').on('click', openMenu);
 
   // Functions
   function openMenu() {
-    playMenuAnimation();
-  }
-  function updateMenuText() {
-    menuText = menuOpenAnim ? 'Menu' : 'Close';
+    if (navReveal) {
+      playMenuAnimation();
+    }
   }
 
   function playMenuAnimation() {
     updateMenuText();
     if (!menuOpenAnim) {
-      menuAnimation.timeScale(1).play();
+      navReveal.timeScale(1).play();
     } else {
-      menuAnimation.timeScale(1.5).reverse();
+      navReveal.timeScale(1.5).reverse();
     }
+  }
+
+  function updateMenuText() {
+    menuText = menuOpenAnim ? 'Menu' : 'Close';
   }
 });
