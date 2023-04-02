@@ -1,14 +1,15 @@
-import { codeAnimation, letterAnimation } from '$utils/globalFunctions';
+import { codeAnimation, letterAnimation, typeText } from '$utils/globalFunctions';
 
 $(document).ready(function () {
   gsap.registerPlugin(ScrollTrigger);
 
+  // GSAP IMG SET
   $('img').each(function () {
     $(this).removeAttr('loading');
     ScrollTrigger.refresh();
   });
 
-  // Lines Animation
+  // -- Lines Animation
   let lineMaskTriggers = [];
 
   function setupLineMaskScrollTriggers() {
@@ -57,9 +58,21 @@ $(document).ready(function () {
   }
 
   // Set up the ScrollTriggers on window resize, debounce the handler with 250ms delay
-  $(window).on('resize', debounce(setupLineMaskScrollTriggers, 250));
+  let lastWindowWidth = $(window).width();
 
-  // Code Blocks Animations to view
+  $(window).on(
+    'resize',
+    debounce(() => {
+      const currentWindowWidth = $(window).width();
+
+      if (currentWindowWidth !== lastWindowWidth) {
+        setupLineMaskScrollTriggers();
+        lastWindowWidth = currentWindowWidth;
+      }
+    }, 250)
+  );
+
+  // -- Code Blocks Animations to view
   $('.dashboard_inner[code-animation]').each(function () {
     const codeBlock = $(this).find('.dashboard_code-block');
     codeBlock.hide();
@@ -77,7 +90,7 @@ $(document).ready(function () {
     });
   });
 
-  // CTA Animation
+  // -- CTA Animation
   $('#ctaBox').each(function () {
     let label = $(this).find('#ctaLabel');
     let text = $(this).find('#ctaText');
@@ -97,4 +110,62 @@ $(document).ready(function () {
     });
     tl.add(letterAnimation(label)).add(letterAnimation(text));
   });
+
+  // -- Menu
+
+  // Base
+  var menuOpenAnim = false;
+  const menuLinks = '.navbar_part.links';
+  const menuLinksItems = '.navbar_link';
+  const menuButton = '.navbar_menu-btn';
+
+  // Variable Anim
+  let revealAnim = {
+    y: '100%',
+    opacity: 0,
+    stagger: {
+      each: 0.05,
+    },
+  };
+
+  // Menu Animation
+  let menuText = 'Close';
+  let navReveal = gsap
+    .timeline()
+    .call(function () {
+      menuOpenAnim = false;
+    })
+    .add(typeText(menuButton + ' div', () => menuText)) // Use a function that returns menuText value
+    .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
+    .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
+    .from(menuLinksItems, revealAnim, '-=0.2')
+    .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' })
+    .call(function () {
+      menuOpenAnim = true;
+    });
+
+  // Define Master Timeline
+  let menuAnimation = gsap.timeline({ paused: true });
+  menuAnimation.add(navReveal, '<');
+
+  // Actionss
+  // Open on Click
+  $('.navbar_menu-btn').on('click', openMenu);
+
+  // Functions
+  function openMenu() {
+    playMenuAnimation();
+  }
+  function updateMenuText() {
+    menuText = menuOpenAnim ? 'Menu' : 'Close';
+  }
+
+  function playMenuAnimation() {
+    updateMenuText();
+    if (!menuOpenAnim) {
+      menuAnimation.timeScale(1).play();
+    } else {
+      menuAnimation.timeScale(1.5).reverse();
+    }
+  }
 });
