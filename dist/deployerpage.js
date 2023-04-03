@@ -1,1 +1,279 @@
-"use strict";(()=>{var x=t=>{let e=n=>{if(n.nodeType===Node.TEXT_NODE){let i=n.textContent,r=document.createDocumentFragment();for(let a=0;a<i.length;a++){let o=document.createElement("span");o.className="letter",o.textContent=i[a],r.appendChild(o)}n.parentNode.replaceChild(r,n)}else n.nodeType===Node.ELEMENT_NODE&&n.tagName!=="BR"&&Array.from(n.childNodes).forEach(e)};$(t).contents().each(function(){e(this)})},y=(t,e)=>{let n=gsap.timeline();return $(t).each((i,r)=>{let a=$(r).find(".letter").not(".line-numbers-row .code-letter"),o=gsap.timeline();a.each((g,m)=>{let c=$(m).closest(".word-highlight");c.length?o.fromTo(m,{display:"none"},{display:"inline"},g*e,"<").to(c,{opacity:1,duration:.2},"<"):o.fromTo(m,{visibility:"hidden"},{visibility:"initial"},g*e,"<")}),n.add(o,0)}),n},E=(t,e)=>{let n;return e==="label"?n=.03:e==="heading"?n=.02:typeof e=="number"?n=e:n=.01,x(t),y(t,n)};var N=t=>{gsap.timeline().fromTo(t,{scaleY:0},{scaleY:1,duration:1},"<")};var b=(t,e)=>{let n=$(e),i=gsap.timeline({ease:Power2.easeOut,paused:!0,scrollTrigger:{trigger:n,start:"50% bottom",onEnter:()=>{i.play()}}}),r=$(t).find(".text-size-label"),a=$(e).find(".graphd_legend-dot"),o=$(t).find(".graph-charts");return i.add(E(r,"label"),"<").add(N(o),"<").fromTo(a,{scale:.5,opacity:0},{scale:1,opacity:1},"<"),i};function p(t,e){let n=typeof t;return typeof e!="string"||e.trim()===""?t:e==="true"&&n==="boolean"?!0:e==="false"&&n==="boolean"?!1:isNaN(e)&&n==="string"?e:!isNaN(e)&&n==="number"?+e:t}$("[tr-marquee-element='component']").each(function(){let t=$(this),e=t.find("[tr-marquee-element='panel']"),n=t.find("[tr-marquee-element='triggerhover']"),i=t.find("[tr-marquee-element='triggerclick']"),r=p(100,t.attr("tr-marquee-speed")),a=p(!1,t.attr("tr-marquee-vertical")),o=p(!1,t.attr("tr-marquee-reverse")),g=p(!1,t.attr("tr-marquee-scrolldirection")),m=p(!1,t.attr("tr-marquee-scrollscrub")),c=-100,u=1,v=!1;o&&(c=100);let d=gsap.timeline({repeat:-1,onReverseComplete:()=>d.progress(1)});a?(r=e.first().height()/r,d.fromTo(e,{yPercent:0},{yPercent:c,ease:"none",duration:r})):(r=e.first().width()/r,d.fromTo(e,{xPercent:0},{xPercent:c,ease:"none",duration:r}));let T={value:1};ScrollTrigger.create({trigger:"body",start:"top top",end:"bottom bottom",onUpdate:s=>{if(!v&&(g&&u!==s.direction&&(u=s.direction,d.timeScale(s.direction)),m)){let l=s.getVelocity()*.006;l=gsap.utils.clamp(-60,60,l),gsap.timeline({onUpdate:()=>d.timeScale(T.value)}).fromTo(T,{value:l},{value:u,duration:.5})}}});function f(s){v=s;let l={value:1},h=gsap.timeline({onUpdate:()=>d.timeScale(l.value)});s?(h.fromTo(l,{value:u},{value:0,duration:.5}),i.addClass("is-paused")):(h.fromTo(l,{value:0},{value:u,duration:.5}),i.removeClass("is-paused"))}window.matchMedia("(pointer: fine)").matches&&(n.on("mouseenter",()=>f(!0)),n.on("mouseleave",()=>f(!1))),i.on("click",function(){$(this).hasClass("is-paused")?f(!1):f(!0)})});$(".graphd").each(function(){let t=$(this),e=gsap.timeline({ease:Power2.easeOut,paused:!0,scrollTrigger:{trigger:t,start:"top bottom",onEnter:()=>{e.play()}}});e.add(b($(this),t))});$(".graphd").each(function(){b($(this),$(this))});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/utils/globalFunctions.js
+  var wrapLetters = (element) => {
+    const processNode = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (!node.parentNode.classList.contains("letter")) {
+          const codeText = node.textContent;
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < codeText.length; i++) {
+            const span = document.createElement("span");
+            span.className = "letter";
+            span.textContent = codeText[i];
+            fragment.appendChild(span);
+          }
+          node.parentNode.replaceChild(fragment, node);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName !== "BR") {
+          const childNodes = Array.from(node.childNodes);
+          childNodes.forEach(processNode);
+        }
+      }
+    };
+    $(element).contents().each(function() {
+      processNode(this);
+    });
+  };
+  var revealLetters = (elements, letterDelay) => {
+    const codeTimeline = gsap.timeline();
+    let globalLetterIndex = 0;
+    $(elements).each((elementIndex, element) => {
+      const letters = $(element).find(".letter").not(".line-numbers-row .code-letter");
+      letters.each((letterIndex, letter) => {
+        const wordHighlight = $(letter).closest(".word-highlight");
+        if (wordHighlight.length) {
+          codeTimeline.fromTo(
+            letter,
+            { display: "none" },
+            { display: "inline" },
+            globalLetterIndex * letterDelay,
+            "<"
+          ).to(wordHighlight, { opacity: 1, duration: 0.2 }, "<");
+        } else {
+          codeTimeline.fromTo(
+            letter,
+            { visibility: "hidden" },
+            { visibility: "initial" },
+            globalLetterIndex * letterDelay,
+            "<"
+          );
+        }
+        globalLetterIndex++;
+      });
+    });
+    return codeTimeline;
+  };
+  var letterAnimation = (elements, letterType) => {
+    let letterDelay;
+    if (letterType === "label") {
+      letterDelay = 0.03;
+    } else if (letterType === "heading") {
+      letterDelay = 0.02;
+    } else if (typeof letterType === "number") {
+      letterDelay = letterType;
+    } else {
+      letterDelay = 0.01;
+    }
+    wrapLetters(elements);
+    return revealLetters(elements, letterDelay);
+  };
+  var animateCounter = ($element) => {
+    $($element).each(function() {
+      const Cont = { val: 0 };
+      const originalText = $(this).text();
+      const targetValue = parseFloat(originalText);
+      if (!isNaN(targetValue)) {
+        const onUpdate = () => {
+          const formattedValue = Cont.val % 1 === 0 ? Cont.val.toFixed(0) : Cont.val.toFixed(1);
+          $(this).text(formattedValue);
+        };
+        TweenLite.to(Cont, 1, {
+          val: targetValue,
+          onUpdate
+        });
+      } else {
+        return;
+      }
+    });
+  };
+  var animateGraphRow = (targets, graphClassPrefix) => {
+    const masterTimeline = gsap.timeline();
+    $(targets).each(function(index) {
+      let row = $(this).find(`.graph${graphClassPrefix}_box`);
+      let label = $(this).find(`.graph${graphClassPrefix}_label div`);
+      let number = $(this).find(`.graph${graphClassPrefix}_row-num div`);
+      const codeTimeline = gsap.timeline();
+      codeTimeline.from(row, { scaleX: 0, duration: 1 }).add(letterAnimation(label, "label")).add(animateCounter(number));
+      masterTimeline.add(codeTimeline, index * 0.2);
+    });
+    return masterTimeline;
+  };
+  var animateGraphChart = (target) => {
+    let tl = gsap.timeline();
+    tl.fromTo(
+      target,
+      {
+        scaleY: 0
+      },
+      { scaleY: 1, duration: 1 },
+      "<"
+    );
+  };
+  var animateHorizontalGraph = (target, graphType, trigger) => {
+    let triggerElement = $(trigger);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        start: "50% bottom",
+        onEnter: () => {
+          tl.play();
+        }
+      }
+    });
+    tl.add(animateGraphRow(target, graphType));
+    return tl;
+  };
+  var animateChartGraph = (target, trigger) => {
+    let triggerElement = $(trigger);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        start: "50% bottom",
+        onEnter: () => {
+          tl.play();
+        }
+      }
+    });
+    let labels = $(target).find(".text-size-label");
+    let labelDot = $(trigger).find(".graphd_legend-dot");
+    let chart = $(target).find(".graph-charts");
+    tl.add(letterAnimation(labels, "label"), "<").add(animateGraphChart(chart), "<").fromTo(labelDot, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1 }, "<");
+    return tl;
+  };
+  var animateBoxGraph = (target, trigger) => {
+    let triggerElement = $(trigger);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        start: "50% bottom",
+        onEnter: () => {
+          tl.play();
+        }
+      }
+    });
+    let labels = $(target).find(".text-size-label");
+    let box = $(target).find(".graphc_item");
+    tl.fromTo(
+      box,
+      {
+        scale: 0,
+        opacity: 0
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        stagger: 0.2
+      }
+    ).add(letterAnimation(labels, "label"));
+    return tl;
+  };
+
+  // src/deployerpage.js
+  function attr(defaultVal, attrVal) {
+    const defaultValType = typeof defaultVal;
+    if (typeof attrVal !== "string" || attrVal.trim() === "")
+      return defaultVal;
+    if (attrVal === "true" && defaultValType === "boolean")
+      return true;
+    if (attrVal === "false" && defaultValType === "boolean")
+      return false;
+    if (isNaN(attrVal) && defaultValType === "string")
+      return attrVal;
+    if (!isNaN(attrVal) && defaultValType === "number")
+      return +attrVal;
+    return defaultVal;
+  }
+  $("[tr-marquee-element='component']").each(function() {
+    const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']"), triggerHoverEl = componentEl.find("[tr-marquee-element='triggerhover']"), triggerClickEl = componentEl.find("[tr-marquee-element='triggerclick']");
+    let speedSetting = attr(100, componentEl.attr("tr-marquee-speed")), verticalSetting = attr(false, componentEl.attr("tr-marquee-vertical")), reverseSetting = attr(false, componentEl.attr("tr-marquee-reverse")), scrollDirectionSetting = attr(false, componentEl.attr("tr-marquee-scrolldirection")), scrollScrubSetting = attr(false, componentEl.attr("tr-marquee-scrollscrub")), moveDistanceSetting = -100, timeScaleSetting = 1, pausedStateSetting = false;
+    if (reverseSetting)
+      moveDistanceSetting = 100;
+    const marqueeTimeline = gsap.timeline({
+      repeat: -1,
+      onReverseComplete: () => marqueeTimeline.progress(1)
+    });
+    if (verticalSetting) {
+      speedSetting = panelEl.first().height() / speedSetting;
+      marqueeTimeline.fromTo(
+        panelEl,
+        { yPercent: 0 },
+        { yPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
+      );
+    } else {
+      speedSetting = panelEl.first().width() / speedSetting;
+      marqueeTimeline.fromTo(
+        panelEl,
+        { xPercent: 0 },
+        { xPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
+      );
+    }
+    const scrubObject = { value: 1 };
+    ScrollTrigger.create({
+      trigger: "body",
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        if (!pausedStateSetting) {
+          if (scrollDirectionSetting && timeScaleSetting !== self.direction) {
+            timeScaleSetting = self.direction;
+            marqueeTimeline.timeScale(self.direction);
+          }
+          if (scrollScrubSetting) {
+            let v = self.getVelocity() * 6e-3;
+            v = gsap.utils.clamp(-60, 60, v);
+            const scrubTimeline = gsap.timeline({
+              onUpdate: () => marqueeTimeline.timeScale(scrubObject.value)
+            });
+            scrubTimeline.fromTo(
+              scrubObject,
+              { value: v },
+              { value: timeScaleSetting, duration: 0.5 }
+            );
+          }
+        }
+      }
+    });
+    function pauseMarquee(isPausing) {
+      pausedStateSetting = isPausing;
+      const pauseObject = { value: 1 };
+      const pauseTimeline = gsap.timeline({
+        onUpdate: () => marqueeTimeline.timeScale(pauseObject.value)
+      });
+      if (isPausing) {
+        pauseTimeline.fromTo(pauseObject, { value: timeScaleSetting }, { value: 0, duration: 0.5 });
+        triggerClickEl.addClass("is-paused");
+      } else {
+        pauseTimeline.fromTo(pauseObject, { value: 0 }, { value: timeScaleSetting, duration: 0.5 });
+        triggerClickEl.removeClass("is-paused");
+      }
+    }
+    if (window.matchMedia("(pointer: fine)").matches) {
+      triggerHoverEl.on("mouseenter", () => pauseMarquee(true));
+      triggerHoverEl.on("mouseleave", () => pauseMarquee(false));
+    }
+    triggerClickEl.on("click", function() {
+      !$(this).hasClass("is-paused") ? pauseMarquee(true) : pauseMarquee(false);
+    });
+  });
+  $(".graphd").each(function() {
+    animateChartGraph($(this), $(this));
+  });
+  $(".graphb_row").each(function() {
+    animateHorizontalGraph($(this), "b", ".graphb");
+  });
+  $(".graphc_box").each(function() {
+    animateBoxGraph($(this), ".graphc");
+  });
+})();
+//# sourceMappingURL=deployerpage.js.map

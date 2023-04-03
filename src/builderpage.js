@@ -11,6 +11,7 @@ const progressLine = $('.tabs_block-progress-line');
 const duration = 4000;
 
 let shouldAnimate = true;
+let tabTimeline = gsap.timeline({ paused: true });
 
 function switchTab() {
   if (!shouldAnimate) {
@@ -37,6 +38,7 @@ function switchTab() {
 }
 
 const resetTabs = () => {
+  tabTimeline.clear();
   tabLinks.removeClass(activeClass);
   progressLine.css('width', '0');
   tabCodes.hide();
@@ -50,7 +52,8 @@ const stopAnimation = () => {
 
 const showCode = (nextIndex) => {
   tabCodes.eq(nextIndex).show();
-  codeAnimation(tabCodes.eq(nextIndex));
+  tabTimeline.add(codeAnimation(tabCodes.eq(nextIndex)));
+  tabTimeline.play();
 };
 
 const initTabs = () => {
@@ -59,6 +62,7 @@ const initTabs = () => {
 
   // Start looped animation
   switchTab();
+  showCode(0);
 
   // User Click
   tabLinks.on('click', function () {

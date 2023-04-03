@@ -1,4 +1,4 @@
-import { animateChartGraph } from '$utils/globalFunctions';
+import { animateBoxGraph, animateChartGraph, animateHorizontalGraph } from '$utils/globalFunctions';
 
 // Marquee Strip
 function attr(defaultVal, attrVal) {
@@ -95,25 +95,17 @@ $("[tr-marquee-element='component']").each(function () {
 });
 
 // Graph Animation
-
-$('.graphd').each(function () {
-  let triggerElement = $(this);
-  let tl = gsap.timeline({
-    ease: Power2.easeOut,
-    paused: true,
-    scrollTrigger: {
-      trigger: triggerElement,
-      // trigger element - viewport
-      start: 'top bottom',
-      onEnter: () => {
-        // Play the timeline when the trigger element enters the viewport
-        tl.play();
-      },
-    },
-  });
-  tl.add(animateChartGraph($(this), triggerElement));
-});
-
+// Hero Chart Graph
 $('.graphd').each(function () {
   animateChartGraph($(this), $(this));
+});
+
+// Carousel Graph 1
+$('.graphb_row').each(function () {
+  animateHorizontalGraph($(this), 'b', '.graphb');
+});
+
+// Carousel Graph 2
+$('.graphc_box').each(function () {
+  animateBoxGraph($(this), '.graphc');
 });

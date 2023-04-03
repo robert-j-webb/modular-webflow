@@ -293,7 +293,7 @@ $(document).ready(function () {
       scrollTrigger: {
         trigger: triggerElement,
         // trigger element - viewport
-        start: 'top bottom',
+        start: '20% bottom',
         onEnter: () => {
           // Play the timeline when the trigger element enters the viewport
           tl.play();
@@ -328,7 +328,7 @@ $(document).ready(function () {
 
   //-- Animate Graph
   $('.grapha_row').each(function () {
-    animateHorizontalGraph($(this), '.grapha');
+    animateHorizontalGraph($(this), 'a', '.grapha');
   });
 
   main.play();

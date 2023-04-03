@@ -1,1 +1,47 @@
-"use strict";(()=>{var i,e=!1;function t(){let s=window.matchMedia("(min-width: 0px) and (max-width: 991px)");window.matchMedia("(min-width: 992px)").matches?e&&(i&&i.destroy(!0,!0),e=!1):s.matches&&(e||(e=!0,i=new Swiper(".steps_component .padding-small",{slidesPerView:1,spaceBetween:24,speed:250,observer:!0,pagination:{el:".swiper-navigation",type:"bullets",clickable:!0,bulletActiveClass:"w-active",bulletClass:"w-slider-dot"}})))}window.addEventListener("load",function(){t()});window.addEventListener("resize",function(){t()});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/devpage.js
+  var swiper;
+  var init = false;
+  function swiperMode() {
+    const mobile = window.matchMedia("(min-width: 0px) and (max-width: 991px)");
+    const desktop = window.matchMedia("(min-width: 992px)");
+    if (desktop.matches) {
+      if (init) {
+        if (swiper) {
+          swiper.destroy(true, true);
+        }
+        init = false;
+      }
+    } else if (mobile.matches) {
+      if (!init) {
+        init = true;
+        swiper = new Swiper(".steps_component .padding-small", {
+          // Optional parameters
+          slidesPerView: 1,
+          spaceBetween: 24,
+          speed: 250,
+          observer: true,
+          // Enable lazy loading
+          pagination: {
+            el: ".swiper-navigation",
+            type: "bullets",
+            clickable: true,
+            bulletActiveClass: "w-active",
+            bulletClass: "w-slider-dot"
+          }
+        });
+      }
+    }
+  }
+  window.addEventListener("load", function() {
+    swiperMode();
+  });
+  window.addEventListener("resize", function() {
+    swiperMode();
+  });
+})();
+//# sourceMappingURL=devpage.js.map
