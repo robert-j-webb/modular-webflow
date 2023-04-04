@@ -115,6 +115,7 @@ $(document).ready(function () {
 
   // Base
   var menuOpenAnim = false;
+  var dropdownOpen = false;
   const menuLinks = '.navbar_part.links';
   const menuLinksItems = '.navbar_link';
   const menuButton = '.navbar_menu-btn';
@@ -161,6 +162,10 @@ $(document).ready(function () {
   // Actions
   // Open on Click
   $('.navbar_menu-btn').on('click', openMenu);
+  $('.navbar_dropdown').on('click', function () {
+    if (!dropdownOpen) {
+    }
+  });
 
   // Functions
   function openMenu() {

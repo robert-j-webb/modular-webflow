@@ -35,24 +35,13 @@
     $(elements).each((elementIndex, element) => {
       const letters = $(element).find(".letter").not(".line-numbers-row .code-letter");
       letters.each((letterIndex, letter) => {
-        const wordHighlight = $(letter).closest(".word-highlight");
-        if (wordHighlight.length) {
-          codeTimeline.fromTo(
-            letter,
-            { display: "none" },
-            { display: "inline" },
-            globalLetterIndex * letterDelay,
-            "<"
-          ).to(wordHighlight, { opacity: 1, duration: 0.2 }, "<");
-        } else {
-          codeTimeline.fromTo(
-            letter,
-            { visibility: "hidden" },
-            { visibility: "initial" },
-            globalLetterIndex * letterDelay,
-            "<"
-          );
-        }
+        codeTimeline.fromTo(
+          letter,
+          { visibility: "hidden" },
+          { visibility: "initial" },
+          globalLetterIndex * letterDelay,
+          "<"
+        );
         globalLetterIndex++;
       });
     });
@@ -63,7 +52,7 @@
     if (letterType === "label") {
       letterDelay = 0.03;
     } else if (letterType === "heading") {
-      letterDelay = 0.02;
+      letterDelay = 0.01;
     } else if (typeof letterType === "number") {
       letterDelay = letterType;
     } else {
@@ -178,6 +167,7 @@
       tl.add(letterAnimation(label)).add(letterAnimation(text));
     });
     var menuOpenAnim = false;
+    var dropdownOpen = false;
     const menuLinks = ".navbar_part.links";
     const menuLinksItems = ".navbar_link";
     const menuButton = ".navbar_menu-btn";
@@ -204,6 +194,10 @@
       }
     });
     $(".navbar_menu-btn").on("click", openMenu);
+    $(".navbar_dropdown").on("click", function() {
+      if (!dropdownOpen) {
+      }
+    });
     function openMenu() {
       if (navReveal) {
         playMenuAnimation();

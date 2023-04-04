@@ -35,24 +35,13 @@
     $(elements).each((elementIndex, element) => {
       const letters = $(element).find(".letter").not(".line-numbers-row .code-letter");
       letters.each((letterIndex, letter) => {
-        const wordHighlight = $(letter).closest(".word-highlight");
-        if (wordHighlight.length) {
-          codeTimeline.fromTo(
-            letter,
-            { display: "none" },
-            { display: "inline" },
-            globalLetterIndex * letterDelay,
-            "<"
-          ).to(wordHighlight, { opacity: 1, duration: 0.2 }, "<");
-        } else {
-          codeTimeline.fromTo(
-            letter,
-            { visibility: "hidden" },
-            { visibility: "initial" },
-            globalLetterIndex * letterDelay,
-            "<"
-          );
-        }
+        codeTimeline.fromTo(
+          letter,
+          { visibility: "hidden" },
+          { visibility: "initial" },
+          globalLetterIndex * letterDelay,
+          "<"
+        );
         globalLetterIndex++;
       });
     });

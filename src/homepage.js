@@ -7,6 +7,8 @@ import {
   typeText,
 } from '$utils/globalFunctions';
 
+import { wrapLetters } from './utils/globalFunctions';
+
 // --- Hero Dashboard Animation
 
 function switchDeviceIcons() {
@@ -60,16 +62,8 @@ const graphNumberLabel = '.hero-dashboard_graph-number-label';
 const graphNumber = '.hero-dashboard_graph-number';
 const graphLegend = '.hero-dashboard_graph-legend';
 
-// Heading Text Changes
-const heroSpan1 = '.hero-heading_span1';
-const heroSpan2 = '.hero-heading_span2';
-const heroSpan3 = '.hero-heading_span3';
-const heroSpan4 = '.hero-heading_span4';
-const heroSpan5 = '.hero-heading_span5';
-const heroSpan6 = '.hero-heading_span6';
-
 // Animation
-const main = gsap.timeline({ delay: 1.5, ease: Power2.easeOut, paused: true, repeat: -1 });
+const main = gsap.timeline({ delay: 0.5, ease: Power2.easeOut, paused: true, repeat: -1 });
 
 $(document).ready(function () {
   /*
@@ -102,16 +96,15 @@ $(document).ready(function () {
 
   // Initial Reveal
   main
-    .addLabel('heroText')
-    .add(letterAnimation(heroLabel, 'label'))
-    .add(letterAnimation(heroHeading + ' span', 'heading'), '<')
+    .addLabel('Start')
+    .add(letterAnimation(heroLabel, 0.01))
+    .add(letterAnimation(heroHeading, 'heading'), '<')
     .from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, '<0.1')
-    .addLabel('modularBox')
     .fromTo(
       $(modularBox),
       { width: '19em', opacity: 0 },
       { width: '12.2em', opacity: 1, duration: baseDuration },
-      'modularBox'
+      'Start'
     )
     .add(letterAnimation($(modularBox).find(metadata).find('div'), 'label'));
 
@@ -176,17 +169,7 @@ $(document).ready(function () {
       '<'
     )
     // Update Heading
-    .addLabel('headingUpdate1')
-    .add(typeText(heroSpan1, 'A '), '<')
-    .add(typeText(heroSpan2, 'new language'), '<')
-    .add(typeText(heroSpan3, ' that'), '<')
-    .add(typeText(heroSpan4, ' extends Python '), '<')
-    .add(typeText(heroSpan5, "but that's "), '<')
-    .add(typeText(heroSpan6, 'as fast as C'), '<')
-    .add(() => {
-      $(heroSpan5).removeClass(hightlightClass);
-      $(heroSpan4 + ',' + heroSpan6).addClass(hightlightClass);
-    }, '<');
+    .addLabel('headingUpdate1');
 
   // Show Dashboard
   main
@@ -236,16 +219,7 @@ $(document).ready(function () {
       'showGraphs'
     )
     // Update Heading
-    .addLabel('headingUpdate2')
-    .add(typeText(heroSpan1, 'The '), '<')
-    .add(typeText(heroSpan2, 'fastest unified AI interfence'), '<')
-    .add(typeText(heroSpan3, ''), '<')
-    .add(typeText(heroSpan4, 'engine'), '<')
-    .add(typeText(heroSpan5, 'in the world.'), '<')
-    .add(typeText(heroSpan6, ''), '<')
-    .add(() => {
-      $(heroSpan6).removeClass(hightlightClass);
-    }, '<');
+    .addLabel('headingUpdate2');
 
   // Show Graphs
   main
@@ -284,6 +258,7 @@ $(document).ready(function () {
     duration: baseDuration,
   });
 
+  // --- Homepage Rest
   //--- Discord Animation
   $('.discord_box').each(function () {
     let triggerElement = $(this);

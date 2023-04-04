@@ -35,24 +35,13 @@
     $(elements).each((elementIndex, element) => {
       const letters = $(element).find(".letter").not(".line-numbers-row .code-letter");
       letters.each((letterIndex, letter) => {
-        const wordHighlight = $(letter).closest(".word-highlight");
-        if (wordHighlight.length) {
-          codeTimeline.fromTo(
-            letter,
-            { display: "none" },
-            { display: "inline" },
-            globalLetterIndex * letterDelay,
-            "<"
-          ).to(wordHighlight, { opacity: 1, duration: 0.2 }, "<");
-        } else {
-          codeTimeline.fromTo(
-            letter,
-            { visibility: "hidden" },
-            { visibility: "initial" },
-            globalLetterIndex * letterDelay,
-            "<"
-          );
-        }
+        codeTimeline.fromTo(
+          letter,
+          { visibility: "hidden" },
+          { visibility: "initial" },
+          globalLetterIndex * letterDelay,
+          "<"
+        );
         globalLetterIndex++;
       });
     });
@@ -63,7 +52,7 @@
     if (letterType === "label") {
       letterDelay = 0.03;
     } else if (letterType === "heading") {
-      letterDelay = 0.02;
+      letterDelay = 0.01;
     } else if (typeof letterType === "number") {
       letterDelay = letterType;
     } else {
@@ -79,17 +68,6 @@
     wrapLetters(codeBlock);
     codeBlock.prepend(lineNumbers);
     return revealLetters(codeBlock, 0.01);
-  };
-  var typeText = (element, text) => {
-    const codeTimeline = gsap.timeline();
-    codeTimeline.to(
-      element,
-      {
-        text: { value: text, ease: "none", speed: 1 }
-      },
-      "<"
-    );
-    return codeTimeline;
   };
   var animateCounter = ($element) => {
     $($element).each(function() {
@@ -151,7 +129,6 @@
       icons.eq(nextIndex).removeClass(hideClass);
     });
   }
-  var hightlightClass = "word-highlight";
   var baseDuration = 1.2;
   var heroLabel = "#heroLabel";
   var heroHeading = "#heroHeading";
@@ -181,19 +158,13 @@
   var graphNumberLabel = ".hero-dashboard_graph-number-label";
   var graphNumber = ".hero-dashboard_graph-number";
   var graphLegend = ".hero-dashboard_graph-legend";
-  var heroSpan1 = ".hero-heading_span1";
-  var heroSpan2 = ".hero-heading_span2";
-  var heroSpan3 = ".hero-heading_span3";
-  var heroSpan4 = ".hero-heading_span4";
-  var heroSpan5 = ".hero-heading_span5";
-  var heroSpan6 = ".hero-heading_span6";
-  var main = gsap.timeline({ delay: 1.5, ease: Power2.easeOut, paused: true, repeat: -1 });
+  var main = gsap.timeline({ delay: 0.5, ease: Power2.easeOut, paused: true, repeat: -1 });
   $(document).ready(function() {
-    main.addLabel("heroText").add(letterAnimation(heroLabel, "label")).add(letterAnimation(heroHeading + " span", "heading"), "<").from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, "<0.1").addLabel("modularBox").fromTo(
+    main.addLabel("Start").add(letterAnimation(heroLabel, 0.01)).add(letterAnimation(heroHeading, "heading"), "<").from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, "<0.1").fromTo(
       $(modularBox),
       { width: "19em", opacity: 0 },
       { width: "12.2em", opacity: 1, duration: baseDuration },
-      "modularBox"
+      "Start"
     ).add(letterAnimation($(modularBox).find(metadata).find("div"), "label"));
     main.addLabel("heroBoxesLeft").from(
       heroBoxesLeft,
@@ -228,10 +199,7 @@
       [brandBox, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
       { opacity: 0, duration: baseDuration },
       "<"
-    ).addLabel("headingUpdate1").add(typeText(heroSpan1, "A "), "<").add(typeText(heroSpan2, "new language"), "<").add(typeText(heroSpan3, " that"), "<").add(typeText(heroSpan4, " extends Python "), "<").add(typeText(heroSpan5, "but that's "), "<").add(typeText(heroSpan6, "as fast as C"), "<").add(() => {
-      $(heroSpan5).removeClass(hightlightClass);
-      $(heroSpan4 + "," + heroSpan6).addClass(hightlightClass);
-    }, "<");
+    ).addLabel("headingUpdate1");
     main.addLabel("showDashboard").fromTo(
       [dashboard, dashboardInner],
       { autoAlpha: 0 },
@@ -254,9 +222,7 @@
         duration: baseDuration
       },
       "showGraphs"
-    ).addLabel("headingUpdate2").add(typeText(heroSpan1, "The "), "<").add(typeText(heroSpan2, "fastest unified AI interfence"), "<").add(typeText(heroSpan3, ""), "<").add(typeText(heroSpan4, "engine"), "<").add(typeText(heroSpan5, "in the world."), "<").add(typeText(heroSpan6, ""), "<").add(() => {
-      $(heroSpan6).removeClass(hightlightClass);
-    }, "<");
+    ).addLabel("headingUpdate2");
     main.addLabel("showGraph").to(graphs, { autoAlpha: 1, duration: baseDuration }, "<").to(dashboard, { autoAlpha: 0, duration: baseDuration }, "<");
     const animateLabel = (element) => {
       main.set(element, { opacity: 1 }).add(letterAnimation(element, "label"), "<");

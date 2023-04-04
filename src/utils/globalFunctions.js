@@ -44,26 +44,13 @@ const revealLetters = (elements, letterDelay) => {
 
     // Animate each letter in the current element
     letters.each((letterIndex, letter) => {
-      const wordHighlight = $(letter).closest('.word-highlight');
-      if (wordHighlight.length) {
-        codeTimeline
-          .fromTo(
-            letter,
-            { display: 'none' },
-            { display: 'inline' },
-            globalLetterIndex * letterDelay,
-            '<'
-          )
-          .to(wordHighlight, { opacity: 1, duration: 0.2 }, '<');
-      } else {
-        codeTimeline.fromTo(
-          letter,
-          { visibility: 'hidden' },
-          { visibility: 'initial' },
-          globalLetterIndex * letterDelay,
-          '<'
-        );
-      }
+      codeTimeline.fromTo(
+        letter,
+        { visibility: 'hidden' },
+        { visibility: 'initial' },
+        globalLetterIndex * letterDelay,
+        '<'
+      );
 
       globalLetterIndex++; // increment the global letter index
     });
@@ -78,7 +65,7 @@ export const letterAnimation = (elements, letterType) => {
   if (letterType === 'label') {
     letterDelay = 0.03;
   } else if (letterType === 'heading') {
-    letterDelay = 0.02;
+    letterDelay = 0.01;
   } else if (typeof letterType === 'number') {
     letterDelay = letterType;
   } else {
