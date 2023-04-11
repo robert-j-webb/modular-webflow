@@ -1,6 +1,8 @@
 import { codeAnimation, letterAnimation, typeText } from '$utils/globalFunctions';
 
 $(document).ready(function () {
+  $('.main-wrapper').fadeTo('slow', 1);
+
   gsap.registerPlugin(ScrollTrigger);
 
   // GSAP IMG SET
@@ -27,7 +29,7 @@ $(document).ready(function () {
       const scrollTrigger = ScrollTrigger.create({
         trigger: $(this).closest('.line-mask_wrap'),
         once: true,
-        start: 'center bottom',
+        start: '70% bottom',
         invalidateOnRefresh: true,
         onEnter: () => {
           gsap.to($(this), { height: originalHeight, duration: 1.2 });

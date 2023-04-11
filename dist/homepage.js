@@ -107,7 +107,7 @@
       paused: true,
       scrollTrigger: {
         trigger: triggerElement,
-        start: "50% bottom",
+        start: "70% bottom",
         onEnter: () => {
           tl.play();
         }
@@ -132,11 +132,13 @@
   var baseDuration = 1.2;
   var heroLabel = "#heroLabel";
   var heroHeading = "#heroHeading";
+  var heroHeadingBox = ".header_highlight-head";
   var heroButtons = "#heroButtons .button";
   var modularBox = "#modularBox";
   var heroBox = ".hero-box";
   var heroBoxInner = ".hero-box_inner";
   var brandBox = modularBox + " " + heroBoxInner;
+  var brandLogo = "#brandLogo";
   var heroBoxesLeft = heroBox + "[box-direction=left] " + heroBoxInner;
   var heroBoxesRight = heroBox + "[box-direction=right] " + heroBoxInner;
   var metadata = ".hero-box_metadata-mask";
@@ -160,7 +162,9 @@
   var graphLegend = ".hero-dashboard_graph-legend";
   var main = gsap.timeline({ delay: 0.5, ease: Power2.easeOut, paused: true, repeat: -1 });
   $(document).ready(function() {
-    main.addLabel("Start").add(letterAnimation(heroLabel, 0.01)).add(letterAnimation(heroHeading, "heading"), "<").from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, "<0.1").fromTo(
+    main.addLabel("Start").add(letterAnimation(heroLabel, 0.01)).add(letterAnimation(heroHeading, "heading"), "<").call(() => {
+      $(brandLogo).trigger("click");
+    }).from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, "<0.1").fromTo(
       $(modularBox),
       { width: "19em", opacity: 0 },
       { width: "12.2em", opacity: 1, duration: baseDuration },
@@ -199,7 +203,13 @@
       [brandBox, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
       { opacity: 0, duration: baseDuration },
       "<"
-    ).addLabel("headingUpdate1");
+    ).addLabel("headingUpdate1").to(heroHeading, { opacity: 0, y: "2em", duration: 0.2 }).call(() => {
+      $(heroHeading).html(
+        'A <span class="word-highlight">new language</span> that <span class="word-highlight">extends</span> <span class="word-highlight">Python</span> but thats <span class="word-highlight">as fast as C</span>'
+      );
+      wrapLetters(heroHeading);
+      $(heroHeadingBox).css("width", "80%");
+    }).to(heroHeading, { opacity: 1, y: "0em", duration: 0.2 });
     main.addLabel("showDashboard").fromTo(
       [dashboard, dashboardInner],
       { autoAlpha: 0 },
@@ -222,7 +232,12 @@
         duration: baseDuration
       },
       "showGraphs"
-    ).addLabel("headingUpdate2");
+    ).addLabel("headingUpdate2").to(heroHeading, { opacity: 0, y: "2em", duration: 0.2 }).call(() => {
+      $(heroHeading).html(
+        'The <span class="word-highlight">fastest unified AI inference</span> <span class="word-highlight">engine</span> in the world.'
+      );
+      wrapLetters(heroHeading);
+    }).to(heroHeading, { opacity: 1, y: "0em", duration: 0.2 });
     main.addLabel("showGraph").to(graphs, { autoAlpha: 1, duration: baseDuration }, "<").to(dashboard, { autoAlpha: 0, duration: baseDuration }, "<");
     const animateLabel = (element) => {
       main.set(element, { opacity: 1 }).add(letterAnimation(element, "label"), "<");

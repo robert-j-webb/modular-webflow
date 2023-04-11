@@ -166,7 +166,7 @@ export const animateHorizontalGraph = (target, graphType, trigger) => {
     paused: true,
     scrollTrigger: {
       trigger: triggerElement,
-      start: '50% bottom',
+      start: '70% bottom',
       onEnter: () => {
         // Play the timeline when the trigger element enters the viewport
         tl.play();
@@ -185,7 +185,7 @@ export const animateChartGraph = (target, trigger) => {
     paused: true,
     scrollTrigger: {
       trigger: triggerElement,
-      start: '50% bottom',
+      start: '70% bottom',
       onEnter: () => {
         // Play the timeline when the trigger element enters the viewport
         tl.play();
@@ -211,7 +211,7 @@ export const animateBoxGraph = (target, trigger) => {
     paused: true,
     scrollTrigger: {
       trigger: triggerElement,
-      start: '50% bottom',
+      start: '70% bottom',
       onEnter: () => {
         // Play the timeline when the trigger element enters the viewport
         tl.play();
@@ -221,18 +221,15 @@ export const animateBoxGraph = (target, trigger) => {
 
   let labels = $(target).find('.text-size-label');
   let box = $(target).find('.graphc_item');
-  tl.fromTo(
-    box,
-    {
-      scale: 0,
-      opacity: 0,
-    },
-    {
-      scale: 1,
-      opacity: 1,
-      stagger: 0.2,
-    }
-  ).add(letterAnimation(labels, 'label'));
+  tl.set(box, {
+    scale: 0,
+    opacity: 0,
+  });
+  tl.to(box, {
+    scale: 1,
+    opacity: 1,
+    stagger: 0.2,
+  }).add(letterAnimation(labels, 'label'));
 
   return tl;
 };

@@ -110,7 +110,7 @@
       paused: true,
       scrollTrigger: {
         trigger: triggerElement,
-        start: "50% bottom",
+        start: "70% bottom",
         onEnter: () => {
           tl.play();
         }
@@ -126,7 +126,7 @@
       paused: true,
       scrollTrigger: {
         trigger: triggerElement,
-        start: "50% bottom",
+        start: "70% bottom",
         onEnter: () => {
           tl.play();
         }
@@ -145,7 +145,7 @@
       paused: true,
       scrollTrigger: {
         trigger: triggerElement,
-        start: "50% bottom",
+        start: "70% bottom",
         onEnter: () => {
           tl.play();
         }
@@ -153,116 +153,123 @@
     });
     let labels = $(target).find(".text-size-label");
     let box = $(target).find(".graphc_item");
-    tl.fromTo(
-      box,
-      {
-        scale: 0,
-        opacity: 0
-      },
-      {
-        scale: 1,
-        opacity: 1,
-        stagger: 0.2
-      }
-    ).add(letterAnimation(labels, "label"));
+    tl.set(box, {
+      scale: 0,
+      opacity: 0
+    });
+    tl.to(box, {
+      scale: 1,
+      opacity: 1,
+      stagger: 0.2
+    }).add(letterAnimation(labels, "label"));
     return tl;
   };
 
   // src/deployerpage.js
-  function attr(defaultVal, attrVal) {
-    const defaultValType = typeof defaultVal;
-    if (typeof attrVal !== "string" || attrVal.trim() === "")
-      return defaultVal;
-    if (attrVal === "true" && defaultValType === "boolean")
-      return true;
-    if (attrVal === "false" && defaultValType === "boolean")
-      return false;
-    if (isNaN(attrVal) && defaultValType === "string")
-      return attrVal;
-    if (!isNaN(attrVal) && defaultValType === "number")
-      return +attrVal;
-    return defaultVal;
-  }
-  $("[tr-marquee-element='component']").each(function() {
-    const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']"), triggerHoverEl = componentEl.find("[tr-marquee-element='triggerhover']"), triggerClickEl = componentEl.find("[tr-marquee-element='triggerclick']");
-    let speedSetting = attr(100, componentEl.attr("tr-marquee-speed")), verticalSetting = attr(false, componentEl.attr("tr-marquee-vertical")), reverseSetting = attr(false, componentEl.attr("tr-marquee-reverse")), scrollDirectionSetting = attr(false, componentEl.attr("tr-marquee-scrolldirection")), scrollScrubSetting = attr(false, componentEl.attr("tr-marquee-scrollscrub")), moveDistanceSetting = -100, timeScaleSetting = 1, pausedStateSetting = false;
-    if (reverseSetting)
-      moveDistanceSetting = 100;
-    const marqueeTimeline = gsap.timeline({
-      repeat: -1,
-      onReverseComplete: () => marqueeTimeline.progress(1)
+  $(document).ready(function() {
+    $("#hero").each(function() {
+      let tl = gsap.timeline({ delay: 0.2 });
+      let heading = $(this).find("h1");
+      let par = $(this).find("p");
+      let btn = $(this).find(".button");
+      tl.to(heading, { opacity: 1 });
+      tl.add(letterAnimation("h1"), "<");
+      tl.to(par, { opacity: 1, duration: 0.5 }, "<1");
+      tl.to(btn, { opacity: 1, duration: 0.5 }, "<0.4");
+      tl.add(animateChartGraph(".graphd", ".graphd"), "<");
     });
-    if (verticalSetting) {
-      speedSetting = panelEl.first().height() / speedSetting;
-      marqueeTimeline.fromTo(
-        panelEl,
-        { yPercent: 0 },
-        { yPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
-      );
-    } else {
-      speedSetting = panelEl.first().width() / speedSetting;
-      marqueeTimeline.fromTo(
-        panelEl,
-        { xPercent: 0 },
-        { xPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
-      );
+    function attr(defaultVal, attrVal) {
+      const defaultValType = typeof defaultVal;
+      if (typeof attrVal !== "string" || attrVal.trim() === "")
+        return defaultVal;
+      if (attrVal === "true" && defaultValType === "boolean")
+        return true;
+      if (attrVal === "false" && defaultValType === "boolean")
+        return false;
+      if (isNaN(attrVal) && defaultValType === "string")
+        return attrVal;
+      if (!isNaN(attrVal) && defaultValType === "number")
+        return +attrVal;
+      return defaultVal;
     }
-    const scrubObject = { value: 1 };
-    ScrollTrigger.create({
-      trigger: "body",
-      start: "top top",
-      end: "bottom bottom",
-      onUpdate: (self) => {
-        if (!pausedStateSetting) {
-          if (scrollDirectionSetting && timeScaleSetting !== self.direction) {
-            timeScaleSetting = self.direction;
-            marqueeTimeline.timeScale(self.direction);
-          }
-          if (scrollScrubSetting) {
-            let v = self.getVelocity() * 6e-3;
-            v = gsap.utils.clamp(-60, 60, v);
-            const scrubTimeline = gsap.timeline({
-              onUpdate: () => marqueeTimeline.timeScale(scrubObject.value)
-            });
-            scrubTimeline.fromTo(
-              scrubObject,
-              { value: v },
-              { value: timeScaleSetting, duration: 0.5 }
-            );
+    $("[tr-marquee-element='component']").each(function() {
+      const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']"), triggerHoverEl = componentEl.find("[tr-marquee-element='triggerhover']"), triggerClickEl = componentEl.find("[tr-marquee-element='triggerclick']");
+      let speedSetting = attr(100, componentEl.attr("tr-marquee-speed")), verticalSetting = attr(false, componentEl.attr("tr-marquee-vertical")), reverseSetting = attr(false, componentEl.attr("tr-marquee-reverse")), scrollDirectionSetting = attr(false, componentEl.attr("tr-marquee-scrolldirection")), scrollScrubSetting = attr(false, componentEl.attr("tr-marquee-scrollscrub")), moveDistanceSetting = -100, timeScaleSetting = 1, pausedStateSetting = false;
+      if (reverseSetting)
+        moveDistanceSetting = 100;
+      const marqueeTimeline = gsap.timeline({
+        repeat: -1,
+        onReverseComplete: () => marqueeTimeline.progress(1)
+      });
+      if (verticalSetting) {
+        speedSetting = panelEl.first().height() / speedSetting;
+        marqueeTimeline.fromTo(
+          panelEl,
+          { yPercent: 0 },
+          { yPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
+        );
+      } else {
+        speedSetting = panelEl.first().width() / speedSetting;
+        marqueeTimeline.fromTo(
+          panelEl,
+          { xPercent: 0 },
+          { xPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
+        );
+      }
+      const scrubObject = { value: 1 };
+      ScrollTrigger.create({
+        trigger: "body",
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          if (!pausedStateSetting) {
+            if (scrollDirectionSetting && timeScaleSetting !== self.direction) {
+              timeScaleSetting = self.direction;
+              marqueeTimeline.timeScale(self.direction);
+            }
+            if (scrollScrubSetting) {
+              let v = self.getVelocity() * 6e-3;
+              v = gsap.utils.clamp(-60, 60, v);
+              const scrubTimeline = gsap.timeline({
+                onUpdate: () => marqueeTimeline.timeScale(scrubObject.value)
+              });
+              scrubTimeline.fromTo(
+                scrubObject,
+                { value: v },
+                { value: timeScaleSetting, duration: 0.5 }
+              );
+            }
           }
         }
-      }
-    });
-    function pauseMarquee(isPausing) {
-      pausedStateSetting = isPausing;
-      const pauseObject = { value: 1 };
-      const pauseTimeline = gsap.timeline({
-        onUpdate: () => marqueeTimeline.timeScale(pauseObject.value)
       });
-      if (isPausing) {
-        pauseTimeline.fromTo(pauseObject, { value: timeScaleSetting }, { value: 0, duration: 0.5 });
-        triggerClickEl.addClass("is-paused");
-      } else {
-        pauseTimeline.fromTo(pauseObject, { value: 0 }, { value: timeScaleSetting, duration: 0.5 });
-        triggerClickEl.removeClass("is-paused");
+      function pauseMarquee(isPausing) {
+        pausedStateSetting = isPausing;
+        const pauseObject = { value: 1 };
+        const pauseTimeline = gsap.timeline({
+          onUpdate: () => marqueeTimeline.timeScale(pauseObject.value)
+        });
+        if (isPausing) {
+          pauseTimeline.fromTo(pauseObject, { value: timeScaleSetting }, { value: 0, duration: 0.5 });
+          triggerClickEl.addClass("is-paused");
+        } else {
+          pauseTimeline.fromTo(pauseObject, { value: 0 }, { value: timeScaleSetting, duration: 0.5 });
+          triggerClickEl.removeClass("is-paused");
+        }
       }
-    }
-    if (window.matchMedia("(pointer: fine)").matches) {
-      triggerHoverEl.on("mouseenter", () => pauseMarquee(true));
-      triggerHoverEl.on("mouseleave", () => pauseMarquee(false));
-    }
-    triggerClickEl.on("click", function() {
-      !$(this).hasClass("is-paused") ? pauseMarquee(true) : pauseMarquee(false);
+      if (window.matchMedia("(pointer: fine)").matches) {
+        triggerHoverEl.on("mouseenter", () => pauseMarquee(true));
+        triggerHoverEl.on("mouseleave", () => pauseMarquee(false));
+      }
+      triggerClickEl.on("click", function() {
+        !$(this).hasClass("is-paused") ? pauseMarquee(true) : pauseMarquee(false);
+      });
     });
-  });
-  $(".graphd").each(function() {
-    animateChartGraph($(this), $(this));
-  });
-  $(".graphb_row").each(function() {
-    animateHorizontalGraph($(this), "b", ".graphb");
-  });
-  $(".graphc_box").each(function() {
-    animateBoxGraph($(this), ".graphc");
+    $(".graphb_row").each(function() {
+      animateHorizontalGraph($(this), "b", ".graphb");
+    });
+    $(".graphc_box").each(function() {
+      animateBoxGraph($(this), ".graphc");
+    });
   });
 })();
 //# sourceMappingURL=deployerpage.js.map

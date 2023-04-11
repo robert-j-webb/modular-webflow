@@ -28,6 +28,7 @@ const hightlightClass = 'word-highlight';
 const baseDuration = 1.2;
 const heroLabel = '#heroLabel';
 const heroHeading = '#heroHeading';
+const heroHeadingBox = '.header_highlight-head';
 const heroButtons = '#heroButtons .button';
 const modularBox = '#modularBox';
 const heroBox = '.hero-box';
@@ -99,6 +100,9 @@ $(document).ready(function () {
     .addLabel('Start')
     .add(letterAnimation(heroLabel, 0.01))
     .add(letterAnimation(heroHeading, 'heading'), '<')
+    .call(() => {
+      $(brandLogo).trigger('click');
+    })
     .from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, '<0.1')
     .fromTo(
       $(modularBox),
@@ -169,7 +173,16 @@ $(document).ready(function () {
       '<'
     )
     // Update Heading
-    .addLabel('headingUpdate1');
+    .addLabel('headingUpdate1')
+    .to(heroHeading, { opacity: 0, y: '2em', duration: 0.2 })
+    .call(() => {
+      $(heroHeading).html(
+        'A <span class="word-highlight">new language</span> that <span class="word-highlight">extends</span> <span class="word-highlight">Python</span> but thats <span class="word-highlight">as fast as C</span>'
+      );
+      wrapLetters(heroHeading);
+      $(heroHeadingBox).css('width', '80%');
+    })
+    .to(heroHeading, { opacity: 1, y: '0em', duration: 0.2 });
 
   // Show Dashboard
   main
@@ -219,7 +232,15 @@ $(document).ready(function () {
       'showGraphs'
     )
     // Update Heading
-    .addLabel('headingUpdate2');
+    .addLabel('headingUpdate2')
+    .to(heroHeading, { opacity: 0, y: '2em', duration: 0.2 })
+    .call(() => {
+      $(heroHeading).html(
+        'The <span class="word-highlight">fastest unified AI inference</span> <span class="word-highlight">engine</span> in the world.'
+      );
+      wrapLetters(heroHeading);
+    })
+    .to(heroHeading, { opacity: 1, y: '0em', duration: 0.2 });
 
   // Show Graphs
   main

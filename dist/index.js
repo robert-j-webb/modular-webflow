@@ -83,6 +83,7 @@
 
   // src/index.js
   $(document).ready(function() {
+    $(".main-wrapper").fadeTo("slow", 1);
     gsap.registerPlugin(ScrollTrigger);
     $("img").each(function() {
       $(this).removeAttr("loading");
@@ -100,7 +101,7 @@
         const scrollTrigger = ScrollTrigger.create({
           trigger: $(this).closest(".line-mask_wrap"),
           once: true,
-          start: "center bottom",
+          start: "70% bottom",
           invalidateOnRefresh: true,
           onEnter: () => {
             gsap.to($(this), { height: originalHeight, duration: 1.2 });
