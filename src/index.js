@@ -1,8 +1,12 @@
 import { codeAnimation, letterAnimation, typeText } from '$utils/globalFunctions';
 
-$(document).ready(function () {
-  $('.main-wrapper').fadeTo('slow', 1);
+document.documentElement.classList.add('js-enabled');
 
+$(document).ready(function () {
+  // Init Reveal
+  $('.main-wrapper').delay(300).fadeTo('slow', 1);
+
+  // Register GSAP
   gsap.registerPlugin(ScrollTrigger);
 
   // GSAP IMG SET
@@ -13,7 +17,6 @@ $(document).ready(function () {
 
   // -- Lines Animation
   let lineMaskTriggers = [];
-
   function setupLineMaskScrollTriggers() {
     // Kill existing line mask triggers before setting up new ones
     lineMaskTriggers.forEach((st) => st.kill());
@@ -24,7 +27,11 @@ $(document).ready(function () {
       const computedStyle = window.getComputedStyle($(this)[0]);
       const originalHeight = computedStyle.getPropertyValue('height');
 
-      gsap.set($(this), { height: '100%' });
+      if ($(this).closest('.line-mask_wrap').hasClass('bottom')) {
+        gsap.set($(this), { height: '0%' });
+      } else {
+        gsap.set($(this), { height: '100%' });
+      }
 
       const scrollTrigger = ScrollTrigger.create({
         trigger: $(this).closest('.line-mask_wrap'),
@@ -40,11 +47,6 @@ $(document).ready(function () {
       lineMaskTriggers.push(scrollTrigger);
     });
   }
-
-  // Set up the ScrollTriggers on page load
-  setupLineMaskScrollTriggers();
-
-  // Debounce function to limit function calls
   function debounce(func, wait) {
     let timeout;
     return function () {
@@ -58,10 +60,9 @@ $(document).ready(function () {
       timeout = setTimeout(later, wait);
     };
   }
-
   // Set up the ScrollTriggers on window resize, debounce the handler with 250ms delay
   let lastWindowWidth = $(window).width();
-
+  setupLineMaskScrollTriggers();
   $(window).on(
     'resize',
     debounce(() => {
@@ -180,8 +181,13 @@ $(document).ready(function () {
     updateMenuText();
     if (!menuOpenAnim) {
       navReveal.timeScale(1).play();
+      $('html, body').addClass('overflow-hidden');
+      var currentscrollpos;
+      currentscrollpos = $(window).scrollTop();
     } else {
       navReveal.timeScale(1.5).reverse();
+      $('html, body').removeClass('overflow-hidden');
+      $('html, body').animate({ scrollTop: currentscrollpos }, 0);
     }
   }
 

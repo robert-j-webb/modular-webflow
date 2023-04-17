@@ -1,11 +1,6 @@
 gsap.registerPlugin(ScrollTrigger);
 
-import {
-  animateHorizontalGraph,
-  codeAnimation,
-  letterAnimation,
-  typeText,
-} from '$utils/globalFunctions';
+import { animateHorizontalGraph, codeAnimation, letterAnimation } from '$utils/globalFunctions';
 
 import { wrapLetters } from './utils/globalFunctions';
 
@@ -67,34 +62,6 @@ const graphLegend = '.hero-dashboard_graph-legend';
 const main = gsap.timeline({ delay: 0.5, ease: Power2.easeOut, paused: true, repeat: -1 });
 
 $(document).ready(function () {
-  /*
-  // Arrows Loop
-  const arrowContainers = $(iconBoxArrow);
-
-  function animateArrows() {
-    arrowContainers.each(function () {
-      const arrows: any[] = gsap.utils.toArray($(this).find('path')); // <-- add type annotation
-      gsap.set(arrows, { opacity: 0, x: '-1em' });
-
-      const arrowTimeline = gsap.timeline();
-
-      for (let i = arrows.length - 1; i >= 0; i--) {
-        arrowTimeline.to(arrows[i], { opacity: 1, x: '0', duration: 0.5 });
-      }
-
-      arrowTimeline
-        .to(arrows, { opacity: 0, duration: 0.5 })
-        .set(arrows, { x: '-1em' })
-        .add(() => {
-          animateArrows();
-        });
-    });
-  }
-
-  animateArrows();
-
-  */
-
   // Initial Reveal
   main
     .addLabel('Start')
@@ -280,7 +247,58 @@ $(document).ready(function () {
   });
 
   // --- Homepage Rest
-  //--- Discord Animation
+  // Model Deployment
+  $('#deployment-visual').each(function () {
+    let triggerElement = $(this);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        // trigger element - viewport
+        start: '50% bottom',
+        onEnter: () => {
+          // Play the timeline when the trigger element enters the viewport
+          tl.play();
+        },
+      },
+    });
+    let icons = $(this).find('.cardj_row1').add('.cardj_row2').find('.w-embed');
+    tl.fromTo(icons, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, stagger: 0.05 });
+    tl.fromTo($(this).find('.cardj_row2'), { opacity: 0 }, { opacity: 1 }, '<').add(
+      letterAnimation($(this).find('.text-size-tiny'), 'label')
+    );
+  });
+
+  // Hardware Animation
+  $('.cardd_visual.hardware').each(function () {
+    let triggerElement = $(this);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        // trigger element - viewport
+        start: '50% bottom',
+        onEnter: () => {
+          // Play the timeline when the trigger element enters the viewport
+          tl.play();
+        },
+      },
+    });
+    tl.fromTo(
+      $(this).find('.cardd_logo-box'),
+      { scale: 0.8, opacity: 0 },
+      { scale: 1, opacity: 1, stagger: 0.05 }
+    );
+    tl.fromTo(
+      $(this).find('.cardd_logo-line-2').add('.cardd_logo-line-1'),
+      { opacity: 0 },
+      { opacity: 1 }
+    );
+  });
+
+  // Discord Animation
   $('.discord_box').each(function () {
     let triggerElement = $(this);
     let tl = gsap.timeline({
@@ -289,7 +307,7 @@ $(document).ready(function () {
       scrollTrigger: {
         trigger: triggerElement,
         // trigger element - viewport
-        start: '20% bottom',
+        start: '50% bottom',
         onEnter: () => {
           // Play the timeline when the trigger element enters the viewport
           tl.play();
@@ -322,7 +340,7 @@ $(document).ready(function () {
       .add(letterAnimation($(this).find('.discord_message-text').eq(1), 0.03));
   });
 
-  //-- Animate Graph
+  // Animate Graph
   $('.grapha_row').each(function () {
     animateHorizontalGraph($(this), 'a', '.grapha');
   });

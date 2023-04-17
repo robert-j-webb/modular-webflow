@@ -66,19 +66,34 @@
       const Cont = { val: 0 };
       const originalText = $(this).text();
       const targetValue = parseFloat(originalText);
+      const isOriginalHalf = originalText % 1 >= 0.5 && originalText % 1 < 1;
       if (!isNaN(targetValue)) {
+        $(this).css("visibility", "hidden");
         const onUpdate = () => {
-          const formattedValue = Cont.val % 1 === 0 ? Cont.val.toFixed(0) : Cont.val.toFixed(1);
+          let formattedValue;
+          if (Math.abs(targetValue - Cont.val) <= 0.01) {
+            formattedValue = targetValue % 1 === 0 ? targetValue.toFixed(0) : targetValue.toFixed(2);
+          } else if (Cont.val >= 1) {
+            formattedValue = Math.floor(Cont.val).toFixed(0);
+          } else {
+            formattedValue = Cont.val.toFixed(2);
+          }
           $(this).text(formattedValue);
         };
         TweenLite.to(Cont, 1, {
           val: targetValue,
-          onUpdate
+          onUpdate,
+          onStart: () => $(this).css("visibility", "visible")
         });
       } else {
         return;
       }
     });
+  };
+  var graphHeadAnimation = (graphClassPrefix) => {
+    const masterTimeline = gsap.timeline();
+    masterTimeline.add(letterAnimation(`.graph${graphClassPrefix}_head .text-size-metadata`), "label").add(() => animateCounter(`.graph${graphClassPrefix}_head .graph-number`), "<");
+    return masterTimeline;
   };
   var animateGraphRow = (targets, graphClassPrefix) => {
     const masterTimeline = gsap.timeline();
@@ -87,7 +102,9 @@
       let label = $(this).find(`.graph${graphClassPrefix}_label div`);
       let number = $(this).find(`.graph${graphClassPrefix}_row-num div`);
       const codeTimeline = gsap.timeline();
-      codeTimeline.from(row, { scaleX: 0, duration: 1 }).add(letterAnimation(label, "label")).add(animateCounter(number));
+      codeTimeline.from(row, { scaleX: 0, duration: 1 }).add(() => {
+        animateCounter(number);
+      }, "<").add(letterAnimation(label, "label"));
       masterTimeline.add(codeTimeline, index * 0.2);
     });
     return masterTimeline;
@@ -116,10 +133,11 @@
         }
       }
     });
-    tl.add(animateGraphRow(target, graphType));
+    tl.add(graphHeadAnimation(graphType));
+    tl.add(animateGraphRow(target, graphType), "<");
     return tl;
   };
-  var animateChartGraph = (target, trigger) => {
+  var animateChartGraph = (target, graphType, trigger) => {
     let triggerElement = $(trigger);
     let tl = gsap.timeline({
       ease: Power2.easeOut,
@@ -135,10 +153,11 @@
     let labels = $(target).find(".text-size-label");
     let labelDot = $(trigger).find(".graphd_legend-dot");
     let chart = $(target).find(".graph-charts");
+    tl.add(graphHeadAnimation(graphType));
     tl.add(letterAnimation(labels, "label"), "<").add(animateGraphChart(chart), "<").fromTo(labelDot, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1 }, "<");
     return tl;
   };
-  var animateBoxGraph = (target, trigger) => {
+  var animateBoxGraph = (target, graphType, trigger) => {
     let triggerElement = $(trigger);
     let tl = gsap.timeline({
       ease: Power2.easeOut,
@@ -153,15 +172,19 @@
     });
     let labels = $(target).find(".text-size-label");
     let box = $(target).find(".graphc_item");
-    tl.set(box, {
-      scale: 0,
-      opacity: 0
-    });
-    tl.to(box, {
-      scale: 1,
-      opacity: 1,
-      stagger: 0.2
-    }).add(letterAnimation(labels, "label"));
+    tl.add(graphHeadAnimation(graphType));
+    tl.fromTo(
+      box,
+      {
+        scale: 0,
+        opacity: 0
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        stagger: 0.2
+      }
+    ).add(letterAnimation(labels, "label"));
     return tl;
   };
 
@@ -173,10 +196,10 @@
       let par = $(this).find("p");
       let btn = $(this).find(".button");
       tl.to(heading, { opacity: 1 });
-      tl.add(letterAnimation("h1"), "<");
+      tl.add(letterAnimation(heading), "<");
       tl.to(par, { opacity: 1, duration: 0.5 }, "<1");
       tl.to(btn, { opacity: 1, duration: 0.5 }, "<0.4");
-      tl.add(animateChartGraph(".graphd", ".graphd"), "<");
+      tl.add(animateChartGraph(".graphd", "d", ".graphd"), "<");
     });
     function attr(defaultVal, attrVal) {
       const defaultValType = typeof defaultVal;
@@ -192,83 +215,48 @@
         return +attrVal;
       return defaultVal;
     }
-    $("[tr-marquee-element='component']").each(function() {
-      const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']"), triggerHoverEl = componentEl.find("[tr-marquee-element='triggerhover']"), triggerClickEl = componentEl.find("[tr-marquee-element='triggerclick']");
-      let speedSetting = attr(100, componentEl.attr("tr-marquee-speed")), verticalSetting = attr(false, componentEl.attr("tr-marquee-vertical")), reverseSetting = attr(false, componentEl.attr("tr-marquee-reverse")), scrollDirectionSetting = attr(false, componentEl.attr("tr-marquee-scrolldirection")), scrollScrubSetting = attr(false, componentEl.attr("tr-marquee-scrollscrub")), moveDistanceSetting = -100, timeScaleSetting = 1, pausedStateSetting = false;
-      if (reverseSetting)
-        moveDistanceSetting = 100;
-      const marqueeTimeline = gsap.timeline({
-        repeat: -1,
-        onReverseComplete: () => marqueeTimeline.progress(1)
-      });
-      if (verticalSetting) {
-        speedSetting = panelEl.first().height() / speedSetting;
-        marqueeTimeline.fromTo(
-          panelEl,
-          { yPercent: 0 },
-          { yPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
-        );
-      } else {
-        speedSetting = panelEl.first().width() / speedSetting;
-        marqueeTimeline.fromTo(
-          panelEl,
-          { xPercent: 0 },
-          { xPercent: moveDistanceSetting, ease: "none", duration: speedSetting }
-        );
-      }
-      const scrubObject = { value: 1 };
-      ScrollTrigger.create({
-        trigger: "body",
-        start: "top top",
-        end: "bottom bottom",
-        onUpdate: (self) => {
-          if (!pausedStateSetting) {
-            if (scrollDirectionSetting && timeScaleSetting !== self.direction) {
-              timeScaleSetting = self.direction;
-              marqueeTimeline.timeScale(self.direction);
-            }
-            if (scrollScrubSetting) {
-              let v = self.getVelocity() * 6e-3;
-              v = gsap.utils.clamp(-60, 60, v);
-              const scrubTimeline = gsap.timeline({
-                onUpdate: () => marqueeTimeline.timeScale(scrubObject.value)
-              });
-              scrubTimeline.fromTo(
-                scrubObject,
-                { value: v },
-                { value: timeScaleSetting, duration: 0.5 }
-              );
-            }
-          }
-        }
-      });
-      function pauseMarquee(isPausing) {
-        pausedStateSetting = isPausing;
-        const pauseObject = { value: 1 };
-        const pauseTimeline = gsap.timeline({
-          onUpdate: () => marqueeTimeline.timeScale(pauseObject.value)
-        });
-        if (isPausing) {
-          pauseTimeline.fromTo(pauseObject, { value: timeScaleSetting }, { value: 0, duration: 0.5 });
-          triggerClickEl.addClass("is-paused");
+    $(document).ready(function() {
+      const initMarquee = () => {
+        if (window.matchMedia("(min-width: 992px)").matches) {
+          $("[tr-marquee-element='component']").each(function() {
+            const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']");
+            let speedSetting = attr(100, componentEl.attr("tr-marquee-speed")), verticalSetting = attr(false, componentEl.attr("tr-marquee-vertical")), reverseSetting = attr(false, componentEl.attr("tr-marquee-reverse")), moveDistanceSetting = -100;
+            if (reverseSetting)
+              moveDistanceSetting = 100;
+            const updateMarqueePosition = (progress) => {
+              if (verticalSetting) {
+                gsap.set(panelEl, { yPercent: progress * moveDistanceSetting });
+              } else {
+                gsap.set(panelEl, { xPercent: progress * moveDistanceSetting });
+              }
+            };
+            const marqueeTimeline = gsap.timeline();
+            ScrollTrigger.create({
+              trigger: "body",
+              start: "top top",
+              end: "bottom bottom",
+              onUpdate: (self) => {
+                const scrollProgress = self.progress;
+                updateMarqueePosition(scrollProgress);
+              }
+            });
+          });
         } else {
-          pauseTimeline.fromTo(pauseObject, { value: 0 }, { value: timeScaleSetting, duration: 0.5 });
-          triggerClickEl.removeClass("is-paused");
+          ScrollTrigger.getAll().forEach((st) => st.kill());
+          $("[tr-marquee-element='component']").each(function() {
+            const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']");
+            gsap.set(panelEl, { clearProps: "all" });
+          });
         }
-      }
-      if (window.matchMedia("(pointer: fine)").matches) {
-        triggerHoverEl.on("mouseenter", () => pauseMarquee(true));
-        triggerHoverEl.on("mouseleave", () => pauseMarquee(false));
-      }
-      triggerClickEl.on("click", function() {
-        !$(this).hasClass("is-paused") ? pauseMarquee(true) : pauseMarquee(false);
-      });
+      };
+      initMarquee();
+      $(window).on("resize", initMarquee);
     });
     $(".graphb_row").each(function() {
       animateHorizontalGraph($(this), "b", ".graphb");
     });
     $(".graphc_box").each(function() {
-      animateBoxGraph($(this), ".graphc");
+      animateBoxGraph($(this), "c", ".graphc");
     });
   });
 })();

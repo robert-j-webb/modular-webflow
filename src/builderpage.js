@@ -7,8 +7,12 @@ $(document).ready(function () {
     let heading = $(this).find('h1');
     let par = $(this).find('p');
     let btn = $(this).find('.button');
-    let pythonTab = '.dashboard_tab-inner.python';
-    let mojoTab = '.dashboard_tab-inner.mojo';
+    let tab = '.dashboard_tab-inner';
+    let tabBrand = '.dashboard_tab-brand-box';
+    let tabBrandBG = $(tabBrand).find('rect');
+    let tabBrandLogo = $(tabBrand).find('path');
+    let pythonLabel = '.dashboard_tab-label.python';
+    let mojoLabel = '.dashboard_tab-label.mojo';
     let pythonCode = '#pythonCode';
     let mojoCode = '#mojoCode';
 
@@ -18,8 +22,12 @@ $(document).ready(function () {
       .to(btn, { opacity: 1, duration: 0.5 }, '<0.4')
       .fromTo('#dashboard', { opacity: 0 }, { opacity: 1, duration: 0 }, '<')
       .add(codeAnimation(pythonCode), '<')
-      .to(pythonTab, { display: 'none', duration: 0 }, '+=1')
-      .to(mojoTab, { display: 'flex', duration: 0 }, '<')
+      .to(tabBrand, { xPercent: 133 }, '+=1')
+      .to(tabBrandBG, { fill: '#B5C0F6' }, '<')
+      .to(tabBrandLogo, { fill: '#020C13' }, '<')
+      .to(pythonLabel, { opacity: 0 }, '<')
+      .to(mojoLabel, { opacity: '1', duration: 0 })
+      .add(letterAnimation(mojoLabel, 'label'), '<')
       .set(pythonCode, { display: 'none' }, '<')
       .set(mojoCode, { display: 'block' }, '<')
       .add(codeAnimation(mojoCode), '<');

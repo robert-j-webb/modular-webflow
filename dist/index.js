@@ -82,8 +82,9 @@
   };
 
   // src/index.js
+  document.documentElement.classList.add("js-enabled");
   $(document).ready(function() {
-    $(".main-wrapper").fadeTo("slow", 1);
+    $(".main-wrapper").delay(300).fadeTo("slow", 1);
     gsap.registerPlugin(ScrollTrigger);
     $("img").each(function() {
       $(this).removeAttr("loading");
@@ -97,7 +98,11 @@
       $(".line-mask").each(function() {
         const computedStyle = window.getComputedStyle($(this)[0]);
         const originalHeight = computedStyle.getPropertyValue("height");
-        gsap.set($(this), { height: "100%" });
+        if ($(this).closest(".line-mask_wrap").hasClass("bottom")) {
+          gsap.set($(this), { height: "0%" });
+        } else {
+          gsap.set($(this), { height: "100%" });
+        }
         const scrollTrigger = ScrollTrigger.create({
           trigger: $(this).closest(".line-mask_wrap"),
           once: true,
@@ -110,7 +115,6 @@
         lineMaskTriggers.push(scrollTrigger);
       });
     }
-    setupLineMaskScrollTriggers();
     function debounce(func, wait) {
       let timeout;
       return function() {
@@ -124,6 +128,7 @@
       };
     }
     let lastWindowWidth = $(window).width();
+    setupLineMaskScrollTriggers();
     $(window).on(
       "resize",
       debounce(() => {
@@ -208,8 +213,13 @@
       updateMenuText();
       if (!menuOpenAnim) {
         navReveal.timeScale(1).play();
+        $("html, body").addClass("overflow-hidden");
+        var currentscrollpos;
+        currentscrollpos = $(window).scrollTop();
       } else {
         navReveal.timeScale(1.5).reverse();
+        $("html, body").removeClass("overflow-hidden");
+        $("html, body").animate({ scrollTop: currentscrollpos }, 0);
       }
     }
     function updateMenuText() {

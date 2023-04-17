@@ -74,19 +74,34 @@
       const Cont = { val: 0 };
       const originalText = $(this).text();
       const targetValue = parseFloat(originalText);
+      const isOriginalHalf = originalText % 1 >= 0.5 && originalText % 1 < 1;
       if (!isNaN(targetValue)) {
+        $(this).css("visibility", "hidden");
         const onUpdate = () => {
-          const formattedValue = Cont.val % 1 === 0 ? Cont.val.toFixed(0) : Cont.val.toFixed(1);
+          let formattedValue;
+          if (Math.abs(targetValue - Cont.val) <= 0.01) {
+            formattedValue = targetValue % 1 === 0 ? targetValue.toFixed(0) : targetValue.toFixed(2);
+          } else if (Cont.val >= 1) {
+            formattedValue = Math.floor(Cont.val).toFixed(0);
+          } else {
+            formattedValue = Cont.val.toFixed(2);
+          }
           $(this).text(formattedValue);
         };
         TweenLite.to(Cont, 1, {
           val: targetValue,
-          onUpdate
+          onUpdate,
+          onStart: () => $(this).css("visibility", "visible")
         });
       } else {
         return;
       }
     });
+  };
+  var graphHeadAnimation = (graphClassPrefix) => {
+    const masterTimeline = gsap.timeline();
+    masterTimeline.add(letterAnimation(`.graph${graphClassPrefix}_head .text-size-metadata`), "label").add(() => animateCounter(`.graph${graphClassPrefix}_head .graph-number`), "<");
+    return masterTimeline;
   };
   var animateGraphRow = (targets, graphClassPrefix) => {
     const masterTimeline = gsap.timeline();
@@ -95,7 +110,9 @@
       let label = $(this).find(`.graph${graphClassPrefix}_label div`);
       let number = $(this).find(`.graph${graphClassPrefix}_row-num div`);
       const codeTimeline = gsap.timeline();
-      codeTimeline.from(row, { scaleX: 0, duration: 1 }).add(letterAnimation(label, "label")).add(animateCounter(number));
+      codeTimeline.from(row, { scaleX: 0, duration: 1 }).add(() => {
+        animateCounter(number);
+      }, "<").add(letterAnimation(label, "label"));
       masterTimeline.add(codeTimeline, index * 0.2);
     });
     return masterTimeline;
@@ -113,7 +130,8 @@
         }
       }
     });
-    tl.add(animateGraphRow(target, graphType));
+    tl.add(graphHeadAnimation(graphType));
+    tl.add(animateGraphRow(target, graphType), "<");
     return tl;
   };
 
@@ -255,6 +273,51 @@
       },
       duration: baseDuration
     });
+    $("#deployment-visual").each(function() {
+      let triggerElement = $(this);
+      let tl = gsap.timeline({
+        ease: Power2.easeOut,
+        paused: true,
+        scrollTrigger: {
+          trigger: triggerElement,
+          // trigger element - viewport
+          start: "50% bottom",
+          onEnter: () => {
+            tl.play();
+          }
+        }
+      });
+      let icons = $(this).find(".cardj_row1").add(".cardj_row2").find(".w-embed");
+      tl.fromTo(icons, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, stagger: 0.05 });
+      tl.fromTo($(this).find(".cardj_row2"), { opacity: 0 }, { opacity: 1 }, "<").add(
+        letterAnimation($(this).find(".text-size-tiny"), "label")
+      );
+    });
+    $(".cardd_visual.hardware").each(function() {
+      let triggerElement = $(this);
+      let tl = gsap.timeline({
+        ease: Power2.easeOut,
+        paused: true,
+        scrollTrigger: {
+          trigger: triggerElement,
+          // trigger element - viewport
+          start: "50% bottom",
+          onEnter: () => {
+            tl.play();
+          }
+        }
+      });
+      tl.fromTo(
+        $(this).find(".cardd_logo-box"),
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, stagger: 0.05 }
+      );
+      tl.fromTo(
+        $(this).find(".cardd_logo-line-2").add(".cardd_logo-line-1"),
+        { opacity: 0 },
+        { opacity: 1 }
+      );
+    });
     $(".discord_box").each(function() {
       let triggerElement = $(this);
       let tl = gsap.timeline({
@@ -263,7 +326,7 @@
         scrollTrigger: {
           trigger: triggerElement,
           // trigger element - viewport
-          start: "20% bottom",
+          start: "50% bottom",
           onEnter: () => {
             tl.play();
           }

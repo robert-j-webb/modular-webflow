@@ -105,21 +105,43 @@ const animateCounter = ($element) => {
     const Cont = { val: 0 };
     const originalText = $(this).text();
     const targetValue = parseFloat(originalText);
+    const isOriginalHalf = originalText % 1 >= 0.5 && originalText % 1 < 1;
 
     if (!isNaN(targetValue)) {
+      // Hide the element before the animation starts
+      $(this).css('visibility', 'hidden');
       const onUpdate = () => {
-        const formattedValue = Cont.val % 1 === 0 ? Cont.val.toFixed(0) : Cont.val.toFixed(1);
+        let formattedValue;
+
+        if (Math.abs(targetValue - Cont.val) <= 0.01) {
+          formattedValue = targetValue % 1 === 0 ? targetValue.toFixed(0) : targetValue.toFixed(2);
+        } else if (Cont.val >= 1) {
+          formattedValue = Math.floor(Cont.val).toFixed(0);
+        } else {
+          formattedValue = Cont.val.toFixed(2);
+        }
+
         $(this).text(formattedValue);
       };
 
       TweenLite.to(Cont, 1, {
         val: targetValue,
         onUpdate: onUpdate,
+        onStart: () => $(this).css('visibility', 'visible'),
       });
     } else {
       return;
     }
   });
+};
+// Animate Graph Head
+const graphHeadAnimation = (graphClassPrefix) => {
+  const masterTimeline = gsap.timeline();
+  masterTimeline
+    .add(letterAnimation(`.graph${graphClassPrefix}_head .text-size-metadata`), 'label')
+    .add(() => animateCounter(`.graph${graphClassPrefix}_head .graph-number`), '<');
+
+  return masterTimeline;
 };
 
 // Graphs Inner Animations
@@ -135,8 +157,11 @@ const animateGraphRow = (targets, graphClassPrefix) => {
 
     codeTimeline
       .from(row, { scaleX: 0, duration: 1 })
-      .add(letterAnimation(label, 'label'))
-      .add(animateCounter(number));
+      // Show the number element and call animateCounter
+      .add(() => {
+        animateCounter(number);
+      }, '<')
+      .add(letterAnimation(label, 'label'));
 
     // Stagger animations using the add() method
     masterTimeline.add(codeTimeline, index * 0.2);
@@ -173,12 +198,13 @@ export const animateHorizontalGraph = (target, graphType, trigger) => {
       },
     },
   });
-  tl.add(animateGraphRow(target, graphType));
+  tl.add(graphHeadAnimation(graphType));
+  tl.add(animateGraphRow(target, graphType), '<');
 
   return tl;
 };
 
-export const animateChartGraph = (target, trigger) => {
+export const animateChartGraph = (target, graphType, trigger) => {
   let triggerElement = $(trigger);
   let tl = gsap.timeline({
     ease: Power2.easeOut,
@@ -197,6 +223,7 @@ export const animateChartGraph = (target, trigger) => {
   let labelDot = $(trigger).find('.graphd_legend-dot');
   let chart = $(target).find('.graph-charts');
 
+  tl.add(graphHeadAnimation(graphType));
   tl.add(letterAnimation(labels, 'label'), '<')
     .add(animateGraphChart(chart), '<')
     .fromTo(labelDot, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1 }, '<');
@@ -204,7 +231,7 @@ export const animateChartGraph = (target, trigger) => {
   return tl;
 };
 
-export const animateBoxGraph = (target, trigger) => {
+export const animateBoxGraph = (target, graphType, trigger) => {
   let triggerElement = $(trigger);
   let tl = gsap.timeline({
     ease: Power2.easeOut,
@@ -221,15 +248,19 @@ export const animateBoxGraph = (target, trigger) => {
 
   let labels = $(target).find('.text-size-label');
   let box = $(target).find('.graphc_item');
-  tl.set(box, {
-    scale: 0,
-    opacity: 0,
-  });
-  tl.to(box, {
-    scale: 1,
-    opacity: 1,
-    stagger: 0.2,
-  }).add(letterAnimation(labels, 'label'));
+  tl.add(graphHeadAnimation(graphType));
+  tl.fromTo(
+    box,
+    {
+      scale: 0,
+      opacity: 0,
+    },
+    {
+      scale: 1,
+      opacity: 1,
+      stagger: 0.2,
+    }
+  ).add(letterAnimation(labels, 'label'));
 
   return tl;
 };
