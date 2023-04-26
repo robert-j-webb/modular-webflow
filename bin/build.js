@@ -13,6 +13,8 @@ const ENTRY_POINTS = [
   'src/homepage.js',
   'src/deployerpage.js',
   'src/devpage.js',
+  'src/signup.js',
+  'src/legacy.js',
 ];
 
 // Config dev serving
