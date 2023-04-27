@@ -173,33 +173,33 @@
   var pythonCode = dashboard + " .hero-dashboard_code-block.python";
   var mojoCode = dashboard + " .hero-dashboard_code-block.mojo";
   var graphs = ".hero-dashboard_graphs";
+  var graphHead = ".hero-dashboard_graph-head";
   var graphBox = ".hero-dashboard_graph-box";
   var graphLabel = ".hero-dashboard_graph-label";
   var graphNumberLabel = ".hero-dashboard_graph-number-label";
   var graphNumber = ".hero-dashboard_graph-number";
   var graphLegend = ".hero-dashboard_graph-legend";
-  var main = gsap.timeline({ delay: 0.5, ease: Power2.easeOut, paused: true, repeat: -1 });
+  var main = gsap.timeline({ delay: 0.5, ease: Power2.easeOut, paused: true });
   $(document).ready(function() {
-    main.addLabel("Start").add(letterAnimation(heroLabel, 0.01)).add(letterAnimation(heroHeading, "heading"), "<").call(() => {
+    function updateNavigation(index) {
+      let items = $(".hero-navigation_item");
+      items.removeClass("active");
+      items.eq(index).addClass("active");
+    }
+    main.addLabel("Platform").addLabel("Start").call(updateNavigation(0)).add(letterAnimation(heroLabel, 0.01)).add(letterAnimation(heroHeading, "heading"), "<").call(() => {
       $(brandLogo).trigger("click");
     }).from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, "<0.1").fromTo(
       $(modularBox),
       { width: "19em", opacity: 0 },
-      { width: "12.2em", opacity: 1, duration: baseDuration },
+      { width: "12.2em", opacity: 1, duration: 1 },
       "Start"
-    ).add(letterAnimation($(modularBox).find(metadata).find("div"), "label"));
-    main.addLabel("heroBoxesLeft").from(
-      heroBoxesLeft,
-      { opacity: 0, left: "-6em", stagger: 0.15, duration: baseDuration / 2 },
-      "heroBoxesLeft"
-    ).add(
+    ).fromTo($(brandBox), { opacity: 0 }, { opacity: 1 }, "Start+=0.3").call(() => {
+      $(brandBox).addClass("border");
+    }).add(letterAnimation($(modularBox).find(metadata).find("div"), 0.15), "-=1.15");
+    main.addLabel("heroBoxes").from(heroBoxesLeft, { opacity: 0, x: "-12em", stagger: 0.15, duration: 1.2 }, "heroBoxes").from(heroBoxesRight, { opacity: 0, x: "12em", stagger: 0.15, duration: 1.2 }, "<");
+    main.addLabel("heroBoxesText").add(
       letterAnimation($(heroBoxesLeft).closest(heroBox).find(metadata).children(), "label"),
-      "<"
-    );
-    main.addLabel("heroBoxesRight").from(
-      heroBoxesRight,
-      { opacity: 0, left: "6em", stagger: 0.15, duration: baseDuration / 2 },
-      "heroBoxesLeft"
+      "heroBoxesText"
     ).add(
       letterAnimation(
         $(heroBoxesRight).closest(".hero-devices_box").find(metadata).children(),
@@ -207,72 +207,96 @@
       ),
       "<"
     );
-    main.addLabel("arrowsAndBorder").to([cloudBorder, iconBoxArrow], { opacity: 1, duration: baseDuration }, "arrowsAndBorder");
+    main.addLabel("arrowsAndBorder").to(iconBoxArrow, { opacity: 1, duration: baseDuration }, "arrowsAndBorder");
     main.addLabel("loopDevices");
-    const CloudsSwitch = gsap.timeline().to(heroBoxesRight, { opacity: 0 }).to(heroBoxesRight, { x: "1em" }).call(switchDeviceIcons).to(heroBoxesRight, { opacity: 1, x: "0" });
+    let staggerDuration = (index) => {
+      return 2 - 0.15 * index;
+    };
+    const CloudsSwitch = gsap.timeline().to(heroBoxesRight, {
+      opacity: 0,
+      duration: 0.15
+    }).set(heroBoxesRight, {
+      x: "3em"
+    }).call(switchDeviceIcons).to(heroBoxesRight, {
+      opacity: 1,
+      x: "0",
+      duration: (index) => {
+        return staggerDuration(index);
+      },
+      stagger: 0.15
+    });
     const repeatedCloudsSwitch = gsap.timeline().add(CloudsSwitch).delay(1).repeat(1).repeatDelay(1);
     main.add(repeatedCloudsSwitch, "loopDevices");
-    main.addLabel("expandSquare").fromTo(
+    main.addLabel("Inference Engine").addLabel("expandSquare").fromTo(
       modularBox,
       { width: "12.2em", height: "12.2em" },
-      { width: "90.4em", height: "37.2em", duration: baseDuration },
-      "expandSquare"
+      { width: "90.4em", height: "37.2em", duration: 1 }
     ).to(
-      [brandBox, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
+      [brandLogo, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
       { opacity: 0, duration: baseDuration },
+      "expandSquare+=0.4"
+    ).addLabel("show Dashboard").fromTo(
+      [dashboard, dashboardInner],
+      { opacity: 0, display: "none" },
+      { opacity: 1, display: "flex" },
       "<"
-    ).addLabel("headingUpdate1").to(heroHeading, { opacity: 0, y: "2em", duration: 0.2 }).call(() => {
+    ).to(closeCircles, { opacity: 1, stagger: 0.1, duration: baseDuration }, "<").add(letterAnimation(dashboardTitle + " div", "label"), "<").to([dashboardTitle, langTab], { opacity: 1, duration: baseDuration, stagger: 0.2 }, "<").to(dashboardCode, { opacity: 1, duration: baseDuration }, "<");
+    main.addLabel("headingUpdate1").to(heroHeading, { opacity: 0, y: "2em", duration: 0.2 }).call(() => {
       $(heroHeading).html(
         'A <span class="word-highlight">new language</span> that <span class="word-highlight">extends</span> <span class="word-highlight">Python</span> but thats <span class="word-highlight">as fast as C</span>'
       );
       wrapLetters(heroHeading);
       $(heroHeadingBox).css("width", "80%");
+      updateNavigation(1);
     }).to(heroHeading, { opacity: 1, y: "0em", duration: 0.2 });
-    main.addLabel("showDashboard").fromTo(
-      [dashboard, dashboardInner],
-      { autoAlpha: 0 },
-      { autoAlpha: 1, stagger: 0.2 },
-      "showDashboard"
-    ).to(closeCircles, { opacity: 1, stagger: 0.1, duration: baseDuration }).add(letterAnimation(dashboardTitle + " div", "label"), "<").to([dashboardTitle, langTab], { opacity: 1, duration: baseDuration, stagger: 0.2 }, "<").to(dashboardCode, { opacity: 1, duration: baseDuration }, "<");
     main.addLabel("pythonCode").add(codeAnimation(pythonCode), "pythonCode+0.3");
     main.addLabel("switchCodeTabs").to(pythonTab, { opacity: 0, duration: baseDuration / 2 }, "switchCodeTabs").to(mojoTab, { opacity: 1, display: "flex", duration: baseDuration }, "<").set(pythonCode, { display: "none" }, "<").set(mojoCode, { display: "block" }, "<");
-    main.addLabel("mojoCode").add(codeAnimation(mojoCode), "mojoCode+0.3");
-    let graphWidth;
+    main.add(codeAnimation(mojoCode), "mojoCode+0.3").addLabel("mojoCode");
     const firstGraph = $(graphBox).eq(0);
-    main.call(() => {
-      graphWidth = firstGraph.css("width");
-    }).set(firstGraph, { width: "100%" }).set($(graphBox).not(":first-child"), { scaleY: 0 }).addLabel("transitionCode").to(
-      [dashboardCode, firstGraph],
-      {
-        width: () => {
-          return graphWidth;
-        },
-        duration: baseDuration
-      },
-      "showGraphs"
-    ).addLabel("headingUpdate2").to(heroHeading, { opacity: 0, y: "2em", duration: 0.2 }).call(() => {
+    main.set(firstGraph, { width: "100%" }).set($(graphBox).not(":first-child"), { scaleY: 0 }).addLabel("Mojo").addLabel("headingUpdate2").to(heroHeading, { opacity: 0, y: "2em", duration: 0.2 }).call(() => {
       $(heroHeading).html(
         'The <span class="word-highlight">fastest unified AI inference</span> <span class="word-highlight">engine</span> in the world.'
       );
       wrapLetters(heroHeading);
+      updateNavigation(2);
     }).to(heroHeading, { opacity: 1, y: "0em", duration: 0.2 });
-    main.addLabel("showGraph").to(graphs, { autoAlpha: 1, duration: baseDuration }, "<").to(dashboard, { autoAlpha: 0, duration: baseDuration }, "<");
-    const animateLabel = (element) => {
-      main.set(element, { opacity: 1 }).add(letterAnimation(element, "label"), "<");
+    main.addLabel("showGraph").to(
+      [dashboardCode, firstGraph],
+      {
+        width: () => {
+          return "33.33%";
+        },
+        duration: baseDuration
+      },
+      "showGraphs"
+    ).fromTo(
+      graphs,
+      { opacity: 0, display: "none" },
+      { opacity: 1, display: "flex", duration: baseDuration },
+      "<"
+    ).to(dashboardInner, { opacity: 0, display: "none" }, "<");
+    const animateLabel = (element, time) => {
+      let duration = time;
+      let tl = gsap.timeline();
+      if (!time) {
+        duration = "label";
+      }
+      main.set(element, { opacity: 1 });
+      tl.add(letterAnimation(element, duration));
+      return tl;
     };
     const animateGraph = (parent) => {
-      main.add(animateLabel($(parent).find(graphLabel).children()), "<").add(animateLabel($(parent).find(graphNumberLabel).children()), "<").add(animateLabel($(parent).find(graphLegend).children()), "<").set($(parent).find(graphNumber), { yPercent: 10, opacity: 0 }, "<").to($(parent).find(graphNumber), { yPercent: 0, opacity: 1, duration: baseDuration }, "<");
+      let tl = gsap.timeline();
+      tl.add(animateLabel($(graphHead).children(), 0.05), "<").add(animateLabel($(parent).find(graphLabel).children()), "<+=0.3").add(animateLabel($(parent).find(graphNumberLabel).children()), "<+=0.3").set($(parent).find(graphNumber), { yPercent: 10, opacity: 0 }, "<").to(
+        $(parent).find(graphNumber),
+        { yPercent: 0, opacity: 1, duration: baseDuration },
+        "<+=0.15"
+      ).add(animateLabel($(parent).find(graphLegend).children()), "<+=0.3");
+      return tl;
     };
-    main.addLabel("animateGraph1").add(animateGraph($(graphBox).eq(0)));
-    main.to($(graphBox).eq(1), { scaleY: 1, duration: baseDuration }).addLabel("animateGraph2").add(animateGraph($(graphBox).eq(1)));
-    main.to($(graphBox).eq(2), { scaleY: 1, duration: baseDuration }).addLabel("animateGraph3").add(animateGraph($(graphBox).eq(2)));
-    main.to(modularBox, {
-      keyframes: {
-        "50%": { opacity: 0 },
-        "100%": { scale: 0.5 }
-      },
-      duration: baseDuration
-    });
+    main.addLabel("animateGraph1").add(animateGraph($(graphBox).eq(0)), "showGraph+=0.2");
+    main.to($(graphBox).eq(1), { scaleY: 1, duration: baseDuration }, "-=0.2").addLabel("animateGraph2").add(animateGraph($(graphBox).eq(1)), "-=0.2");
+    main.to($(graphBox).eq(2), { scaleY: 1, duration: baseDuration }, "-=1").addLabel("animateGraph3").add(animateGraph($(graphBox).eq(2)), "-=0.4");
     $("#deployment-visual").each(function() {
       let triggerElement = $(this);
       let tl = gsap.timeline({

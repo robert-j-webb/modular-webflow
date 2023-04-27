@@ -1,4 +1,4 @@
-import { codeAnimation, letterAnimation } from '$utils/globalFunctions';
+import { letterAnimation } from '$utils/globalFunctions';
 
 // Hero
 $(document).ready(function () {
