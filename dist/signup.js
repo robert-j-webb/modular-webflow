@@ -1,1 +1,187 @@
-"use strict";(()=>{var g,h=[["First name","Last name","Email","Modular Product Name"],["Company name","Size","Industry"]],y={"First name":"Please fill your first name.","Last name":"Please fill your last name.",Email:"Please fill your email.","Company name":"Please fill your company name.",Industry:"Please select your industry."},u="#formBtn",r,i,l=0;function k(){document.querySelectorAll(".hs-form-field label span").forEach(e=>{h.forEach((t,s)=>{t.forEach(o=>{e.textContent.trim()===o&&e.closest(".hs-form-field").setAttribute("data-step",s)})})})}hbspt.forms.create({region:"na1",portalId:"24141518",formId:"456272d6-bcc6-477d-95bc-5efde20524fe",target:"#form-container",onFormReady:function(e){f(),$(u).on("click",function(){if(E())p()?(console.log("Submit Mojo"),d()):l===h.length-1?(console.log("Submit Full"),d()):(v(),console.log("Update"));else{console.log("Fail");return}}),$("input, select, :checkbox, :radio").not("[type=email]").on("input focus change",function(){let t=$(u);p()?(l>0&&f(),t.text("Submit")):t.text("Next"),c($(this))}),$(".hs-form-checkbox").on("click",function(){$(this).find("input[type=checkbox]").is(":checked")?$(this).find("label").addClass("active"):$(this).find("label").removeClass("active")}),$(".hs-form-radio").on("change",function(){let t=$(this).find("input[type=radio]").attr("name");$('input[name="'+t.replace(/[-/\\^$*+?.()|[\]{}]/g,"\\$&")).closest("label").removeClass("active"),$(this).find("input[type=radio]").is(":checked")&&$(this).find("label").addClass("active")}),$("select").niceSelect(),$(".nice-select li").on("click",function(){$(".nice-select .current").css("color","#020c13")})}});function f(){l=0,r=$(".hs-form-field"),k(),console.log(r),r.hide(),$(".sign-up_step-inner").animate({opacity:1},300),i=r.filter(`[data-step=${l}]`),i.fadeIn("slow")}function v(){l+=1,i=r.filter(`[data-step=${l}]`),i.fadeIn("slow")}function d(){c(),g.find("input[type=submit]").trigger("click")}function x(e){let t=!0,s=$(e).val(),n=$(e).closest(".input").siblings("label").find("span").eq(0).text(),a=y[n]||`Error for ${n}`;return(s===""||s==null)&&(b(a,e),t=!1),t}function m(e){if(!e.length)return!0;let t=e.is(":checked"),o=e.first().closest(".inputs-list");return t?!0:(b("Please select at least one option.",o),!1)}var C=new Set;function p(){return $('.hs-input[type="checkbox"]').filter(":checked").length===1&&$('.hs-input[type="checkbox"]:checked[value="mojo"]').length===1}function b(e,t){let s=$(t).closest(".input");if(console.log(s),s.next().hasClass("hs-error-msgs"))return;let o=$("<label>",{class:"hs-error-msg hs-main-font-element",text:e}),n=$("<ul>",{class:"no-list hs-error-msgs inputs-list custom-error-msg",role:"alert"}),a=$("<li>");a.append(o),n.append(a),s.after(n),t.tagName==="INPUT"&&$(t).addClass("invalid error custom-error-class")}function c(e){let t=e?$(e).closest(".hs-form-field"):$(document.body),s=t.find(".custom-error-msg"),o=t.find(".custom-error-class");s.remove(),o.removeClass("invalid error custom-error-class")}function E(){let e=!0;c(),i.find(":input:visible,select").not("[type=email]").each(function(){e=x(this)&&e});let s=$("input[type=email]");s.get(0).focus(),s.get(0).blur();let o=i.find(":checkbox:visible"),n=i.find(":radio:visible");return e=m(o,"checkbox")&&e,e=m(n,"radio")&&e,C.add(l),e}})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/signup.js
+  var hsform;
+  var steps = [
+    ["First name", "Last name", "Email", "Modular Product Name"],
+    ["Company name", "Size", "Industry"]
+  ];
+  var customErrorMessages = {
+    "First name": "Please fill your first name.",
+    "Last name": "Please fill your last name.",
+    Email: "Please fill your email.",
+    "Company name": "Please fill your company name.",
+    Industry: "Please select your industry."
+    // Add more custom error messages as needed
+  };
+  var controlBtn = "#formBtn";
+  var fields;
+  var currentSteps;
+  var x = 0;
+  function tagFields() {
+    document.querySelectorAll(".hs-form-field label span").forEach((label) => {
+      steps.forEach((step, i) => {
+        step.forEach((field) => {
+          if (label.textContent.trim() === field) {
+            label.closest(".hs-form-field").setAttribute("data-step", i);
+          }
+        });
+      });
+    });
+  }
+  hbspt.forms.create({
+    region: "na1",
+    portalId: "24141518",
+    formId: "456272d6-bcc6-477d-95bc-5efde20524fe",
+    target: "#form-container",
+    onFormReady: function(form) {
+      initMultiStep();
+      $(controlBtn).on("click", function() {
+        if (validation()) {
+          if (isOnlyMojo()) {
+            console.log("Submit Mojo");
+            submitForm();
+          } else if (x === steps.length - 1) {
+            console.log("Submit Full");
+            submitForm();
+          } else {
+            updateStep();
+            console.log("Update");
+          }
+        } else {
+          console.log("Fail");
+          return;
+        }
+      });
+      $("input, select, :checkbox, :radio").not("[type=email]").on("input focus change", function() {
+        const submitBtn = $(controlBtn);
+        if (isOnlyMojo()) {
+          if (x > 0) {
+            initMultiStep();
+          }
+          submitBtn.text("Submit");
+        } else {
+          submitBtn.text("Next");
+        }
+        removeErrorMessages($(this));
+      });
+      $(".hs-form-checkbox").on("click", function() {
+        if ($(this).find("input[type=checkbox]").is(":checked")) {
+          $(this).find("label").addClass("active");
+        } else {
+          $(this).find("label").removeClass("active");
+        }
+      });
+      $(".hs-form-radio").on("change", function() {
+        let radioGroup = $(this).find("input[type=radio]").attr("name");
+        let radioButtons = $('input[name="' + radioGroup.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"));
+        radioButtons.closest("label").removeClass("active");
+        if ($(this).find("input[type=radio]").is(":checked")) {
+          $(this).find("label").addClass("active");
+        }
+      });
+      $("select").niceSelect();
+      $(".nice-select li").on("click", function() {
+        $(".nice-select .current").css("color", "#020c13");
+      });
+    }
+  });
+  function initMultiStep() {
+    x = 0;
+    fields = $(".hs-form-field");
+    tagFields();
+    console.log(fields);
+    fields.hide();
+    $(".sign-up_step-inner").animate({ opacity: 1 }, 300);
+    currentSteps = fields.filter(`[data-step=${x}]`);
+    currentSteps.fadeIn("slow");
+  }
+  function updateStep() {
+    x += 1;
+    currentSteps = fields.filter(`[data-step=${x}]`);
+    currentSteps.fadeIn("slow");
+  }
+  function submitForm() {
+    removeErrorMessages();
+    hsform.find("input[type=submit]").trigger("click");
+  }
+  function validateInput(input) {
+    let isValid = true;
+    const value = $(input).val();
+    const inputParentElement = $(input).closest(".input");
+    const labelText = inputParentElement.siblings("label").find("span").eq(0).text();
+    const errorMessage = customErrorMessages[labelText] || `Error for ${labelText}`;
+    if (value === "" || value == null) {
+      createErrorMessage(errorMessage, input);
+      isValid = false;
+    }
+    return isValid;
+  }
+  function validateCheckboxRadio(elements) {
+    if (!elements.length)
+      return true;
+    const atLeastOneChecked = elements.is(":checked");
+    const firstGroupItem = elements.first();
+    const closestWrapper = firstGroupItem.closest(".inputs-list");
+    if (!atLeastOneChecked) {
+      createErrorMessage("Please select at least one option.", closestWrapper);
+      return false;
+    }
+    return true;
+  }
+  var validationCalled = /* @__PURE__ */ new Set();
+  function isOnlyMojo() {
+    const isMojoOnlyChecked = $('.hs-input[type="checkbox"]').filter(":checked").length === 1 && $('.hs-input[type="checkbox"]:checked[value="mojo"]').length === 1;
+    return isMojoOnlyChecked;
+  }
+  function createErrorMessage(labelText, element) {
+    const inputParentElement = $(element).closest(".input");
+    console.log(inputParentElement);
+    if (inputParentElement.next().hasClass("hs-error-msgs")) {
+      return;
+    }
+    const labelElement = $("<label>", {
+      class: "hs-error-msg hs-main-font-element",
+      text: labelText
+    });
+    const ulElement = $("<ul>", {
+      class: "no-list hs-error-msgs inputs-list custom-error-msg",
+      role: "alert"
+    });
+    const liElement = $("<li>");
+    liElement.append(labelElement);
+    ulElement.append(liElement);
+    inputParentElement.after(ulElement);
+    if (element.tagName === "INPUT") {
+      $(element).addClass("invalid error custom-error-class");
+    }
+  }
+  function removeErrorMessages(element) {
+    const $errorContainer = element ? $(element).closest(".hs-form-field") : $(document.body);
+    const $errorMessages = $errorContainer.find(".custom-error-msg");
+    const $errorClass = $errorContainer.find(".custom-error-class");
+    $errorMessages.remove();
+    $errorClass.removeClass("invalid error custom-error-class");
+  }
+  function validation() {
+    let inputValidate = true;
+    removeErrorMessages();
+    const inputs = currentSteps.find(":input:visible,select").not("[type=email]");
+    inputs.each(function() {
+      inputValidate = validateInput(this) && inputValidate;
+    });
+    let hsemail = $("input[type=email]");
+    hsemail.get(0).focus();
+    hsemail.get(0).blur();
+    const checkboxes = currentSteps.find(":checkbox:visible");
+    const radios = currentSteps.find(":radio:visible");
+    inputValidate = validateCheckboxRadio(checkboxes, "checkbox") && inputValidate;
+    inputValidate = validateCheckboxRadio(radios, "radio") && inputValidate;
+    validationCalled.add(x);
+    return inputValidate;
+  }
+})();
+//# sourceMappingURL=signup.js.map

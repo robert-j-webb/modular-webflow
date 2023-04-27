@@ -15,6 +15,32 @@ $(document).ready(function () {
     ScrollTrigger.refresh();
   });
 
+  // RemoveScrollBar for all overflow elements
+  function addNoScrollbarClass() {
+    const allElements = document.querySelectorAll('*');
+
+    for (const element of allElements) {
+      // Exclude body and html elements
+      if (element.tagName.toLowerCase() === 'body' || element.tagName.toLowerCase() === 'html') {
+        continue;
+      }
+
+      const style = window.getComputedStyle(element);
+      if (
+        style.overflow === 'auto' ||
+        style.overflow === 'scroll' ||
+        style.overflowX === 'auto' ||
+        style.overflowX === 'scroll' ||
+        style.overflowY === 'auto' ||
+        style.overflowY === 'scroll'
+      ) {
+        element.classList.add('no-scrollbar');
+      }
+    }
+  }
+
+  addNoScrollbarClass();
+
   // -- Lines Animation
   let lineMaskTriggers = [];
   function setupLineMaskScrollTriggers() {

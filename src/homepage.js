@@ -7,8 +7,6 @@ import { animateHorizontalGraph, codeAnimation, letterAnimation } from '$utils/g
 import { wrapLetters } from './utils/globalFunctions';
 
 $(document).ready(function () {
-  // ------------- Start of Hero Dashboard Animation ----------
-
   // Base Hero Elements
   const baseDuration = 1.2;
   const heroLabel = '#heroLabel';
@@ -58,7 +56,6 @@ $(document).ready(function () {
     'The <span class="word-highlight">fastest unified AI inference</span> <span class="word-highlight">engine</span> in the world.',
     'A <span class="word-highlight">new language</span> that <span class="word-highlight">extends</span> <span class="word-highlight">Python</span> but thats <span class="word-highlight">as fast as C</span>',
   ];
-  console.log(headings[0]);
 
   // --- Functions
   // Insta Functions
@@ -91,12 +88,16 @@ $(document).ready(function () {
     $(element).addClass(className);
   }
   // Animated Functions
+  let headingsTimeline = null;
+
   const animateHeadings = (index) => {
-    let tl = gsap.timeline();
-    tl.to(heroHeading, { opacity: 0, y: '2em', duration: 0.2 })
+    headingsTimeline = gsap.timeline();
+    headingsTimeline
+      .to(heroHeading, { opacity: 0, y: '2em', duration: 0.2 })
       .call(() => switchHeadings(index))
       .to(heroHeading, { opacity: 1, y: '0em', duration: 0.2 });
-    return tl;
+
+    return headingsTimeline;
   };
   const animateLabel = (element, time) => {
     let duration = time;
@@ -104,7 +105,7 @@ $(document).ready(function () {
     if (!time) {
       duration = 'label';
     }
-    main.set(element, { opacity: 1 });
+    tl.set(element, { opacity: 1 });
     tl.add(letterAnimation(element, duration));
 
     return tl;
@@ -130,165 +131,281 @@ $(document).ready(function () {
     return tl;
   };
 
-  // Animation
-  const main = gsap.timeline({ delay: 0.5, ease: Power2.easeOut, paused: true });
+  // Animations Parts
+  const initialReveal = () => {
+    let main = gsap.timeline();
+    main
+      .addLabel('Start')
+      .call(() => updateNavigation(0))
+      .add(letterAnimation(heroHeading, 'heading'), '<')
+      .call(() => triggerElementClick(brandLogo))
+      .from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, '<0.1')
+      .fromTo(
+        $(modularBox),
+        { width: '19em', opacity: 0 },
+        { width: '12.2em', opacity: 1, duration: 1 },
+        'Start'
+      )
+      .addLabel($(navigationItems).eq(0).text())
+      .fromTo($(brandBox), { opacity: 0 }, { opacity: 1 }, 'Start+=0.3')
+      .call(() => addClassToElement(brandBox, 'border'))
+      .add(letterAnimation($(modularBox).find(metadata).find('div'), 0.15), '-=1.15');
 
-  // Platform
-  main
-    .addLabel('Start')
-    .call(() => updateNavigation(0))
-    .add(letterAnimation(heroHeading, 'heading'), '<')
-    .call(() => triggerElementClick(brandLogo))
-    .from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, '<0.1')
-    .fromTo(
-      $(modularBox),
-      { width: '19em', opacity: 0 },
-      { width: '12.2em', opacity: 1, duration: 1 },
-      'Start'
-    )
-    .addLabel($(navigationItems).eq(0).text())
-    .fromTo($(brandBox), { opacity: 0 }, { opacity: 1 }, 'Start+=0.3')
-    .call(() => addClassToElement(brandBox, 'border'))
-    .add(letterAnimation($(modularBox).find(metadata).find('div'), 0.15), '-=1.15');
+    // Hero Boxes Coming
+    main
+      .addLabel('heroBoxes')
+      .from(heroBoxesLeft, { opacity: 0, x: '-12em', stagger: 0.15, duration: 1.2 }, 'heroBoxes')
+      .from(heroBoxesRight, { opacity: 0, x: '12em', stagger: 0.15, duration: 1.2 }, '<');
 
-  // Hero Boxes Coming
-  main
-    .addLabel('heroBoxes')
-    .from(heroBoxesLeft, { opacity: 0, x: '-12em', stagger: 0.15, duration: 1.2 }, 'heroBoxes')
-    .from(heroBoxesRight, { opacity: 0, x: '12em', stagger: 0.15, duration: 1.2 }, '<');
+    // Hero Boxes Texts
+    main
+      .addLabel('heroBoxesText')
+      .add(
+        letterAnimation($(heroBoxesLeft).closest(heroBox).find(metadata).children(), 'label'),
+        'heroBoxesText'
+      )
+      .add(
+        letterAnimation(
+          $(heroBoxesRight).closest('.hero-devices_box').find(metadata).children(),
+          'label'
+        ),
+        '<'
+      );
 
-  // Hero Boxes Texts
-  main
-    .addLabel('heroBoxesText')
-    .add(
-      letterAnimation($(heroBoxesLeft).closest(heroBox).find(metadata).children(), 'label'),
-      'heroBoxesText'
-    )
-    .add(
-      letterAnimation(
-        $(heroBoxesRight).closest('.hero-devices_box').find(metadata).children(),
-        'label'
-      ),
-      '<'
-    );
-
-  // Arrows + Border
-  main
-    .addLabel('arrowsAndBorder')
-    .to(iconBoxArrow, { opacity: 1, duration: baseDuration }, 'arrowsAndBorder');
-
-  // Loop Devices
-  let staggerDuration = (index) => {
-    return 2 - 0.15 * index;
+    // Arrows + Border
+    main
+      .addLabel('arrowsAndBorder')
+      .to(iconBoxArrow, { opacity: 1, duration: baseDuration }, 'arrowsAndBorder');
+    return main;
   };
-  const CloudsSwitch = gsap
-    .timeline()
-    .to(heroBoxesRight, {
-      opacity: 0,
-      duration: 0.15,
-    })
-    .set(heroBoxesRight, {
-      x: '3em',
-    })
-    .call(() => switchDeviceIcons)
-    .to(heroBoxesRight, {
-      opacity: 1,
-      x: '0',
-      duration: (index) => {
-        return staggerDuration(index);
-      },
-      stagger: 0.15,
-    });
+  const platfrom = () => {
+    let main = gsap.timeline();
 
-  const repeatedCloudsSwitch = gsap.timeline().add(CloudsSwitch).delay(1).repeat(1).repeatDelay(1);
-  main.addLabel('loopDevices');
-  main.add(repeatedCloudsSwitch, 'loopDevices');
+    // Initial Reveal
+    main.addLabel('Reveal').add(initialReveal());
 
-  // Expand the Square
-  main
-    .addLabel('expandSquare')
-    .fromTo(
-      modularBox,
-      { width: '12.2em', height: '12.2em' },
-      { width: '90.4em', height: '37.2em', duration: 1 }
-    )
-    .to(
-      [brandLogo, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
-      { opacity: 0, duration: baseDuration },
+    // Loop Devices
+    let staggerDuration = (index) => {
+      return 2 - 0.15 * index;
+    };
+    const CloudsSwitch = gsap
+      .timeline()
+      .to(heroBoxesRight, {
+        opacity: 0,
+        duration: 0.15,
+      })
+      .set(heroBoxesRight, {
+        x: '3em',
+      })
+      .call(() => switchDeviceIcons)
+      .to(heroBoxesRight, {
+        opacity: 1,
+        x: '0',
+        duration: (index) => {
+          return staggerDuration(index);
+        },
+        stagger: 0.15,
+      });
+
+    const repeatedCloudsSwitch = gsap
+      .timeline()
+      .add(CloudsSwitch)
+      .delay(1)
+      .repeat(1)
+      .repeatDelay(1);
+    main.addLabel('loopDevices');
+    main.add(repeatedCloudsSwitch, 'loopDevices');
+
+    // Expand the Square
+    main
+      .addLabel('expandSquare')
+      .fromTo(
+        modularBox,
+        { width: '12.2em', height: '12.2em' },
+        { width: '90.4em', height: '37.2em', duration: 1 }
+      )
+      .to(
+        [brandLogo, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
+        { opacity: 0, duration: baseDuration },
+        'expandSquare+=0.4'
+      );
+
+    // Show Graphs
+    main.fromTo(
+      [dashboard, graphs],
+      { opacity: 0, display: 'none' },
+      { opacity: 1, display: 'flex', duration: baseDuration },
       'expandSquare+=0.4'
     );
 
-  // Show Graphs
-  main.fromTo(
-    [dashboard, graphs],
-    { opacity: 0, display: 'none' },
-    { opacity: 1, display: 'flex', duration: baseDuration },
-    'expandSquare+=0.4'
-  );
+    return main;
+  };
+  const inferenceEngine = () => {
+    let main = gsap.timeline();
+    // Inference Engine
+    main
+      .addLabel($(navigationItems).eq(1).text())
+      .add(animateHeadings(1))
+      .addLabel('showGraph')
+      .addLabel('animateGraph1')
+      .add(animateLabel($(graphHead).children(), 0.05), 'expandSquare-=0.2')
+      .add(animateGraph($(graphBox).eq(0)), '<')
+      .to(dashboardInner, { opacity: 0, display: 'none' }, '<')
+      .addLabel('animateGraph2')
+      .add(scaleGraph($(graphBox).eq(1), '-=0.2'))
+      .add(animateGraph($(graphBox).eq(1)), '<')
+      .addLabel('animateGraph3')
+      .add(scaleGraph($(graphBox).eq(2), '-=0.2'))
+      .add(animateGraph($(graphBox).eq(2)), '-=0.4');
 
-  // Inference Engine
-  main
-    .addLabel($(navigationItems).eq(1).text())
-    .add(animateHeadings(1))
-    .addLabel('showGraph')
-    .addLabel('animateGraph1')
-    .add(animateLabel($(graphHead).children(), 0.05), 'expandSquare-=0.2')
-    .add(animateGraph($(graphBox).eq(0)), '<')
-    .to(dashboardInner, { opacity: 0, display: 'none' }, '<')
-    .addLabel('animateGraph2')
-    .add(scaleGraph($(graphBox).eq(1), '-=0.2'))
-    .add(animateGraph($(graphBox).eq(1)), '<')
-    .addLabel('animateGraph3')
-    .add(scaleGraph($(graphBox).eq(2), '-=0.2'))
-    .add(animateGraph($(graphBox).eq(2)), '-=0.4');
+    // Transition Code
+    main
+      .addLabel('graph expand')
+      .to([$(graphBox).not(':first-child'), $(graphBox).children(), graphHead], {
+        opacity: 0,
+        duration: 0.3,
+      })
+      .to(firstGraph, { width: '100%', duration: 1 })
+      .addLabel('show Dashboard')
+      .fromTo(
+        [dashboardInner],
+        { opacity: 0, display: 'none' },
+        { opacity: 1, display: 'flex', duration: 0.5 }
+      )
+      .to(closeCircles, { opacity: 1, stagger: 0.1, duration: baseDuration }, '<-=0.3')
+      .add(letterAnimation(dashboardTitle + ' div', 'label'), '<')
+      .to([dashboardTitle, langTab], { opacity: 1, duration: baseDuration, stagger: 0.2 }, '<')
+      .to(dashboardCode, { opacity: 1, duration: baseDuration }, '<')
+      .addLabel('graph fade out')
+      .to(graphs, { opacity: 0, display: 'none', duration: 0.5 });
+    return main;
+  };
+  const mojo = () => {
+    let main = gsap.timeline();
+    // Mojo
+    main.addLabel($(navigationItems).eq(2).text()).add(animateHeadings(2));
 
-  // Transition Code
-  main
-    .addLabel('graph expand')
-    .to([$(graphBox).not(':first-child'), $(graphBox).children(), graphHead], {
-      opacity: 0,
-      duration: 0.3,
-    })
-    .to(firstGraph, { width: '100%', duration: 1 })
-    .addLabel('show Dashboard')
-    .fromTo(
-      [dashboardInner],
-      { opacity: 0, display: 'none' },
-      { opacity: 1, display: 'flex', duration: 0.5 }
-    )
-    .to(closeCircles, { opacity: 1, stagger: 0.1, duration: baseDuration }, '<-=0.3')
-    .add(letterAnimation(dashboardTitle + ' div', 'label'), '<')
-    .to([dashboardTitle, langTab], { opacity: 1, duration: baseDuration, stagger: 0.2 }, '<')
-    .to(dashboardCode, { opacity: 1, duration: baseDuration }, '<')
-    .addLabel('graph fade out')
-    .to(graphs, { opacity: 0, display: 'none', duration: 0.5 });
+    // Animate the Python Code
+    main.addLabel('pythonCode').add(codeAnimation(pythonCode), 'pythonCode+0.3');
 
-  // Mojo
-  main.addLabel($(navigationItems).eq(2).text()).add(animateHeadings(2));
+    // Switch Code Tabs
+    main
+      .addLabel('switchCodeTabs')
+      .to(pythonTab, { opacity: 0, duration: baseDuration / 2 }, 'switchCodeTabs')
+      .to(mojoTab, { opacity: 1, display: 'flex', duration: baseDuration }, '<')
+      .set(pythonCode, { display: 'none' }, '<')
+      .set(mojoCode, { display: 'block' }, '<');
 
-  // Animate the Python Code
-  main.addLabel('pythonCode').add(codeAnimation(pythonCode), 'pythonCode+0.3');
+    // Animate the Mojo Code
+    main.add(codeAnimation(mojoCode), 'mojoCode+0.3').addLabel('mojoCode');
 
-  // Switch Code Tabs
-  main
-    .addLabel('switchCodeTabs')
-    .to(pythonTab, { opacity: 0, duration: baseDuration / 2 }, 'switchCodeTabs')
-    .to(mojoTab, { opacity: 1, display: 'flex', duration: baseDuration }, '<')
-    .set(pythonCode, { display: 'none' }, '<')
-    .set(mojoCode, { display: 'block' }, '<');
+    return main;
+  };
 
-  // Animate the Mojo Code
-  main.add(codeAnimation(mojoCode), 'mojoCode+0.3').addLabel('mojoCode');
+  // Hero Animation
+  const heroAnimation = () => {
+    // Animation
+    const main = gsap.timeline({
+      delay: 0.5,
+      ease: Power2.easeOut,
+      scrollTrigger: {
+        trigger: 'body',
+        start: 'top top',
+        end: 'bottom top',
+      },
+    });
 
-  main.play();
+    // Define Animation
+    main
+      .addLabel($(navigationItems).eq(0).text())
+      .add(platfrom())
+      .addLabel($(navigationItems).eq(1).text())
+      .add(inferenceEngine())
+      .addLabel($(navigationItems).eq(2).text())
+      .add(mojo());
+
+    // --- Start Animation
+
+    // --- Hero Navigation Clicks
+    $(navigationItems).on('click', function () {
+      if ($(this).index() === 0) {
+        animateHeadings(0);
+      }
+      main.seek($(this).text(), false);
+    });
+
+    return main;
+  };
+
+  // ------------- Start of Hero Dashboard Animation ----------
+  ScrollTrigger.matchMedia({
+    '(min-width: 768px)': function () {
+      let tl = heroAnimation();
+      tl.play();
+    },
+    '(max-width: 767px)': function () {
+      let tl = initialReveal();
+      tl.play();
+    },
+  });
 
   // ------------- End  of Hero Dashboard Animation ----------
-  // Hero Navigation Clicks
-  $(navigationItems).on('click', function () {
-    if ($(this).index() === 0) {
-      animateHeadings(0);
+
+  // --- Hero Swiper
+  let swiper;
+  let init = false;
+
+  /* Which media query */
+  function swiperMode() {
+    const mobile = window.matchMedia('(min-width: 0px) and (max-width: 767px)');
+    const desktop = window.matchMedia('(min-width: 768px)');
+
+    // Enable (for desktop)
+    if (desktop.matches) {
+      if (init) {
+        if (swiper) {
+          swiper.destroy(true, true);
+        }
+        init = false;
+      }
     }
-    main.seek($(this).text(), false);
+
+    // Disable (for desktop)
+    else if (mobile.matches) {
+      if (!init) {
+        init = true;
+        swiper = new Swiper('.hero-swiper', {
+          // Optional parameters
+          slidesPerView: 1,
+          spaceBetween: 24,
+          speed: 250,
+          observer: true,
+          on: {
+            slideChange: function () {
+              animateHeadings(swiper.activeIndex);
+            },
+          },
+          // Enable lazy loading
+          pagination: {
+            el: '.swiper-navigation',
+            type: 'bullets',
+            clickable: true,
+            bulletActiveClass: 'w-active',
+            bulletClass: 'w-slider-dot',
+          },
+        });
+      }
+    }
+  }
+
+  // On Load
+  window.addEventListener('load', function () {
+    swiperMode();
+  });
+
+  // On Resize
+  window.addEventListener('resize', function () {
+    swiperMode();
   });
 
   // --- Homepage Rest
