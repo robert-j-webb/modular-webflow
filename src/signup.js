@@ -37,6 +37,7 @@ hbspt.forms.create({
   formId: '456272d6-bcc6-477d-95bc-5efde20524fe',
   target: '#form-container',
   onFormReady: function (form) {
+    hsform = form;
     initMultiStep();
 
     // Actions
@@ -105,7 +106,6 @@ function initMultiStep() {
 
   // Init Multisteps
   tagFields();
-  console.log(fields);
   fields.hide();
 
   // Reveal
@@ -119,7 +119,6 @@ function updateStep() {
   x += 1;
   currentSteps = fields.filter(`[data-step=${x}]`);
   if (x === steps.length - 1) {
-    console.log(submitBtn);
     submitBtn.text(stepsTexts[1]);
   } else {
     submitBtn.text(stepsTexts[0]);
@@ -189,7 +188,6 @@ function isOnlyMojo() {
 // Show Error
 function createErrorMessage(labelText, element) {
   const inputParentElement = $(element).closest('.input');
-  console.log(inputParentElement);
 
   // check if the input parent element already has an error message element
   if (inputParentElement.next().hasClass('hs-error-msgs')) {

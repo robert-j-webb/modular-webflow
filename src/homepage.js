@@ -23,6 +23,8 @@ $(document).ready(function () {
   const iconBoxArrow = '.hero-dashboard_arrow';
   const cloudBorder = '.hero-devices_border';
 
+  const introText = '#introText';
+
   // Dashboard Elements
   const dashboard = '#dashboard';
   const dashboardInner = dashboard + ' .hero-dashboard_inner';
@@ -151,6 +153,7 @@ $(document).ready(function () {
       .add(letterAnimation(heroHeading, 'heading'), '<')
       .call(() => triggerElementClick(brandLogo))
       .from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, '<0.1')
+      .from(introText, { opacity: 0, duration: baseDuration })
       .fromTo(
         $(modularBox),
         { width: '19em', opacity: 0 },
