@@ -1,7 +1,5 @@
 gsap.registerPlugin(ScrollTrigger);
 
-import { ElementFlags } from 'typescript';
-
 import { animateHorizontalGraph, codeAnimation, letterAnimation } from '$utils/globalFunctions';
 
 import { wrapLetters } from './utils/globalFunctions';
