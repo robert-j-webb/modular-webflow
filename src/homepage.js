@@ -87,13 +87,15 @@ $(document).ready(function () {
   function addClassToElement(element, className) {
     $(element).addClass(className);
   }
+
   // Animated Functions
   let headingsTimeline = null;
-
-  const animateHeadings = (index) => {
+  const animateHeadings = (index, width) => {
     headingsTimeline = gsap.timeline();
+    width = width ? width : '90%';
     headingsTimeline
       .to(heroHeading, { opacity: 0, y: '2em', duration: 0.2 })
+      .set(heroHeadingBox, { css: { width: width } })
       .call(() => switchHeadings(index))
       .to(heroHeading, { opacity: 1, y: '0em', duration: 0.2 });
 
@@ -329,7 +331,7 @@ $(document).ready(function () {
     // --- Hero Navigation Clicks
     $(navigationItems).on('click', function () {
       if ($(this).index() === 0) {
-        animateHeadings(0);
+        animateHeadings(0, '77%');
       }
       main.seek($(this).text(), false);
     });
@@ -345,6 +347,7 @@ $(document).ready(function () {
     },
     '(max-width: 767px)': function () {
       let tl = initialReveal();
+      animateHeadings(0);
       tl.play();
     },
   });
@@ -380,6 +383,8 @@ $(document).ready(function () {
           spaceBetween: 24,
           speed: 250,
           observer: true,
+          touchMoveStopPropagation: false,
+          preventInteractionOnTransition: true,
           on: {
             slideChange: function () {
               animateHeadings(swiper.activeIndex);

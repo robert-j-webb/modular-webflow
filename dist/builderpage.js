@@ -34,6 +34,7 @@
     let globalLetterIndex = 0;
     $(elements).each((elementIndex, element) => {
       const letters = $(element).find(".letter").not(".line-numbers-row .code-letter");
+      const highlights = $(element).find(".word-highlight");
       letters.each((letterIndex, letter) => {
         codeTimeline.fromTo(
           letter,
@@ -44,6 +45,14 @@
         );
         globalLetterIndex++;
       });
+      if (highlights.length) {
+        console.log(highlights);
+        const currentBgColor = window.getComputedStyle(document.body).getPropertyValue("background-color");
+        const currentBgColorRGBA = currentBgColor.replace(/^rgb(a)?\(/, "").replace(/\)$/, "");
+        const currentBgColorHex = currentBgColor.match(/^#(?:[0-9a-f]{3}){1,2}$/i) ? currentBgColor : null;
+        const backgroundColor = currentBgColorHex || `rgba(${currentBgColorRGBA}, 0)`;
+        codeTimeline.from(highlights, { backgroundColor, duration: 0.35 });
+      }
     });
     return codeTimeline;
   };

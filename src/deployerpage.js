@@ -43,7 +43,6 @@ $(document).ready(function () {
             moveDistanceSetting = -100;
           if (reverseSetting) moveDistanceSetting = 100;
 
-          // New function to update marquee position on scroll
           const updateMarqueePosition = (progress) => {
             if (verticalSetting) {
               gsap.set(panelEl, { yPercent: progress * moveDistanceSetting });
@@ -52,11 +51,9 @@ $(document).ready(function () {
             }
           };
 
-          // Remove the initial animation from marqueeTimeline
           const marqueeTimeline = gsap.timeline();
 
-          // Update marquee position on scroll
-          ScrollTrigger.create({
+          const scrollTriggerInstance = ScrollTrigger.create({
             trigger: 'body',
             start: 'top top',
             end: 'bottom bottom',
@@ -65,13 +62,22 @@ $(document).ready(function () {
               updateMarqueePosition(scrollProgress);
             },
           });
+
+          // Store ScrollTrigger instance in the component's data
+          componentEl.data('scrollTrigger', scrollTriggerInstance);
         });
       } else {
-        // Destroy ScrollTrigger and reset marquee position when viewport is smaller than 992px
-        ScrollTrigger.getAll().forEach((st) => st.kill());
         $("[tr-marquee-element='component']").each(function () {
           const componentEl = $(this),
             panelEl = componentEl.find("[tr-marquee-element='panel']");
+
+          // Retrieve and kill the corresponding ScrollTrigger instance
+          const st = componentEl.data('scrollTrigger');
+          if (st) {
+            st.kill();
+            componentEl.removeData('scrollTrigger');
+          }
+
           gsap.set(panelEl, { clearProps: 'all' });
         });
       }

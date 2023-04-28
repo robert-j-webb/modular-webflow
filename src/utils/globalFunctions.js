@@ -1,5 +1,4 @@
 // -- Text/Code Fuctions
-
 // Wrap Letters
 export const wrapLetters = (element) => {
   const processNode = (node) => {
@@ -37,10 +36,10 @@ const revealLetters = (elements, letterDelay) => {
   const codeTimeline = gsap.timeline(); // create a single timeline for all elements and letters
 
   let globalLetterIndex = 0; // initialize a global letter index
-
   // Iterate over each element passed
   $(elements).each((elementIndex, element) => {
     const letters = $(element).find('.letter').not('.line-numbers-row .code-letter');
+    const highlights = $(element).find('.word-highlight');
 
     // Animate each letter in the current element
     letters.each((letterIndex, letter) => {
@@ -51,9 +50,20 @@ const revealLetters = (elements, letterDelay) => {
         globalLetterIndex * letterDelay,
         '<'
       );
-
       globalLetterIndex++; // increment the global letter index
     });
+    if (highlights.length) {
+      console.log(highlights);
+      const currentBgColor = window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color');
+      const currentBgColorRGBA = currentBgColor.replace(/^rgb(a)?\(/, '').replace(/\)$/, '');
+      const currentBgColorHex = currentBgColor.match(/^#(?:[0-9a-f]{3}){1,2}$/i)
+        ? currentBgColor
+        : null;
+      const backgroundColor = currentBgColorHex || `rgba(${currentBgColorRGBA}, 0)`;
+      codeTimeline.from(highlights, { backgroundColor, duration: 0.35 });
+    }
   });
   return codeTimeline;
 };
