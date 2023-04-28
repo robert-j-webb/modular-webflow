@@ -159,23 +159,31 @@ $(document).ready(function () {
 
   // Menu Animation
   let menuText = 'Close';
-
   function createNavReveal() {
     let navReveal = gsap
-      .timeline({ paused: true })
-      .call(function () {
-        menuOpenAnim = false;
+      .timeline({
+        paused: true,
+        onComplete: () => {
+          disableScroll();
+        },
       })
       .add(typeText(menuButton + ' div', () => menuText)) // Use a function that returns menuText value
       .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
       .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
       .from(menuLinksItems, revealAnim, '-=0.2')
-      .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' }, '<')
-      .call(function () {
-        menuOpenAnim = true;
-      });
+      .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' }, '<');
     return navReveal;
   }
+  let scrollPosition;
+  const disableScroll = () => {
+    if (!menuOpenAnim) {
+      scrollPosition = $(window).scrollTop();
+      $('html, body').animate({ scrollTop: 0 }, 0).addClass('overflow-hidden');
+    } else {
+      $('html, body').animate({ scrollTop: scrollPosition }, 0).removeClass('overflow-hidden');
+    }
+    menuOpenAnim = !menuOpenAnim;
+  };
 
   let navReveal;
 
@@ -204,15 +212,12 @@ $(document).ready(function () {
 
   function playMenuAnimation() {
     updateMenuText();
+
     if (!menuOpenAnim) {
-      $('html, body').addClass('overflow-hidden');
-      currentscrollpos = $(window).scrollTop();
-      $('html, body').animate({ scrollTop: 0 }, 0);
-      menuOpenAnim = true;
+      navReveal.timeScale(1).play();
     } else {
-      $('html, body').removeClass('overflow-hidden');
-      $('html, body').animate({ scrollTop: currentscrollpos }, 0);
-      menuOpenAnim = false;
+      navReveal.timeScale(1.5).reverse();
+      disableScroll();
     }
   }
 
