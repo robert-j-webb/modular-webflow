@@ -122,9 +122,9 @@ $(document).ready(function () {
 
     return tl;
   };
-  const scaleGraph = (element, startTime) => {
+  const scaleGraph = (element) => {
     let tl = gsap.timeline();
-    tl.fromTo(element, { scaleY: 0 }, { scaleY: 1, duration: baseDuration }, startTime);
+    tl.fromTo(element, { scaleY: 0 }, { scaleY: 1, duration: baseDuration }, '<');
 
     return tl;
   };
@@ -148,6 +148,7 @@ $(document).ready(function () {
     let main = gsap.timeline();
     main
       .addLabel('Start')
+      .call(() => triggerElementClick(brandLogo))
       .call(() => updateNavigation(0))
       .add(letterAnimation(heroHeading, 'heading'), '<')
       .call(() => triggerElementClick(brandLogo))
@@ -187,7 +188,8 @@ $(document).ready(function () {
     // Arrows + Border
     main
       .addLabel('arrowsAndBorder')
-      .to(iconBoxArrow, { opacity: 1, duration: baseDuration }, 'arrowsAndBorder');
+      .call(() => triggerElementClick(iconBoxArrow))
+      .to(iconBoxArrow, { opacity: 1, duration: 0 }, 'arrowsAndBorder');
     return main;
   };
   const platfrom = () => {
@@ -258,15 +260,16 @@ $(document).ready(function () {
     main
       .addLabel('showGraph')
       .addLabel('animateGraph1')
-      .add(animateLabel($(graphHead).children(), 0.05), 'expandSquare-=0.2')
-      .add(animateGraph($(graphBox).eq(0)), '<')
       .to(dashboardInner, { opacity: 0, display: 'none' }, '<')
+      .add(animateLabel($(graphHead).children(), 0.05), '<')
+      .add(scaleGraph($(graphBox).eq(0)), '<')
+      .add(animateGraph($(graphBox).eq(0)), '>-0.4')
       .addLabel('animateGraph2')
-      .add(scaleGraph($(graphBox).eq(1), '-=0.2'))
-      .add(animateGraph($(graphBox).eq(1)), '<')
+      .add(scaleGraph($(graphBox).eq(1)), '<')
+      .add(animateGraph($(graphBox).eq(1)), '>-0.4')
       .addLabel('animateGraph3')
-      .add(scaleGraph($(graphBox).eq(2), '-=0.2'))
-      .add(animateGraph($(graphBox).eq(2)), '-=0.4');
+      .add(scaleGraph($(graphBox).eq(2)), '<')
+      .add(animateGraph($(graphBox).eq(2)), '>-0.4');
 
     // Transition Code
     main
@@ -293,7 +296,7 @@ $(document).ready(function () {
   const mojo = () => {
     let main = gsap.timeline();
     // Mojo
-    main.addLabel($(navigationItems).eq(2).text());
+    main.addLabel($(navigationItems).eq(2).text(), '<');
 
     // Animate the Python Code
     main.addLabel('pythonCode').add(codeAnimation(pythonCode), 'pythonCode+0.3');
@@ -329,15 +332,15 @@ $(document).ready(function () {
     main
       // Platform
       .addLabel($(navigationItems).eq(0).text())
-      .add(platfrom())
+      .add(platfrom(), '<')
       // Inference
       .addLabel($(navigationItems).eq(1).text())
       .add(animateHeadings(1))
-      .add(inferenceEngine())
+      .add(inferenceEngine(), '<')
       // Mojo
       .addLabel($(navigationItems).eq(2).text())
       .add(animateHeadings(2))
-      .add(mojo());
+      .add(mojo(), '<');
 
     // --- Start Animation
 
@@ -345,7 +348,6 @@ $(document).ready(function () {
     $(navigationItems).on('click', function () {
       if ($(this).index() === 0) {
         animateHeadings(0, '77%');
-        console.log('0');
       }
       main.restart().seek($(this).text(), false);
     });

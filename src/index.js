@@ -4,7 +4,12 @@ document.documentElement.classList.add('js-enabled');
 
 $(document).ready(function () {
   // Init Reveal
-  $('.main-wrapper').delay(300).fadeTo('slow', 1);
+  const intervalId = setInterval(function () {
+    if (window.gsap) {
+      clearInterval(intervalId); // stop checking for the object
+      $('.main-wrapper').delay(300).fadeTo('slow', 1); // run the fadeTo method
+    }
+  }, 100);
 
   // Register GSAP
   gsap.registerPlugin(ScrollTrigger);

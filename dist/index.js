@@ -93,7 +93,12 @@
   // src/index.js
   document.documentElement.classList.add("js-enabled");
   $(document).ready(function() {
-    $(".main-wrapper").delay(300).fadeTo("slow", 1);
+    const intervalId = setInterval(function() {
+      if (window.gsap) {
+        clearInterval(intervalId);
+        $(".main-wrapper").delay(300).fadeTo("slow", 1);
+      }
+    }, 100);
     gsap.registerPlugin(ScrollTrigger);
     $("img").each(function() {
       $(this).removeAttr("loading");
