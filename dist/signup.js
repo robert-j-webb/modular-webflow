@@ -17,6 +17,7 @@
     Industry: "Please select your industry."
     // Add more custom error messages as needed
   };
+  var stepsTexts = ["Next", "Submit"];
   var controlBtn = "#formBtn";
   var fields;
   var currentSteps;
@@ -42,17 +43,13 @@
       $(controlBtn).on("click", function() {
         if (validation()) {
           if (isOnlyMojo()) {
-            console.log("Submit Mojo");
             submitForm();
           } else if (x === steps.length - 1) {
-            console.log("Submit Full");
             submitForm();
           } else {
             updateStep();
-            console.log("Update");
           }
         } else {
-          console.log("Fail");
           return;
         }
       });
@@ -62,9 +59,9 @@
           if (x > 0) {
             initMultiStep();
           }
-          submitBtn.text("Submit");
-        } else {
-          submitBtn.text("Next");
+          submitBtn.text(stepsTexts[1]);
+        } else if (x !== steps.length - 1) {
+          submitBtn.text(stepsTexts[0]);
         }
         removeErrorMessages($(this));
       });
@@ -100,9 +97,22 @@
     currentSteps.fadeIn("slow");
   }
   function updateStep() {
+    const submitBtn = $(controlBtn);
     x += 1;
     currentSteps = fields.filter(`[data-step=${x}]`);
+    if (x === steps.length - 1) {
+      console.log(submitBtn);
+      submitBtn.text(stepsTexts[1]);
+    } else {
+      submitBtn.text(stepsTexts[0]);
+    }
     currentSteps.fadeIn("slow");
+    const input = currentSteps.find("input").eq(0);
+    const inputTop = input.offset().top;
+    const windowHeight = $(window).height();
+    const scrollTo = inputTop - windowHeight / 2;
+    $("html, body").animate({ scrollTop: scrollTo }, 500);
+    input.focus();
   }
   function submitForm() {
     removeErrorMessages();
