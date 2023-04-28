@@ -220,9 +220,9 @@
     const disableScroll = () => {
       if (!menuOpenAnim) {
         scrollPosition = $(window).scrollTop();
-        $("html, body").animate({ scrollTop: 0 }, 0).addClass("overflow-hidden");
+        $("html, body").scrollTop(0).addClass("overflow-hidden");
       } else {
-        $("html, body").animate({ scrollTop: scrollPosition }, 0).removeClass("overflow-hidden");
+        $("html, body").scrollTop(scrollPosition).removeClass("overflow-hidden");
       }
       menuOpenAnim = !menuOpenAnim;
     };
@@ -245,8 +245,10 @@
     function playMenuAnimation() {
       updateMenuText();
       if (!menuOpenAnim) {
+        $(".navbar_menu-btn").addClass("open");
         navReveal.timeScale(1).play();
       } else {
+        $(".navbar_menu-btn").removeClass("open");
         navReveal.timeScale(1.5).reverse();
         disableScroll();
       }
