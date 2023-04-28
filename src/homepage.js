@@ -91,13 +91,23 @@ $(document).ready(function () {
   // Animated Functions
   let headingsTimeline = null;
   const animateHeadings = (index, width) => {
+    const checkWidth = (width) => {
+      if (width) {
+        $(heroHeading).width(width);
+      } else {
+        $(heroHeading).removeAttr('style');
+      }
+    };
     headingsTimeline = gsap.timeline();
     width = width ? width : '90%';
     headingsTimeline
-      .to(heroHeading, { opacity: 0, y: '2em', duration: 0.2 })
-      .set(heroHeadingBox, { css: { width: width } })
-      .call(() => switchHeadings(index))
-      .to(heroHeading, { opacity: 1, y: '0em', duration: 0.2 });
+      .to(heroHeading, { opacity: 0, y: '2em', duration: 0.5 })
+      .add(() => {
+        let tl = gsap.timeline();
+        tl.call(() => checkWidth(width)).call(() => switchHeadings(index));
+        return tl;
+      })
+      .to(heroHeading, { opacity: 1, y: '0em', duration: 0.5 });
 
     return headingsTimeline;
   };
@@ -246,8 +256,6 @@ $(document).ready(function () {
     let main = gsap.timeline();
     // Inference Engine
     main
-      .addLabel($(navigationItems).eq(1).text())
-      .add(animateHeadings(1))
       .addLabel('showGraph')
       .addLabel('animateGraph1')
       .add(animateLabel($(graphHead).children(), 0.05), 'expandSquare-=0.2')
@@ -285,7 +293,7 @@ $(document).ready(function () {
   const mojo = () => {
     let main = gsap.timeline();
     // Mojo
-    main.addLabel($(navigationItems).eq(2).text()).add(animateHeadings(2));
+    main.addLabel($(navigationItems).eq(2).text());
 
     // Animate the Python Code
     main.addLabel('pythonCode').add(codeAnimation(pythonCode), 'pythonCode+0.3');
@@ -319,11 +327,16 @@ $(document).ready(function () {
 
     // Define Animation
     main
+      // Platform
       .addLabel($(navigationItems).eq(0).text())
       .add(platfrom())
+      // Inference
       .addLabel($(navigationItems).eq(1).text())
+      .add(animateHeadings(1))
       .add(inferenceEngine())
+      // Mojo
       .addLabel($(navigationItems).eq(2).text())
+      .add(animateHeadings(2))
       .add(mojo());
 
     // --- Start Animation
@@ -332,8 +345,9 @@ $(document).ready(function () {
     $(navigationItems).on('click', function () {
       if ($(this).index() === 0) {
         animateHeadings(0, '77%');
+        console.log('0');
       }
-      main.seek($(this).text(), false);
+      main.restart().seek($(this).text(), false);
     });
 
     return main;
