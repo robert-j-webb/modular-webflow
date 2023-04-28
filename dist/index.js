@@ -234,14 +234,14 @@
     function playMenuAnimation() {
       updateMenuText();
       if (!menuOpenAnim) {
-        navReveal.timeScale(1).play();
         $("html, body").addClass("overflow-hidden");
-        var currentscrollpos;
         currentscrollpos = $(window).scrollTop();
+        $("html, body").animate({ scrollTop: 0 }, 0);
+        menuOpenAnim = true;
       } else {
-        navReveal.timeScale(1.5).reverse();
         $("html, body").removeClass("overflow-hidden");
         $("html, body").animate({ scrollTop: currentscrollpos }, 0);
+        menuOpenAnim = false;
       }
     }
     function updateMenuText() {
