@@ -98,6 +98,9 @@ hbspt.forms.create({
       $('.nice-select .current').css('color', '#020c13');
     });
   },
+  onFormSubmitted: function () {
+    $(controlBtn).hide();
+  },
 });
 
 function initMultiStep() {

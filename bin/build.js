@@ -15,6 +15,7 @@ const ENTRY_POINTS = [
   'src/devpage.js',
   'src/signup.js',
   'src/legacy.js',
+  'src/cookies.js',
 ];
 
 // Config dev serving

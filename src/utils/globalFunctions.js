@@ -53,7 +53,6 @@ const revealLetters = (elements, letterDelay) => {
       globalLetterIndex++; // increment the global letter index
     });
     if (highlights.length) {
-      console.log(highlights);
       const currentBgColor = window
         .getComputedStyle(document.body)
         .getPropertyValue('background-color');

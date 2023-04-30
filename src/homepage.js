@@ -23,7 +23,7 @@ $(document).ready(function () {
   const iconBoxArrow = '.hero-dashboard_arrow';
   const cloudBorder = '.hero-devices_border';
 
-  const introText = '#introText';
+  const introText = '#intro-text';
 
   // Dashboard Elements
   const dashboard = '#dashboard';
@@ -317,16 +317,18 @@ $(document).ready(function () {
   };
 
   // Hero Animation
+  const heroTrigger = {
+    trigger: '.section_headera',
+    start: 'top center',
+    end: 'bottom top',
+    toggleActions: 'play pause play pause',
+  };
   const heroAnimation = () => {
     // Animation
     const main = gsap.timeline({
       delay: 0.5,
       ease: Power2.easeOut,
-      scrollTrigger: {
-        trigger: 'body',
-        start: 'top top',
-        end: 'bottom top',
-      },
+      scrollTrigger: heroTrigger,
     });
 
     // Define Animation
@@ -357,78 +359,75 @@ $(document).ready(function () {
   };
 
   // ------------- Start of Hero Dashboard Animation ----------
+
   ScrollTrigger.matchMedia({
     '(min-width: 768px)': function () {
       let tl = heroAnimation();
-      tl.play();
     },
     '(max-width: 767px)': function () {
-      let tl = initialReveal();
+      let tl = gsap.timeline({
+        scrollTrigger: heroTrigger,
+      });
+      tl.add(initialReveal());
       animateHeadings(0);
-      tl.play();
     },
   });
 
   // ------------- End  of Hero Dashboard Animation ----------
+  // --- Swieprs
+  function initSwiper(swiperSelector, mediaQueryString, customConfig) {
+    let swiperInstance;
+    let initStatus = false;
 
-  // --- Hero Swiper
-  let swiper;
-  let init = false;
+    function handleSwiper() {
+      const mediaQuery = window.matchMedia(mediaQueryString);
+      const shouldInitialize = mediaQuery.matches;
 
-  /* Which media query */
-  function swiperMode() {
-    const mobile = window.matchMedia('(min-width: 0px) and (max-width: 767px)');
-    const desktop = window.matchMedia('(min-width: 768px)');
-
-    // Enable (for desktop)
-    if (desktop.matches) {
-      if (init) {
-        if (swiper) {
-          swiper.destroy(true, true);
-        }
-        init = false;
-      }
-    }
-
-    // Disable (for desktop)
-    else if (mobile.matches) {
-      if (!init) {
-        init = true;
-        swiper = new Swiper('.hero-swiper', {
-          // Optional parameters
-          slidesPerView: 1,
-          spaceBetween: 24,
-          speed: 250,
-          observer: true,
-          touchMoveStopPropagation: false,
-          preventInteractionOnTransition: true,
-          on: {
-            slideChange: function () {
-              animateHeadings(swiper.activeIndex);
+      if (shouldInitialize) {
+        if (!initStatus) {
+          initStatus = true;
+          swiperInstance = new Swiper(swiperSelector, {
+            slidesPerView: 1,
+            spaceBetween: 24,
+            speed: 250,
+            observer: true,
+            touchMoveStopPropagation: false,
+            preventInteractionOnTransition: true,
+            pagination: {
+              el: '.swiper-navigation',
+              type: 'bullets',
+              clickable: true,
+              bulletActiveClass: 'w-active',
+              bulletClass: 'w-slider-dot',
             },
-          },
-          // Enable lazy loading
-          pagination: {
-            el: '.swiper-navigation',
-            type: 'bullets',
-            clickable: true,
-            bulletActiveClass: 'w-active',
-            bulletClass: 'w-slider-dot',
-          },
-        });
+            ...customConfig,
+          });
+        }
+      } else {
+        if (initStatus) {
+          if (swiperInstance) {
+            swiperInstance.destroy(true, true);
+          }
+          initStatus = false;
+        }
       }
     }
+
+    window.addEventListener('load', handleSwiper);
+    window.addEventListener('resize', handleSwiper);
+
+    return handleSwiper;
   }
 
-  // On Load
-  window.addEventListener('load', function () {
-    swiperMode();
+  const handleHeroSwiper = initSwiper('.hero-swiper', '(max-width: 767px)', {
+    on: {
+      slideChange: function () {
+        animateHeadings(this.activeIndex);
+      },
+    },
   });
 
-  // On Resize
-  window.addEventListener('resize', function () {
-    swiperMode();
-  });
+  initSwiper('.carda_slider', '(max-width: 991px)', {});
 
   // --- Homepage Rest
   // Model Deployment
@@ -529,3 +528,28 @@ $(document).ready(function () {
     animateHorizontalGraph($(this), 'a', '.grapha');
   });
 });
+
+// --- Flip Menu Color to Black
+$(window).on('load resize scroll', function () {
+  $('.section_videohero').each(function () {
+    if (isElementInView($(this))) {
+      $('.navbar_wrapper').addClass('white');
+    } else {
+      $('.navbar_wrapper').removeClass('white');
+    }
+  });
+});
+
+function isElementInView(elem) {
+  var $elem = $(elem);
+  var $window = $(window);
+
+  var docViewTop = $window.scrollTop();
+  var docViewBottom = docViewTop + $window.height();
+
+  var elemTop = $elem.offset().top;
+  var elemBottom = elemTop + $elem.height();
+
+  // Check if the element is within the viewport
+  return elemTop < docViewBottom && elemBottom > docViewTop;
+}

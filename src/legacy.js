@@ -358,24 +358,6 @@ if (window.location.pathname.includes('/blog/')) {
   });
 }
 
-// On home page, adjust the height of section adjust sticky top so text is not cut off on small screens
-
-// if url is home page
-if (window.location.pathname === '/' && window.innerWidth > 991) {
-  // get height of window and store it in variable viewportHeight
-  var viewportHeight = window.innerHeight;
-
-  // get height of element with attribute section-4-home and store it in variable section4Height
-  var section4Height = document.querySelector('.section-4-home').offsetHeight;
-
-  // if viewportHeight is more than section4Height substract section4Height from viewportHeight
-  if (viewportHeight < section4Height) {
-    var stickyValue = viewportHeight - section4Height;
-    // set top value of element with attribute section-4-home to stickyValue
-    document.querySelector('.section-4-home').style.top = stickyValue + 'px';
-  }
-}
-
 // if url contains /blog get value of color of .grid-wapper h2
 if (window.location.pathname.includes('/blog')) {
   var text = document.querySelector('.heading-2');
