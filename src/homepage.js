@@ -53,8 +53,8 @@ $(document).ready(function () {
   // Texts
   const headings = [
     $(heroHeading).html(),
-    'The <span class="word-highlight">fastest unified AI inference</span> <span class="word-highlight">engine</span> in the world.',
-    'A <span class="word-highlight">new language</span> that <span class="word-highlight">extends</span> <span class="word-highlight">Python</span> but thats <span class="word-highlight">as fast as C</span>',
+    $('.hero-headings').find('div').eq(0).html(),
+    $('.hero-headings').find('div').eq(1).html(),
   ];
 
   // --- Functions
@@ -131,8 +131,7 @@ $(document).ready(function () {
   const animateGraph = (parent) => {
     let tl = gsap.timeline();
     tl.add(animateLabel($(parent).find(graphLabel).children()), '<+=0.3')
-      .add(animateLabel($(parent).find(graphNumberLabel).children()), '<+=0.3')
-      .set($(parent).find(graphNumber), { yPercent: 10, opacity: 0 }, '<')
+      .set($(parent).find(graphNumber), { yPercent: 10, opacity: 0 }, '<+=0.3')
       .to(
         $(parent).find(graphNumber),
         { yPercent: 0, opacity: 1, duration: baseDuration },
@@ -193,6 +192,33 @@ $(document).ready(function () {
       .to(iconBoxArrow, { opacity: 1, duration: 0 }, 'arrowsAndBorder');
     return main;
   };
+  const dashboardTransition = () => {
+    let main = gsap.timeline();
+
+    // Expand the Square
+    main
+      .addLabel('expandSquare')
+      .fromTo(
+        modularBox,
+        { width: '12.2em', height: '12.2em' },
+        { width: '90.4em', height: '37.2em', duration: 1 }
+      )
+      .to(
+        [brandLogo, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
+        { opacity: 0, duration: baseDuration },
+        'expandSquare+=0.4'
+      );
+
+    // Show Graphs
+    main.fromTo(
+      [dashboard, graphs],
+      { opacity: 0, display: 'none' },
+      { opacity: 1, display: 'flex', duration: baseDuration },
+      'expandSquare+=0.4'
+    );
+
+    return main;
+  };
   const platfrom = () => {
     let main = gsap.timeline();
 
@@ -231,28 +257,6 @@ $(document).ready(function () {
     main.addLabel('loopDevices');
     main.add(repeatedCloudsSwitch, 'loopDevices');
 
-    // Expand the Square
-    main
-      .addLabel('expandSquare')
-      .fromTo(
-        modularBox,
-        { width: '12.2em', height: '12.2em' },
-        { width: '90.4em', height: '37.2em', duration: 1 }
-      )
-      .to(
-        [brandLogo, heroBoxesLeft, heroBoxesRight, metadata, iconBoxArrow, cloudBorder],
-        { opacity: 0, duration: baseDuration },
-        'expandSquare+=0.4'
-      );
-
-    // Show Graphs
-    main.fromTo(
-      [dashboard, graphs],
-      { opacity: 0, display: 'none' },
-      { opacity: 1, display: 'flex', duration: baseDuration },
-      'expandSquare+=0.4'
-    );
-
     return main;
   };
   const inferenceEngine = () => {
@@ -271,7 +275,10 @@ $(document).ready(function () {
       .addLabel('animateGraph3')
       .add(scaleGraph($(graphBox).eq(2)), '<')
       .add(animateGraph($(graphBox).eq(2)), '>-0.4');
-
+    return main;
+  };
+  const mojo = () => {
+    let main = gsap.timeline();
     // Transition Code
     main
       .addLabel('graph expand')
@@ -292,12 +299,6 @@ $(document).ready(function () {
       .to(dashboardCode, { opacity: 1, duration: baseDuration }, '<')
       .addLabel('graph fade out')
       .to(graphs, { opacity: 0, display: 'none', duration: 0.5 });
-    return main;
-  };
-  const mojo = () => {
-    let main = gsap.timeline();
-    // Mojo
-    main.addLabel($(navigationItems).eq(2).text(), '<');
 
     // Animate the Python Code
     main.addLabel('pythonCode').add(codeAnimation(pythonCode), 'pythonCode+0.3');
@@ -334,25 +335,28 @@ $(document).ready(function () {
     // Define Animation
     main
       // Platform
-      .addLabel($(navigationItems).eq(0).text())
+      .addLabel($(navigationItems).eq(0).text() + '-Start')
       .add(platfrom(), '<')
+      .addLabel($(navigationItems).eq(0).text() + '-End')
+      // Dashboard Transition
+      .add(dashboardTransition())
       // Inference
-      .addLabel($(navigationItems).eq(1).text())
+      .addLabel($(navigationItems).eq(1).text() + '-Start')
       .add(animateHeadings(1))
       .add(inferenceEngine(), '<')
+      .addLabel($(navigationItems).eq(1).text() + '-End')
       // Mojo
-      .addLabel($(navigationItems).eq(2).text())
-      .add(animateHeadings(2))
-      .add(mojo(), '<');
+      .addLabel($(navigationItems).eq(2).text() + '-Start')
+      .add(animateHeadings(2), '<+1')
+      .add(mojo(), '<')
+      .addLabel($(navigationItems).eq(2).text() + '-End');
 
     // --- Start Animation
 
     // --- Hero Navigation Clicks
     $(navigationItems).on('click', function () {
-      if ($(this).index() === 0) {
-        animateHeadings(0, '77%');
-      }
-      main.restart().seek($(this).text(), false);
+      let text = $(this).text();
+      main.restart().tweenFromTo(text + '-Start', text + '-End');
     });
 
     return main;

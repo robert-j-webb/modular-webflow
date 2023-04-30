@@ -1,76 +1,58 @@
 window.addEventListener('load', function () {
-  // obtain cookieconsent plugin
+  // obtain plugin
   var cc = initCookieConsent();
 
-  // example logo
-  var logo =
-    '<img src="https://fontmeme.com/permalink/220805/3b90158d204fdd325173a5c7873e7cc1.png" alt="Logo" loading="lazy" style="margin-left: -4px; margin-bottom: -5px; height: 35px">';
-  var cookie = '🍪';
-
-  // run plugin with config object
-  console.log(cc);
+  // run plugin with your configuration
   cc.run({
-    autorun: true,
     current_lang: 'en',
     autoclear_cookies: true, // default: false
-    cookie_name: 'cc_cookie_demo1', // default: 'cc_cookie'
-    cookie_expiration: 365, // default: 182
     page_scripts: true, // default: false
 
-    // auto_language: null,                     // default: null; could also be 'browser' or 'document'
-    // autorun: true,                           // default: true
-    // delay: 0,                                // default: 0
-    // force_consent: false,
-    // hide_from_bots: false,                   // default: false
-    // remove_cookie_tables: false              // default: false
-    // cookie_domain: location.hostname,        // default: current domain
-    // cookie_path: "/",                        // default: root
-    // cookie_same_site: "Lax",
-    // use_rfc_cookie: false,                   // default: false
-    // revision: 0,                             // default: 0
+    // mode: 'opt-in'                          // default: 'opt-in'; value: 'opt-in' or 'opt-out'
+    // delay: 0,                               // default: 0
+    // auto_language: null                     // default: null; could also be 'browser' or 'document'
+    // autorun: true,                          // default: true
+    // force_consent: false,                   // default: false
+    // hide_from_bots: true,                   // default: true
+    // remove_cookie_tables: false             // default: false
+    // cookie_name: 'cc_cookie',               // default: 'cc_cookie'
+    // cookie_expiration: 182,                 // default: 182 (days)
+    // cookie_necessary_only_expiration: 182   // default: disabled
+    // cookie_domain: location.hostname,       // default: current domain
+    // cookie_path: '/',                       // default: root
+    // cookie_same_site: 'Lax',                // default: 'Lax'
+    // use_rfc_cookie: false,                  // default: false
+    // revision: 0,                            // default: 0
 
-    gui_options: {
-      consent_modal: {
-        layout: 'box', // box,cloud,bar
-        position: 'bottom right', // bottom,middle,top + left,right,center
-        transition: 'slide', // zoom,slide
-      },
-      settings_modal: {
-        layout: 'box', // box,bar
-        // position: 'left',                // right,left (available only if bar layout selected)
-        transition: 'slide', // zoom,slide
-      },
-    },
-
-    onFirstAction: function () {
-      console.log('onFirstAction fired');
+    onFirstAction: function (user_preferences, cookie) {
+      // callback triggered only once
     },
 
     onAccept: function (cookie) {
-      console.log('onAccept fired ...');
+      // ...
     },
 
     onChange: function (cookie, changed_preferences) {
-      console.log('onChange fired ...');
+      // ...
     },
 
     languages: {
       en: {
         consent_modal: {
-          title: cookie + ' We use cookies! ',
+          title: 'Please accept our cookies',
           description:
-            'Hi, this website uses essential cookies to ensure its proper operation and tracking cookies to understand how you interact with it. The latter will be set only after consent. <button type="button" data-cc="c-settings" class="cc-link">Let me choose</button>',
+            'We use cookies to track visitor traffic so we can learn to improve the website and documentation. <a aria-label="Cookie policy" class="cc-link" data-cc="c-settings">Read more</a>',
           primary_btn: {
-            text: 'Accept all',
+            text: 'Accept',
             role: 'accept_all', // 'accept_selected' or 'accept_all'
           },
           secondary_btn: {
-            text: 'Reject all',
+            text: 'Reject',
             role: 'accept_necessary', // 'settings' or 'accept_necessary'
           },
         },
         settings_modal: {
-          title: logo,
+          title: 'Cookie preferences',
           save_settings_btn: 'Save settings',
           accept_all_btn: 'Accept all',
           reject_all_btn: 'Reject all',
@@ -83,60 +65,48 @@ window.addEventListener('load', function () {
           ],
           blocks: [
             {
-              title: 'Cookie usage 📢',
+              title: 'Cookie usage',
               description:
-                'I use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in/out whenever you want. For more details relative to cookies and other sensitive data, please read the full <a href="#" class="cc-link">privacy policy</a>.',
+                'The Modular Docs website uses browser cookies only to track website traffic with Google Analytics. For more details about how we handle sensitive data, please read our <a href="https://www.modular.com/privacy" class="cc-link">privacy policy</a>.',
             },
             {
-              title: 'Strictly necessary cookies',
-              description:
-                'These cookies are essential for the proper functioning of my website. Without these cookies, the website would not work properly',
+              title: 'Google Analytics cookies',
+              description: 'These cookies track website usage and are unique to this website.',
               toggle: {
-                value: 'necessary',
-                enabled: true,
-                readonly: true, // cookie categories with readonly=true are all treated as "necessary cookies"
-              },
-            },
-            {
-              title: 'Performance and Analytics cookies',
-              description:
-                'These cookies allow the website to remember the choices you have made in the past',
-              toggle: {
-                value: 'analytics', // there are no default categories => you specify them
+                value: 'analytics', // your cookie category
                 enabled: false,
                 readonly: false,
               },
               cookie_table: [
+                // list of all expected cookies
                 {
-                  col1: '^_ga',
+                  col1: '^_ga', // match all cookies starting with "_ga"
                   col2: 'google.com',
                   col3: '2 years',
-                  col4: 'description ...',
+                  col4: 'Google Analytics',
                   is_regex: true,
                 },
-                {
-                  col1: '_gid',
-                  col2: 'google.com',
-                  col3: '1 day',
-                  col4: 'description ...',
-                },
               ],
-            },
-            {
-              title: 'Advertisement and Targeting cookies',
-              description:
-                'These cookies collect information about how you use the website, which pages you visited and which links you clicked on. All of the data is anonymized and cannot be used to identify you',
-              toggle: {
-                value: 'targeting',
-                enabled: false,
-                readonly: false,
-              },
-            },
-            {
-              title: 'More information',
-              description:
-                'For any queries in relation to my policy on cookies and your choices, please <a class="cc-link" href="https://orestbida.com/contact">contact me</a>.',
-            },
+            } /*, {
+                        title: 'Strictly necessary cookies',
+                        description: 'These cookies are essential for the proper functioning of my website. Without these cookies, the website would not work properly',
+                        toggle: {
+                            value: 'necessary',
+                            enabled: true,
+                            readonly: true          // cookie categories with readonly=true are all treated as "necessary cookies"
+                        }
+                    }, {
+                        title: 'Advertisement and Targeting cookies',
+                        description: 'These cookies collect information about how you use the website, which pages you visited and which links you clicked on. All of the data is anonymized and cannot be used to identify you',
+                        toggle: {
+                            value: 'targeting',
+                            enabled: false,
+                            readonly: false
+                        }
+                    }, {
+                        title: 'More information',
+                        description: 'For any queries in relation to our policy on cookies and your choices, please <a class="cc-link" href="#yourcontactpage">contact us</a>.',
+                    } */,
           ],
         },
       },
