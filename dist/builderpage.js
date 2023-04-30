@@ -1,1 +1,237 @@
-"use strict";(()=>{var N=i=>{let t=e=>{if(e.nodeType===Node.TEXT_NODE){if(!e.parentNode.classList.contains("letter")){let n=e.textContent,l=document.createDocumentFragment();for(let a=0;a<n.length;a++){let s=document.createElement("span");s.className="letter",s.textContent=n[a],l.appendChild(s)}e.parentNode.replaceChild(l,e)}}else e.nodeType===Node.ELEMENT_NODE&&e.tagName!=="BR"&&Array.from(e.childNodes).forEach(t)};$(i).contents().each(function(){t(this)})},B=(i,t)=>{let e=gsap.timeline(),n=0;return $(i).each((l,a)=>{let s=$(a).find(".letter").not(".line-numbers-row .code-letter"),b=$(a).find(".word-highlight");if(s.each((h,u)=>{e.fromTo(u,{visibility:"hidden"},{visibility:"initial"},n*t,"<"),n++}),b.length){let h=window.getComputedStyle(document.body).getPropertyValue("background-color"),u=h.replace(/^rgb(a)?\(/,"").replace(/\)$/,""),f=(h.match(/^#(?:[0-9a-f]{3}){1,2}$/i)?h:null)||`rgba(${u}, 0)`;e.from(b,{backgroundColor:f,duration:.35})}}),e},v=(i,t)=>{let e;return t==="label"?e=.03:t==="heading"?e=.01:typeof t=="number"?e=t:e=.01,N(i),B(i,e)},m=i=>{let t=$(i).find("code"),e=t.find(".line-numbers-rows").eq(0).clone();return t.find(".line-numbers-rows").remove(),N(t),t.prepend(e),B(t,.01)};$(document).ready(function(){$("#hero").each(function(){let o=gsap.timeline({delay:.2}),r=$(this).find("h1"),d=$(this).find("p"),c=$(this).find(".button"),y=".dashboard_tab-inner",p=".dashboard_tab-brand-box",z=$(p).find("rect"),F=$(p).find("path"),G=".dashboard_tab-label.python",_=".dashboard_tab-label.mojo",k="#pythonCode",E="#mojoCode";o.to(r,{opacity:1}).add(v("h1"),"<").to(d,{opacity:1,duration:.5},"<1").to(c,{opacity:1,duration:.5},"<0.4").fromTo("#dashboard",{opacity:0},{opacity:1,duration:0},"<").add(m(k),"<").to(p,{xPercent:133},"+=1").to(z,{fill:"#B5C0F6"},"<").to(F,{fill:"#020C13"},"<").to(G,{opacity:0},"<").to(_,{opacity:"1",duration:0}).add(v(_,"label"),"<").set(k,{display:"none"},"<").set(E,{display:"block"},"<").add(m(E),"<")});let i="(min-width: 992px)",t=!1,e=$(".tabs_block-link-menu .tabs_block-link"),n=$(".tabs .cardb_visual .dashboard_code-block"),l="tab-active",a=$(".tabs_block-progress-line"),s=4e3,b=!0,h=gsap.timeline({paused:!0});function u(){if(!b)return;let o=e.filter("."+l);o.find(a).animate({width:"100%"},s,function(){w();let r=o.index(),d=r>=e.length-1?0:r+1;d===r&&(d=r>=e.length-2?0:r+2),e.eq(d).addClass(l),x(d),u()})}let w=()=>{h.clear(),e.removeClass(l),a.css("width","0"),n.hide()},f=()=>{b=!1,e.find(a).stop(!0,!0),w()},x=o=>{n.eq(o).show(),h.add(m(n.eq(o))),h.play()},L=()=>{t=!0,e.eq(0).addClass(l),u(),x(0),e.on("click",function(){let o=$(this).index();f(),$(this).addClass(l),$(this).find(a).animate({width:"100%"},200),x(o)})};$(window).on("load resize",function(){if(window.matchMedia(i).matches){if(!t){let o=ScrollTrigger.create({trigger:".tabs",start:"top center",onEnter:()=>{L(),o.kill()}})}}else t&&(f(),t=!1)});let C,g=!1,A=$(".tabs_slider .cardb_visual .hero-dashboard_code-block");function T(){let o=window.matchMedia("(min-width: 0px) and (max-width: 991px)"),r=window.matchMedia(i);function d(c){let{activeIndex:y}=c;a.stop(!0,!0),a.css("width","0"),$(c.slides[y]).find(a).animate({width:"100%"},s);let p=c.slides[y].querySelector(".dashboard_code-block");p&&($(p).show(),m(p))}r.matches?g&&(C.destroy(!0,!0),g=!1):o.matches&&(g||(g=!0,C=new Swiper(".tabs_slider",{slidesPerView:1,spaceBetween:24,speed:250,autoplay:{delay:s},observer:!0,on:{init:c=>{d(c)},slideChange:()=>{$(A).hide()},transitionEnd:c=>{d(c)}},pagination:{el:".swiper-navigation",type:"bullets",clickable:!0,bulletActiveClass:"w-active",bulletClass:"w-slider-dot"}})))}window.addEventListener("load",function(){T()}),window.addEventListener("resize",function(){T()})});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/utils/globalFunctions.js
+  var wrapLetters = (element) => {
+    const processNode = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (!node.parentNode.classList.contains("letter")) {
+          const codeText = node.textContent;
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < codeText.length; i++) {
+            const span = document.createElement("span");
+            span.className = "letter";
+            span.textContent = codeText[i];
+            fragment.appendChild(span);
+          }
+          node.parentNode.replaceChild(fragment, node);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName !== "BR") {
+          const childNodes = Array.from(node.childNodes);
+          childNodes.forEach(processNode);
+        }
+      }
+    };
+    $(element).contents().each(function() {
+      processNode(this);
+    });
+  };
+  var revealLetters = (elements, letterDelay) => {
+    const codeTimeline = gsap.timeline();
+    let globalLetterIndex = 0;
+    $(elements).each((elementIndex, element) => {
+      const letters = $(element).find(".letter").not(".line-numbers-row .code-letter");
+      const highlights = $(element).find(".word-highlight");
+      letters.each((letterIndex, letter) => {
+        codeTimeline.fromTo(
+          letter,
+          { visibility: "hidden" },
+          { visibility: "initial" },
+          globalLetterIndex * letterDelay,
+          "<"
+        );
+        globalLetterIndex++;
+      });
+      if (highlights.length) {
+        const currentBgColor = window.getComputedStyle(document.body).getPropertyValue("background-color");
+        const currentBgColorRGBA = currentBgColor.replace(/^rgb(a)?\(/, "").replace(/\)$/, "");
+        const currentBgColorHex = currentBgColor.match(/^#(?:[0-9a-f]{3}){1,2}$/i) ? currentBgColor : null;
+        const backgroundColor = currentBgColorHex || `rgba(${currentBgColorRGBA}, 0)`;
+        codeTimeline.from(highlights, { backgroundColor, duration: 0.35 });
+      }
+    });
+    return codeTimeline;
+  };
+  var letterAnimation = (elements, letterType) => {
+    let letterDelay;
+    if (letterType === "label") {
+      letterDelay = 0.03;
+    } else if (letterType === "heading") {
+      letterDelay = 0.01;
+    } else if (typeof letterType === "number") {
+      letterDelay = letterType;
+    } else {
+      letterDelay = 0.01;
+    }
+    wrapLetters(elements);
+    return revealLetters(elements, letterDelay);
+  };
+  var codeAnimation = (className) => {
+    const codeBlock = $(className).find("code");
+    const lineNumbers = codeBlock.find(".line-numbers-rows").eq(0).clone();
+    codeBlock.find(".line-numbers-rows").remove();
+    wrapLetters(codeBlock);
+    codeBlock.prepend(lineNumbers);
+    return revealLetters(codeBlock, 0.01);
+  };
+
+  // src/builderpage.js
+  $(document).ready(function() {
+    $("#hero").each(function() {
+      let tl = gsap.timeline({ delay: 0.2 });
+      let heading = $(this).find("h1");
+      let par = $(this).find("p");
+      let btn = $(this).find(".button");
+      let tab = ".dashboard_tab-inner";
+      let tabBrand = ".dashboard_tab-brand-box";
+      let tabBrandBG = $(tabBrand).find("rect");
+      let tabBrandLogo = $(tabBrand).find("path");
+      let pythonLabel = ".dashboard_tab-label.python";
+      let mojoLabel = ".dashboard_tab-label.mojo";
+      let pythonCode = "#pythonCode";
+      let mojoCode = "#mojoCode";
+      tl.to(heading, { opacity: 1 }).add(letterAnimation("h1"), "<").to(par, { opacity: 1, duration: 0.5 }, "<1").to(btn, { opacity: 1, duration: 0.5 }, "<0.4").fromTo("#dashboard", { opacity: 0 }, { opacity: 1, duration: 0 }, "<").add(codeAnimation(pythonCode), "<").to(tabBrand, { xPercent: 133 }, "+=1").to(tabBrandBG, { fill: "#B5C0F6" }, "<").to(tabBrandLogo, { fill: "#020C13" }, "<").to(pythonLabel, { opacity: 0 }, "<").to(mojoLabel, { opacity: "1", duration: 0 }).add(letterAnimation(mojoLabel, "label"), "<").set(pythonCode, { display: "none" }, "<").set(mojoCode, { display: "block" }, "<").add(codeAnimation(mojoCode), "<");
+    });
+    const responsive = "(min-width: 992px)";
+    let isInitialized = false;
+    const tabLinks = $(".tabs_block-link-menu .tabs_block-link");
+    const tabCodes = $(".tabs .cardb_visual .dashboard_code-block");
+    const activeClass = "tab-active";
+    const progressLine = $(".tabs_block-progress-line");
+    const duration = 4e3;
+    let shouldAnimate = true;
+    let tabTimeline = gsap.timeline({ paused: true });
+    function switchTab() {
+      if (!shouldAnimate) {
+        return;
+      }
+      const currentTab = tabLinks.filter("." + activeClass);
+      currentTab.find(progressLine).animate({ width: "100%" }, duration, function() {
+        resetTabs();
+        const currentIndex = currentTab.index();
+        let nextIndex = currentIndex >= tabLinks.length - 1 ? 0 : currentIndex + 1;
+        if (nextIndex === currentIndex) {
+          nextIndex = currentIndex >= tabLinks.length - 2 ? 0 : currentIndex + 2;
+        }
+        tabLinks.eq(nextIndex).addClass(activeClass);
+        showCode(nextIndex);
+        switchTab();
+      });
+    }
+    const resetTabs = () => {
+      tabTimeline.clear();
+      tabLinks.removeClass(activeClass);
+      progressLine.css("width", "0");
+      tabCodes.hide();
+    };
+    const stopAnimation = () => {
+      shouldAnimate = false;
+      tabLinks.find(progressLine).stop(true, true);
+      resetTabs();
+    };
+    const showCode = (nextIndex) => {
+      tabCodes.eq(nextIndex).show();
+      tabTimeline.add(codeAnimation(tabCodes.eq(nextIndex)));
+      tabTimeline.play();
+    };
+    const initTabs = () => {
+      isInitialized = true;
+      tabLinks.eq(0).addClass(activeClass);
+      switchTab();
+      showCode(0);
+      tabLinks.on("click", function() {
+        const nextIndex = $(this).index();
+        stopAnimation();
+        $(this).addClass(activeClass);
+        $(this).find(progressLine).animate({ width: "100%" }, 200);
+        showCode(nextIndex);
+      });
+    };
+    $(window).on("load resize", function() {
+      if (window.matchMedia(responsive).matches) {
+        if (!isInitialized) {
+          const trigger = ScrollTrigger.create({
+            trigger: ".tabs",
+            start: "top center",
+            onEnter: () => {
+              initTabs();
+              trigger.kill();
+            }
+          });
+        }
+      } else {
+        if (isInitialized) {
+          stopAnimation();
+          isInitialized = false;
+        }
+      }
+    });
+    let swiper;
+    let init = false;
+    const sliderCodes = $(".tabs_slider .cardb_visual .hero-dashboard_code-block");
+    function swiperMode() {
+      const mobile = window.matchMedia("(min-width: 0px) and (max-width: 991px)");
+      const desktop = window.matchMedia(responsive);
+      function handleSwiperSlide(swiperInstance) {
+        const { activeIndex } = swiperInstance;
+        progressLine.stop(true, true);
+        progressLine.css("width", "0");
+        $(swiperInstance.slides[activeIndex]).find(progressLine).animate({ width: "100%" }, duration);
+        const codeBlock = swiperInstance.slides[activeIndex].querySelector(".dashboard_code-block");
+        if (codeBlock) {
+          $(codeBlock).show();
+          codeAnimation(codeBlock);
+        }
+      }
+      if (desktop.matches) {
+        if (init) {
+          swiper.destroy(true, true);
+          init = false;
+        }
+      } else if (mobile.matches) {
+        if (!init) {
+          init = true;
+          swiper = new Swiper(".tabs_slider", {
+            // Optional parameters
+            slidesPerView: 1,
+            spaceBetween: 24,
+            speed: 250,
+            autoplay: {
+              delay: duration
+            },
+            observer: true,
+            on: {
+              init: (swiperInstance) => {
+                handleSwiperSlide(swiperInstance);
+              },
+              slideChange: () => {
+                $(sliderCodes).hide();
+              },
+              transitionEnd: (swiperInstance) => {
+                handleSwiperSlide(swiperInstance);
+              }
+            },
+            // Enable lazy loading
+            pagination: {
+              el: ".swiper-navigation",
+              type: "bullets",
+              clickable: true,
+              bulletActiveClass: "w-active",
+              bulletClass: "w-slider-dot"
+            }
+          });
+        }
+      }
+    }
+    window.addEventListener("load", function() {
+      swiperMode();
+    });
+    window.addEventListener("resize", function() {
+      swiperMode();
+    });
+  });
+})();
+//# sourceMappingURL=builderpage.js.map

@@ -274,7 +274,8 @@ $(document).ready(function () {
       .add(animateGraph($(graphBox).eq(1)), '>-0.4')
       .addLabel('animateGraph3')
       .add(scaleGraph($(graphBox).eq(2)), '<')
-      .add(animateGraph($(graphBox).eq(2)), '>-0.4');
+      .add(animateGraph($(graphBox).eq(2)), '>-0.4')
+      .add(gsap.delayedCall(1));
     return main;
   };
   const mojo = () => {
@@ -347,7 +348,7 @@ $(document).ready(function () {
       .addLabel($(navigationItems).eq(1).text() + '-End')
       // Mojo
       .addLabel($(navigationItems).eq(2).text() + '-Start')
-      .add(animateHeadings(2), '<+1')
+      .add(animateHeadings(2))
       .add(mojo(), '<')
       .addLabel($(navigationItems).eq(2).text() + '-End');
 
@@ -355,8 +356,12 @@ $(document).ready(function () {
 
     // --- Hero Navigation Clicks
     $(navigationItems).on('click', function () {
+      if ($(this).index() === 0) {
+        animateHeadings(0);
+      }
+      console.log('Click');
       let text = $(this).text();
-      main.restart().tweenFromTo(text + '-Start', text + '-End');
+      main.seek(text + '-Start').tweenFromTo(text + '-Start', text + '-End');
     });
 
     return main;

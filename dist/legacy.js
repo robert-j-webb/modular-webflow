@@ -1,1 +1,375 @@
-"use strict";(()=>{if(document.querySelector(".g-text-stagger-animation")){$(".g-text-stagger-animation").each(function(){var t=$(this).html().split(" ").join(" </span><span>"),n="<span>".concat(t,"</span>");$(this).html(n)}),S=$(".g-text-stagger-animation span:first-child").position().top,$(".g-text-stagger-animation span").each(function(t){E=$(this).position().top,t!==0&&(E===S&&($(this).prepend($(this).prev().text()+" "),$(this).prev().remove()),S=E)});let e=document.querySelectorAll(".g-text-stagger-animation span");[].forEach.call(e,t=>{t.style.display="block"})}var S,E,L=new IntersectionObserver(function(e){e.forEach(function(t){if(t.isIntersecting){var n=t.target,o=anime.timeline({loop:!1,autoplay:!1});o.add({targets:n.childNodes,translateY:[50,0],translateZ:0,opacity:[0,1],easing:"easeOutExpo",duration:1400,delay:(a,i)=>300+200*i}),o.play(),L.unobserve(n)}})},{threshold:.5});document.querySelector(".g-text-stagger-animation")&&[].forEach.call(document.querySelectorAll(".g-text-stagger-animation"),function(e){L.observe(e)});document.querySelector(".blog-carousel_collection-list")&&[].forEach.call(document.querySelectorAll(".blog-carousel_collection-list"),function(e){L.observe(e)});if(document.getElementById("blog-posts-container")){let e=function(){var o=document.getElementById("blog-posts-container").getBoundingClientRect().left,a=document.querySelector(".blog-carousel_collection-list"),i;window.innerWidth<768?i=24:i=64,console.log(o),console.log(i),a.style.paddingLeft=o+"px",a.style.paddingRight=o+"px",a.style["scroll-padding-left"]=o+"px",a.style["scroll-padding-right"]=o+"px"},t=function(){l.scrollBy({top:0,left:s,behavior:"smooth"})},n=function(){l.scrollBy({top:0,left:-s,behavior:"smooth"})};O=e,A=t,M=n,e(),window.addEventListener("resize",e),l=document.querySelector(".blog-carousel_collection-list"),s=l.querySelector("div").clientWidth,document.getElementById("blog-carousel-next-arrow").addEventListener("click",t),document.getElementById("blog-carousel-prev-arrow").addEventListener("click",n)}var l,s,O,A,M;if(document.querySelector(".quotes_collection-list-wrapper")){let n=function(){l.scrollBy({top:0,left:s,behavior:"smooth"})},o=function(){l.scrollBy({top:0,left:-s,behavior:"smooth"})},a=function(){document.querySelector(".quotes_collection-list").firstElementChild.getBoundingClientRect().left===0?document.getElementById("carousel-prev-arrow").style.display="none":document.getElementById("carousel-prev-arrow").style.display="flex",document.querySelector(".quotes_collection-list").lastElementChild.getBoundingClientRect().left===0?document.getElementById("carousel-next-arrow").style.display="none":document.getElementById("carousel-next-arrow").style.display="flex"};A=n,M=o,V=a,l=document.querySelector(".quotes_collection-list"),s=l.querySelector("div").clientWidth,document.getElementById("carousel-next-arrow").addEventListener("click",n),document.getElementById("carousel-prev-arrow").addEventListener("click",o),l.addEventListener("scroll",a),a()}var l,s,A,M,V;window.location.host==="modular-dev.webflow.io"?m="modtestingsite":m="modularai";var m,J=window.location.hostname;document.querySelector(".greenhouse-tabs-layout")&&fetch(`https://boards-api.greenhouse.io/v1/boards/${m}/departments`).then(e=>e.json()).then(e=>{var t=e;function n(i){let b=[];for(let p=0;p<i.departments.length;p++)i.departments[p].jobs.length>0&&b.push(i.departments[p]);return b}var o=n(t);function a(i){let b=1;for(let p=0;p<i.length;p++){let u=i[p],d=u.name,r=u.id,c=document.createElement("a");c.classList.add("greenhouse-tab-link"),c.setAttribute("data-department-id",r),c.setAttribute("href","#"),c.addEventListener("click",w=>{document.querySelector(".cc-current")&&document.querySelector(".cc-current").classList.remove("cc-current");var R=w.target;R.classList.add("cc-current");function T(f,y){let h=[];for(let g=0;g<f.departments.length;g++)f.departments[g].id===y&&(h=f.departments[g].jobs);return h}var W=T(t,r);function H(f){document.querySelector(".greenhouse-tabs-content").innerHTML="";for(let y=0;y<f.length;y++){let h=f[y],g=h.title,q=h.id,D=h.location.name,v=document.createElement("a");v.classList.add("greenhouse-job-position-link"),v.setAttribute("href",`https://${J}/career-post?${q}&gh_jid=${q}`),v.setAttribute("data-job-id",q),v.innerHTML=`<h4 class="greenhouse-job-position-link-title">${g}</h4><div class="greenhouse-job-position-link-location">${D}</div><div class="greenhouse-job-position-link-divider"></div>`,document.querySelector(".greenhouse-tabs-content").appendChild(v)}}H(W)}),c.innerHTML=`<div class="greenhouse-tabs-number">${b}</div><h3 class="greenhouse-tab-link-title">${d}</h3>`,document.querySelector(".greenhouse-tabs-menu").appendChild(c),b++}}a(o),document.querySelector(".greenhouse-tabs-menu").firstElementChild.click()});if(window.location.pathname==="/career-post"){let e=function(){return Math.floor(Math.random()*6)+1};F=e,window.location.host==="modular-dev.webflow.io"?m="modtestingsite":m="modularai",k=`https://boards.greenhouse.io/embed/job_board/js?for=${m}`,B=document.createElement("script"),B.src=k,document.body.appendChild(B),j=window.location.search.split("=")[1],fetch(`https://boards-api.greenhouse.io/v1/boards/${m}/jobs/${j}`).then(n=>n.json()).then(n=>{let o=n,a=o.title,i=o.location.name;document.getElementById("job-title").innerHTML=a,document.getElementById("job-location").innerHTML=i,document.getElementById("job-breadcrumb").innerHTML=a}),I=e(6);let t=["https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5d9967c0a74ca7429_career-post-02.jpg","https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5e91ab786257fe203_career-post-01.jpg","https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5bbb025deabbdb1fd_career-post-03.jpg","https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c52a77f6a73ed4f81a_career-post-06.jpg","https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c6fb5c4c90a145b452_career-post-05.jpg","https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c64d12064c743d9cf3_career-post-07.jpg"];document.getElementById("job-image").src=t[I-1]}var m,k,B,j,I,F;window.location.pathname==="/team"&&(document.querySelectorAll(".team-overlay_close-link-wrapper").forEach(e=>{e.addEventListener("click",t=>{document.body.style.overflow="unset"})}),document.querySelectorAll(".team_link-block").forEach(e=>{e.addEventListener("click",t=>{document.body.style.overflow="hidden"})}));document.addEventListener("keydown",e=>{e.keyCode===27&&(document.querySelectorAll(".team-overlay_close-link-wrapper").forEach(t=>{t.click()}),document.body.style.overflow="unset")});window.location.pathname.includes("/blog/")&&document.querySelectorAll(".blog-content-wrapper").forEach(e=>{var t=e.querySelector("p"),n=window.getComputedStyle(t).getPropertyValue("color");e.querySelectorAll("a").forEach(o=>{o.style.color=n})});window.location.pathname.includes("/blog")&&(x=document.querySelector(".heading-2"),C=window.getComputedStyle(x).getPropertyValue("color"),document.querySelectorAll(".nested-author_link-block .small-body-text").forEach(e=>{e.style.color=C}));var x,C;if(window.location.pathname.includes("/about")){let e=function(){var u=document.getElementById("case-studies-title-container").getBoundingClientRect().left,d=document.querySelector(".case-studies-carousel_collection-list"),r;window.innerWidth<768?r=24:r=64,d.style["scroll-padding-left"]=u+r+"px",d.style["scroll-padding-right"]=u+r+"px",d.firstChild.style.paddingLeft=u+r+"px",d.lastChild.style.paddingRight=u+r+"px"},t=function(){l.scrollBy({top:0,left:s,behavior:"smooth"})},n=function(){l.scrollBy({top:0,left:-s,behavior:"smooth"})},o=function(){var u=Math.round(l.firstElementChild.getBoundingClientRect().left),d=Math.round(l.lastElementChild.getBoundingClientRect().right);d=Math.round(l.lastElementChild.getBoundingClientRect().right);var r=window.getComputedStyle(l).getPropertyValue("padding-left"),c=window.getComputedStyle(l).getPropertyValue("padding-right");r=r.slice(0,-2),c=c.slice(0,-2),r=parseInt(r),c=parseInt(c);var w=window.innerWidth;u===r?document.getElementById("case-studies-carousel-prev-arrow").style.display="none":document.getElementById("case-studies-carousel-prev-arrow").style.display="flex",d>=w-c-2&&d<=w-c+2?document.getElementById("case-studies-carousel-next-arrow").style.display="none":document.getElementById("case-studies-carousel-next-arrow").style.display="flex"};O=e,A=t,M=n,V=o,e(),window.addEventListener("resize",e),l=document.querySelector(".case-studies-carousel_collection-list"),s=l.querySelector("a").clientWidth,document.getElementById("case-studies-carousel-next-arrow").addEventListener("click",t),document.getElementById("case-studies-carousel-prev-arrow").addEventListener("click",n),l.addEventListener("scroll",o),o()}var O,A,M,V;document.querySelectorAll(".all-current-category_collection-item").forEach(e=>{var t=e.querySelector(".all-blog_heading-link-block").getAttribute("href")});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/legacy.js
+  if (document.querySelector(".g-text-stagger-animation")) {
+    $(".g-text-stagger-animation").each(function() {
+      var spanInserted = $(this).html().split(" ").join(" </span><span>");
+      var wrapped = "<span>".concat(spanInserted, "</span>");
+      $(this).html(wrapped);
+    });
+    refPos = $(".g-text-stagger-animation span:first-child").position().top;
+    $(".g-text-stagger-animation span").each(function(index) {
+      newPos = $(this).position().top;
+      if (index === 0) {
+        return;
+      }
+      if (newPos === refPos) {
+        $(this).prepend($(this).prev().text() + " ");
+        $(this).prev().remove();
+      }
+      refPos = newPos;
+    });
+    const spans = document.querySelectorAll(".g-text-stagger-animation span");
+    [].forEach.call(spans, (e) => {
+      e.style.display = "block";
+    });
+  }
+  var refPos;
+  var newPos;
+  var observer = new IntersectionObserver(
+    function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var element = entry.target;
+          var fadeUp = anime.timeline({
+            loop: false,
+            autoplay: false
+          });
+          fadeUp.add({
+            targets: element.childNodes,
+            translateY: [50, 0],
+            translateZ: 0,
+            opacity: [0, 1],
+            easing: "easeOutExpo",
+            duration: 1400,
+            delay: (el, i) => 300 + 200 * i
+          });
+          fadeUp.play();
+          observer.unobserve(element);
+        }
+      });
+    },
+    {
+      threshold: 0.5
+    }
+  );
+  if (document.querySelector(".g-text-stagger-animation")) {
+    [].forEach.call(document.querySelectorAll(".g-text-stagger-animation"), function(e) {
+      observer.observe(e);
+    });
+  }
+  if (document.querySelector(".blog-carousel_collection-list")) {
+    [].forEach.call(document.querySelectorAll(".blog-carousel_collection-list"), function(e) {
+      observer.observe(e);
+    });
+  }
+  if (document.getElementById("blog-posts-container")) {
+    let setCarouselPadding = function() {
+      var scrollPadding = document.getElementById("blog-posts-container").getBoundingClientRect().left;
+      var scrollContainer = document.querySelector(".blog-carousel_collection-list");
+      var padding;
+      if (window.innerWidth < 768) {
+        padding = 24;
+      } else {
+        padding = 64;
+      }
+      console.log(scrollPadding);
+      console.log(padding);
+      scrollContainer.style.paddingLeft = scrollPadding + "px";
+      scrollContainer.style.paddingRight = scrollPadding + "px";
+      scrollContainer.style["scroll-padding-left"] = scrollPadding + "px";
+      scrollContainer.style["scroll-padding-right"] = scrollPadding + "px";
+    }, scrollToNextPage = function() {
+      gallery_scroller.scrollBy({
+        top: 0,
+        left: gallery_item_size,
+        behavior: "smooth"
+      });
+    }, scrollToPrevPage = function() {
+      gallery_scroller.scrollBy({
+        top: 0,
+        left: -gallery_item_size,
+        behavior: "smooth"
+      });
+    };
+    setCarouselPadding2 = setCarouselPadding, scrollToNextPage2 = scrollToNextPage, scrollToPrevPage2 = scrollToPrevPage;
+    setCarouselPadding();
+    window.addEventListener("resize", setCarouselPadding);
+    gallery_scroller = document.querySelector(".blog-carousel_collection-list");
+    gallery_item_size = gallery_scroller.querySelector("div").clientWidth;
+    document.getElementById("blog-carousel-next-arrow").addEventListener("click", scrollToNextPage);
+    document.getElementById("blog-carousel-prev-arrow").addEventListener("click", scrollToPrevPage);
+  }
+  var gallery_scroller;
+  var gallery_item_size;
+  var setCarouselPadding2;
+  var scrollToNextPage2;
+  var scrollToPrevPage2;
+  if (document.querySelector(".quotes_collection-list-wrapper")) {
+    let scrollToNextPage = function() {
+      gallery_scroller.scrollBy({
+        top: 0,
+        left: gallery_item_size,
+        behavior: "smooth"
+      });
+    }, scrollToPrevPage = function() {
+      gallery_scroller.scrollBy({
+        top: 0,
+        left: -gallery_item_size,
+        behavior: "smooth"
+      });
+    }, hideShowArrows = function() {
+      if (document.querySelector(".quotes_collection-list").firstElementChild.getBoundingClientRect().left === 0) {
+        document.getElementById("carousel-prev-arrow").style.display = "none";
+      } else {
+        document.getElementById("carousel-prev-arrow").style.display = "flex";
+      }
+      if (document.querySelector(".quotes_collection-list").lastElementChild.getBoundingClientRect().left === 0) {
+        document.getElementById("carousel-next-arrow").style.display = "none";
+      } else {
+        document.getElementById("carousel-next-arrow").style.display = "flex";
+      }
+    };
+    scrollToNextPage2 = scrollToNextPage, scrollToPrevPage2 = scrollToPrevPage, hideShowArrows2 = hideShowArrows;
+    gallery_scroller = document.querySelector(".quotes_collection-list");
+    gallery_item_size = gallery_scroller.querySelector("div").clientWidth;
+    document.getElementById("carousel-next-arrow").addEventListener("click", scrollToNextPage);
+    document.getElementById("carousel-prev-arrow").addEventListener("click", scrollToPrevPage);
+    gallery_scroller.addEventListener("scroll", hideShowArrows);
+    hideShowArrows();
+  }
+  var gallery_scroller;
+  var gallery_item_size;
+  var scrollToNextPage2;
+  var scrollToPrevPage2;
+  var hideShowArrows2;
+  if (window.location.host === "modular-dev.webflow.io") {
+    greenhouse = "modtestingsite";
+  } else {
+    greenhouse = "modularai";
+  }
+  var greenhouse;
+  var hostName = window.location.hostname;
+  if (document.querySelector(".greenhouse-tabs-layout")) {
+    fetch(`https://boards-api.greenhouse.io/v1/boards/${greenhouse}/departments`).then((response) => response.json()).then((data) => {
+      var jobPositions = data;
+      function findDepartmentsWithJobs(jobPositions2) {
+        let departmentsWithJobs2 = [];
+        for (let i = 0; i < jobPositions2.departments.length; i++) {
+          if (jobPositions2.departments[i].jobs.length > 0) {
+            departmentsWithJobs2.push(jobPositions2.departments[i]);
+          }
+        }
+        return departmentsWithJobs2;
+      }
+      var departmentsWithJobs = findDepartmentsWithJobs(jobPositions);
+      function appendDepartmentsWithJobs(departmentsWithJobs2) {
+        let tabNumber = 1;
+        for (let i = 0; i < departmentsWithJobs2.length; i++) {
+          let department = departmentsWithJobs2[i];
+          let departmentName = department.name;
+          let departmentId = department.id;
+          let departmentListItem = document.createElement("a");
+          departmentListItem.classList.add("greenhouse-tab-link");
+          departmentListItem.setAttribute("data-department-id", departmentId);
+          departmentListItem.setAttribute("href", "#");
+          departmentListItem.addEventListener("click", (e) => {
+            if (document.querySelector(".cc-current")) {
+              let oldTab = document.querySelector(".cc-current");
+              oldTab.classList.remove("cc-current");
+            }
+            var currentTab = e.target;
+            currentTab.classList.add("cc-current");
+            function getJobsForDepartment(jobPositions2, departmentId2) {
+              let jobsForDepartment2 = [];
+              for (let i2 = 0; i2 < jobPositions2.departments.length; i2++) {
+                if (jobPositions2.departments[i2].id === departmentId2) {
+                  jobsForDepartment2 = jobPositions2.departments[i2].jobs;
+                }
+              }
+              return jobsForDepartment2;
+            }
+            var jobsForDepartment = getJobsForDepartment(jobPositions, departmentId);
+            function appendJobsForDepartment(jobsForDepartment2) {
+              document.querySelector(".greenhouse-tabs-content").innerHTML = "";
+              for (let i2 = 0; i2 < jobsForDepartment2.length; i2++) {
+                let job = jobsForDepartment2[i2];
+                let jobTitle = job.title;
+                let jobId = job.id;
+                let jobLocation = job.location.name;
+                let jobListItem = document.createElement("a");
+                jobListItem.classList.add("greenhouse-job-position-link");
+                jobListItem.setAttribute(
+                  "href",
+                  `https://${hostName}/career-post?${jobId}&gh_jid=${jobId}`
+                );
+                jobListItem.setAttribute("data-job-id", jobId);
+                jobListItem.innerHTML = `<h4 class="greenhouse-job-position-link-title">${jobTitle}</h4><div class="greenhouse-job-position-link-location">${jobLocation}</div><div class="greenhouse-job-position-link-divider"></div>`;
+                document.querySelector(".greenhouse-tabs-content").appendChild(jobListItem);
+              }
+            }
+            appendJobsForDepartment(jobsForDepartment);
+          });
+          departmentListItem.innerHTML = `<div class="greenhouse-tabs-number">${tabNumber}</div><h3 class="greenhouse-tab-link-title">${departmentName}</h3>`;
+          document.querySelector(".greenhouse-tabs-menu").appendChild(departmentListItem);
+          tabNumber++;
+        }
+      }
+      appendDepartmentsWithJobs(departmentsWithJobs);
+      document.querySelector(".greenhouse-tabs-menu").firstElementChild.click();
+    });
+  }
+  if (window.location.pathname === "/career-post") {
+    let getRandomNumber = function() {
+      return Math.floor(Math.random() * 6) + 1;
+    };
+    getRandomNumber2 = getRandomNumber;
+    if (window.location.host === "modular-dev.webflow.io") {
+      greenhouse = "modtestingsite";
+    } else {
+      greenhouse = "modularai";
+    }
+    greenhouseSrc = `https://boards.greenhouse.io/embed/job_board/js?for=${greenhouse}`;
+    greenhouseScript = document.createElement("script");
+    greenhouseScript.src = greenhouseSrc;
+    document.body.appendChild(greenhouseScript);
+    jobId = window.location.search.split("=")[1];
+    fetch(`https://boards-api.greenhouse.io/v1/boards/${greenhouse}/jobs/${jobId}`).then((response) => response.json()).then((data) => {
+      let job = data;
+      let jobTitle = job.title;
+      let jobLocation = job.location.name;
+      document.getElementById("job-title").innerHTML = jobTitle;
+      document.getElementById("job-location").innerHTML = jobLocation;
+      document.getElementById("job-breadcrumb").innerHTML = jobTitle;
+    });
+    randomImage = getRandomNumber(6);
+    let images = [
+      "https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5d9967c0a74ca7429_career-post-02.jpg",
+      "https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5e91ab786257fe203_career-post-01.jpg",
+      "https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5bbb025deabbdb1fd_career-post-03.jpg",
+      "https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c52a77f6a73ed4f81a_career-post-06.jpg",
+      "https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c6fb5c4c90a145b452_career-post-05.jpg",
+      "https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c64d12064c743d9cf3_career-post-07.jpg"
+    ];
+    document.getElementById("job-image").src = images[randomImage - 1];
+  }
+  var greenhouse;
+  var greenhouseSrc;
+  var greenhouseScript;
+  var jobId;
+  var randomImage;
+  var getRandomNumber2;
+  if (window.location.pathname === "/team") {
+    document.querySelectorAll(".team-overlay_close-link-wrapper").forEach((element) => {
+      element.addEventListener("click", (e) => {
+        document.body.style.overflow = "unset";
+      });
+    });
+    document.querySelectorAll(".team_link-block").forEach((element) => {
+      element.addEventListener("click", (e) => {
+        document.body.style.overflow = "hidden";
+      });
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.keyCode === 27) {
+      document.querySelectorAll(".team-overlay_close-link-wrapper").forEach((element) => {
+        element.click();
+      });
+      document.body.style.overflow = "unset";
+    }
+  });
+  if (window.location.pathname.includes("/blog/")) {
+    document.querySelectorAll(".blog-content-wrapper").forEach((element) => {
+      var pTag = element.querySelector("p");
+      var pColor = window.getComputedStyle(pTag).getPropertyValue("color");
+      element.querySelectorAll("a").forEach((a) => {
+        a.style.color = pColor;
+      });
+    });
+  }
+  if (window.location.pathname.includes("/blog")) {
+    text = document.querySelector(".heading-2");
+    textColor = window.getComputedStyle(text).getPropertyValue("color");
+    document.querySelectorAll(".nested-author_link-block .small-body-text").forEach((element) => {
+      element.style.color = textColor;
+    });
+  }
+  var text;
+  var textColor;
+  if (window.location.pathname.includes("/about")) {
+    let setCarouselPadding = function() {
+      var scrollPadding = document.getElementById("case-studies-title-container").getBoundingClientRect().left;
+      var scrollContainer = document.querySelector(".case-studies-carousel_collection-list");
+      var padding;
+      if (window.innerWidth < 768) {
+        padding = 24;
+      } else {
+        padding = 64;
+      }
+      scrollContainer.style["scroll-padding-left"] = scrollPadding + padding + "px";
+      scrollContainer.style["scroll-padding-right"] = scrollPadding + padding + "px";
+      scrollContainer.firstChild.style.paddingLeft = scrollPadding + padding + "px";
+      scrollContainer.lastChild.style.paddingRight = scrollPadding + padding + "px";
+    }, scrollToNextPage = function() {
+      gallery_scroller.scrollBy({
+        top: 0,
+        left: gallery_item_size,
+        behavior: "smooth"
+      });
+    }, scrollToPrevPage = function() {
+      gallery_scroller.scrollBy({
+        top: 0,
+        left: -gallery_item_size,
+        behavior: "smooth"
+      });
+    }, hideShowArrows = function() {
+      var galleryScrollerOffsetLeft = Math.round(
+        gallery_scroller.firstElementChild.getBoundingClientRect().left
+      );
+      var galleryScrollerOffsetRight = Math.round(
+        gallery_scroller.lastElementChild.getBoundingClientRect().right
+      );
+      galleryScrollerOffsetRight = Math.round(
+        gallery_scroller.lastElementChild.getBoundingClientRect().right
+      );
+      var galleryScrollerPaddingLeft = window.getComputedStyle(gallery_scroller).getPropertyValue("padding-left");
+      var galleryScrollerPaddingRight = window.getComputedStyle(gallery_scroller).getPropertyValue("padding-right");
+      galleryScrollerPaddingLeft = galleryScrollerPaddingLeft.slice(0, -2);
+      galleryScrollerPaddingRight = galleryScrollerPaddingRight.slice(0, -2);
+      galleryScrollerPaddingLeft = parseInt(galleryScrollerPaddingLeft);
+      galleryScrollerPaddingRight = parseInt(galleryScrollerPaddingRight);
+      var viewportWidth = window.innerWidth;
+      if (galleryScrollerOffsetLeft === galleryScrollerPaddingLeft) {
+        document.getElementById("case-studies-carousel-prev-arrow").style.display = "none";
+      } else {
+        document.getElementById("case-studies-carousel-prev-arrow").style.display = "flex";
+      }
+      if (galleryScrollerOffsetRight >= viewportWidth - galleryScrollerPaddingRight - 2 && galleryScrollerOffsetRight <= viewportWidth - galleryScrollerPaddingRight + 2) {
+        document.getElementById("case-studies-carousel-next-arrow").style.display = "none";
+      } else {
+        document.getElementById("case-studies-carousel-next-arrow").style.display = "flex";
+      }
+    };
+    setCarouselPadding2 = setCarouselPadding, scrollToNextPage2 = scrollToNextPage, scrollToPrevPage2 = scrollToPrevPage, hideShowArrows2 = hideShowArrows;
+    setCarouselPadding();
+    window.addEventListener("resize", setCarouselPadding);
+    gallery_scroller = document.querySelector(".case-studies-carousel_collection-list");
+    gallery_item_size = gallery_scroller.querySelector("a").clientWidth;
+    document.getElementById("case-studies-carousel-next-arrow").addEventListener("click", scrollToNextPage);
+    document.getElementById("case-studies-carousel-prev-arrow").addEventListener("click", scrollToPrevPage);
+    gallery_scroller.addEventListener("scroll", hideShowArrows);
+    hideShowArrows();
+  }
+  var setCarouselPadding2;
+  var scrollToNextPage2;
+  var scrollToPrevPage2;
+  var hideShowArrows2;
+  document.querySelectorAll(".all-current-category_collection-item").forEach((element) => {
+    var link = element.querySelector(".all-blog_heading-link-block").getAttribute("href");
+  });
+})();
+//# sourceMappingURL=legacy.js.map
