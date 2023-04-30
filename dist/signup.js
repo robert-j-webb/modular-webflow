@@ -6,8 +6,8 @@
   // src/signup.js
   var hsform;
   var steps = [
-    ["First name", "Last name", "Email", "Modular Product Name"],
-    ["Company name", "Size", "Industry"]
+    ["firstname", "lastname", "email", "modular_product_name"],
+    ["0-2/name", "0-2/size", "0-2/industry"]
   ];
   var customErrorMessages = {
     "First name": "Please fill your first name.",
@@ -23,11 +23,11 @@
   var currentSteps;
   var x = 0;
   function tagFields() {
-    document.querySelectorAll(".hs-form-field label span").forEach((label) => {
+    document.querySelectorAll(".hs-form-field :is(input, select)").forEach((element) => {
       steps.forEach((step, i) => {
         step.forEach((field) => {
-          if (label.textContent.trim() === field) {
-            label.closest(".hs-form-field").setAttribute("data-step", i);
+          if (element.name === field) {
+            element.closest(".hs-form-field").setAttribute("data-step", i);
           }
         });
       });
