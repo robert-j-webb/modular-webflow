@@ -1,8 +1,12 @@
 gsap.registerPlugin(ScrollTrigger);
 
-import { animateHorizontalGraph, codeAnimation, letterAnimation } from '$utils/globalFunctions';
-
-import { wrapLetters } from './utils/globalFunctions';
+import {
+  animateHorizontalGraph,
+  codeAnimation,
+  codeFile,
+  letterAnimation,
+  wrapLetters,
+} from '$utils/globalFunctions';
 
 $(document).ready(function () {
   // Base Hero Elements
@@ -31,6 +35,7 @@ $(document).ready(function () {
   const dashboardCode = dashboard + ' .hero-dashboard_code';
   const closeCircles = dashboard + ' .hero-dashboard_close circle';
   const dashboardTitle = dashboard + ' .hero-dashboard_head-label';
+  const fileType = '#file-type';
   const langTab = dashboard + ' .hero-dashboard_tab';
   const pythonTab = dashboard + ' .hero-dashboard_tab-inner.python';
   const mojoTab = dashboard + ' .hero-dashboard_tab-inner.mojo';
@@ -291,7 +296,7 @@ $(document).ready(function () {
       .to(graphs, { opacity: 0, display: 'none', duration: 0.5 });
 
     // Animate the Python Code
-    main.addLabel('pythonCode').add(codeAnimation(pythonCode), 'pythonCode+0.3');
+    main.addLabel('pythonCode').add(codeAnimation(pythonCode), '<').add(codeFile(fileType, 0), '<');
 
     // Switch Code Tabs
     main
@@ -302,7 +307,7 @@ $(document).ready(function () {
       .set(mojoCode, { display: 'block' }, '<');
 
     // Animate the Mojo Code
-    main.add(codeAnimation(mojoCode), 'mojoCode+0.3', '<');
+    main.add(codeAnimation(mojoCode), '<').add(codeFile(fileType, 1), '<');
 
     return main;
   };

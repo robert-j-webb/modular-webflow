@@ -1,4 +1,4 @@
-import { codeAnimation, letterAnimation } from '$utils/globalFunctions';
+import { codeAnimation, codeFile, letterAnimation } from '$utils/globalFunctions';
 
 $(document).ready(function () {
   // Hero Animation
@@ -21,7 +21,7 @@ $(document).ready(function () {
       let tl = gsap.timeline();
 
       tl.fromTo('#dashboard', { opacity: 0 }, { opacity: 1, duration: 0 }, '<')
-        .set(fileType, { text: 'PY' })
+        .add(codeFile(fileType, 0))
         .add(codeAnimation(pythonCode), '<');
       return tl;
     };
@@ -33,7 +33,7 @@ $(document).ready(function () {
         .to(tabBrandLogo, { fill: '#020C13' }, '<')
         .to(pythonLabel, { opacity: 0 }, '<')
         .to(mojoLabel, { opacity: '1', duration: 0 })
-        .set(fileType, { text: '&#x1F525' })
+        .add(codeFile(fileType, 1))
         .add(letterAnimation(mojoLabel, 'label'), '<')
         .set(pythonCode, { display: 'none' }, '<')
         .set(mojoCode, { display: 'block' }, '<')

@@ -89,11 +89,15 @@ const revealLetters = (elements, letterDelay) => {
         element.style.boxShadow = initialBoxShadow;
       });
 
-      codeTimeline.to(highlights, {
-        backgroundColor: currentBgColor,
-        boxShadow: currentBoxShadow,
-        duration: 0.35,
-      });
+      codeTimeline.to(
+        highlights,
+        {
+          backgroundColor: currentBgColor,
+          boxShadow: currentBoxShadow,
+          duration: 0.35,
+        },
+        '<'
+      );
     }
   });
   return codeTimeline;
@@ -137,6 +141,15 @@ export const typeText = (element, text) => {
     '<'
   );
   return codeTimeline;
+};
+
+// Code Files Change
+export const codeFile = (element, index) => {
+  let tl = gsap.timeline();
+
+  let text = index === 0 ? 'PY' : '&#x1F525';
+  tl.set(element, { text: text });
+  return tl;
 };
 
 // ---- Graphs
