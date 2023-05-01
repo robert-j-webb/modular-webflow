@@ -46,11 +46,31 @@
         globalLetterIndex++;
       });
       if (highlights.length) {
-        const currentBgColor = window.getComputedStyle(document.body).getPropertyValue("background-color");
-        const currentBgColorRGBA = currentBgColor.replace(/^rgb(a)?\(/, "").replace(/\)$/, "");
-        const currentBgColorHex = currentBgColor.match(/^#(?:[0-9a-f]{3}){1,2}$/i) ? currentBgColor : null;
-        const backgroundColor = currentBgColorHex || `rgba(${currentBgColorRGBA}, 0)`;
-        codeTimeline.from(highlights, { backgroundColor, duration: 0.35 });
+        const firstHighlight = highlights[0];
+        const currentBgColor = window.getComputedStyle(firstHighlight).getPropertyValue("background-color");
+        const currentBoxShadow = window.getComputedStyle(firstHighlight).getPropertyValue("box-shadow");
+        const hexToRGBA = (hex, alpha) => {
+          const [r, g, b] = hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        const rgbaToTransparent = (rgba) => {
+          const rgbaArray = rgba.replace(/^rgba?\(/, "").replace(/\)$/, "").split(",");
+          return `rgba(${rgbaArray[0]}, ${rgbaArray[1]}, ${rgbaArray[2]}, 0)`;
+        };
+        const isHex = (color) => /^#(?:[0-9a-f]{3}){1,2}$/i.test(color);
+        const initialBackgroundColor = isHex(currentBgColor) ? hexToRGBA(currentBgColor, 0) : rgbaToTransparent(currentBgColor);
+        const initialBoxShadow = currentBoxShadow.replace(/rgba?\([^)]+\)/g, (match) => {
+          return isHex(match) ? hexToRGBA(match, 0) : rgbaToTransparent(match);
+        });
+        Array.from(highlights).forEach((element2) => {
+          element2.style.backgroundColor = initialBackgroundColor;
+          element2.style.boxShadow = initialBoxShadow;
+        });
+        codeTimeline.to(highlights, {
+          backgroundColor: currentBgColor,
+          boxShadow: currentBoxShadow,
+          duration: 0.35
+        });
       }
     });
     return codeTimeline;
@@ -81,19 +101,38 @@
   // src/builderpage.js
   $(document).ready(function() {
     $("#hero").each(function() {
-      let tl = gsap.timeline({ delay: 0.2 });
       let heading = $(this).find("h1");
       let par = $(this).find("p");
       let btn = $(this).find(".button");
       let tab = ".dashboard_tab-inner";
+      let fileType = "#file-type";
       let tabBrand = ".dashboard_tab-brand-box";
       let tabBrandBG = $(tabBrand).find("rect");
       let tabBrandLogo = $(tabBrand).find("path");
       let pythonLabel = ".dashboard_tab-label.python";
       let mojoLabel = ".dashboard_tab-label.mojo";
+      let progressLineCode = ".dashboard_progress-line";
       let pythonCode = "#pythonCode";
       let mojoCode = "#mojoCode";
-      tl.to(heading, { opacity: 1 }).add(letterAnimation("h1"), "<").to(par, { opacity: 1, duration: 0.5 }, "<1").to(btn, { opacity: 1, duration: 0.5 }, "<0.4").fromTo("#dashboard", { opacity: 0 }, { opacity: 1, duration: 0 }, "<").add(codeAnimation(pythonCode), "<").to(tabBrand, { xPercent: 133 }, "+=1").to(tabBrandBG, { fill: "#B5C0F6" }, "<").to(tabBrandLogo, { fill: "#020C13" }, "<").to(pythonLabel, { opacity: 0 }, "<").to(mojoLabel, { opacity: "1", duration: 0 }).add(letterAnimation(mojoLabel, "label"), "<").set(pythonCode, { display: "none" }, "<").set(mojoCode, { display: "block" }, "<").add(codeAnimation(mojoCode), "<");
+      const pythonCodeAnim = () => {
+        let tl = gsap.timeline();
+        tl.fromTo("#dashboard", { opacity: 0 }, { opacity: 1, duration: 0 }, "<").add(
+          codeAnimation(pythonCode),
+          "<"
+        );
+        return tl;
+      };
+      const mojoCodeAnim = () => {
+        let tl = gsap.timeline();
+        tl.to(tabBrand, { xPercent: 133 }, "+=2").to(tabBrandBG, { fill: "#B5C0F6" }, "<").to(tabBrandLogo, { fill: "#020C13" }, "<").to(pythonLabel, { opacity: 0 }, "<").to(mojoLabel, { opacity: "1", duration: 0 }).add(letterAnimation(mojoLabel, "label"), "<").set(pythonCode, { display: "none" }, "<").set(mojoCode, { display: "block" }, "<").add(codeAnimation(mojoCode), "<").add(gsap.delayedCall(3));
+        return tl;
+      };
+      let reveal = gsap.timeline({ delay: 0.6 });
+      reveal.to(heading, { opacity: 1 }).call(() => {
+        codeAnim.play();
+      }).add(letterAnimation("h1"), "<").to(par, { opacity: 1, duration: 0.5 }).to(btn, { opacity: 1, duration: 0.5 });
+      let codeAnim = gsap.timeline({ repeat: -1, paused: true });
+      codeAnim.add(pythonCodeAnim()).add(mojoCodeAnim());
     });
     const responsive = "(min-width: 992px)";
     let isInitialized = false;
@@ -181,9 +220,10 @@
         progressLine.css("width", "0");
         $(swiperInstance.slides[activeIndex]).find(progressLine).animate({ width: "100%" }, duration);
         const codeBlock = swiperInstance.slides[activeIndex].querySelector(".dashboard_code-block");
-        if (codeBlock) {
+        if (codeBlock && !codeBlock.classList.contains("animated")) {
           $(codeBlock).show();
           codeAnimation(codeBlock);
+          codeBlock.classList.add("animated");
         }
       }
       if (desktop.matches) {

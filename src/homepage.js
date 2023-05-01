@@ -60,6 +60,7 @@ $(document).ready(function () {
   // --- Functions
   // Insta Functions
   function switchDeviceIcons() {
+    console.log('Devices');
     const hideClass = 'hide';
     $('.hero-devices .hero-box_inner').each(function () {
       const icons = $(this).find('.hero-box_icon');
@@ -81,9 +82,9 @@ $(document).ready(function () {
     items.removeClass('active');
     items.eq(index).addClass('active');
   }
-  function triggerElementClick(element) {
+  const triggerElementClick = (element) => {
     $(element).trigger('click');
-  }
+  };
   function addClassToElement(element, className) {
     $(element).addClass(className);
   }
@@ -143,11 +144,17 @@ $(document).ready(function () {
   };
 
   // Animations Parts
+  let brandLogoClickTriggered = false;
   const initialReveal = () => {
     let main = gsap.timeline();
     main
       .addLabel('Start')
-      .call(() => triggerElementClick(brandLogo))
+      .call(() => {
+        if (!brandLogoClickTriggered) {
+          triggerElementClick(brandLogo);
+          brandLogoClickTriggered = true;
+        }
+      })
       .call(() => updateNavigation(0))
       .add(letterAnimation(heroHeading, 'heading'), '<')
       .call(() => triggerElementClick(brandLogo))
@@ -223,39 +230,7 @@ $(document).ready(function () {
     let main = gsap.timeline();
 
     // Initial Reveal
-    main.addLabel('Reveal').add(initialReveal());
-
-    // Loop Devices
-    let staggerDuration = (index) => {
-      return 2 - 0.15 * index;
-    };
-    const CloudsSwitch = gsap
-      .timeline()
-      .to(heroBoxesRight, {
-        opacity: 0,
-        duration: 0.15,
-      })
-      .set(heroBoxesRight, {
-        x: '3em',
-      })
-      .call(() => switchDeviceIcons)
-      .to(heroBoxesRight, {
-        opacity: 1,
-        x: '0',
-        duration: (index) => {
-          return staggerDuration(index);
-        },
-        stagger: 0.15,
-      });
-
-    const repeatedCloudsSwitch = gsap
-      .timeline()
-      .add(CloudsSwitch)
-      .delay(1)
-      .repeat(1)
-      .repeatDelay(1);
-    main.addLabel('loopDevices');
-    main.add(repeatedCloudsSwitch, 'loopDevices');
+    main.addLabel('Reveal').add(initialReveal()).add(gsap.delayedCall(5));
 
     return main;
   };
@@ -275,7 +250,7 @@ $(document).ready(function () {
       .addLabel('animateGraph3')
       .add(scaleGraph($(graphBox).eq(2)), '<')
       .add(animateGraph($(graphBox).eq(2)), '>-0.4')
-      .add(gsap.delayedCall(1));
+      .add(gsap.delayedCall(6));
     return main;
   };
   const mojo = () => {
@@ -306,14 +281,14 @@ $(document).ready(function () {
 
     // Switch Code Tabs
     main
-      .addLabel('switchCodeTabs')
+      .addLabel('switchCodeTabs', '+=2')
       .to(pythonTab, { opacity: 0, duration: baseDuration / 2 }, 'switchCodeTabs')
       .to(mojoTab, { opacity: 1, display: 'flex', duration: baseDuration }, '<')
       .set(pythonCode, { display: 'none' }, '<')
       .set(mojoCode, { display: 'block' }, '<');
 
     // Animate the Mojo Code
-    main.add(codeAnimation(mojoCode), 'mojoCode+0.3').addLabel('mojoCode');
+    main.add(codeAnimation(mojoCode), 'mojoCode+0.3', '<');
 
     return main;
   };
@@ -355,14 +330,25 @@ $(document).ready(function () {
     // --- Start Animation
 
     // --- Hero Navigation Clicks
-    $(navigationItems).on('click', function () {
-      if ($(this).index() === 0) {
-        animateHeadings(0);
-      }
-      console.log('Click');
-      let text = $(this).text();
-      main.seek(text + '-Start').tweenFromTo(text + '-Start', text + '-End');
-    });
+    $(navigationItems)
+      .off('click')
+      .on('click', function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        let index = $(this).index();
+        let text = $(this).text();
+
+        if (index === 0) {
+          triggerElementClick(brandLogo);
+          main.seek(text + '-Start');
+          main.tweenFromTo(text + '-Start', text + '-End');
+        } else {
+          main.seek(text + '-Start').tweenFromTo(text + '-Start', text + '-End');
+        }
+
+        console.log('Click');
+      });
 
     return main;
   };

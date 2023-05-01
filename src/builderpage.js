@@ -3,34 +3,61 @@ import { codeAnimation, letterAnimation } from '$utils/globalFunctions';
 $(document).ready(function () {
   // Hero Animation
   $('#hero').each(function () {
-    let tl = gsap.timeline({ delay: 0.2 });
     let heading = $(this).find('h1');
     let par = $(this).find('p');
     let btn = $(this).find('.button');
     let tab = '.dashboard_tab-inner';
+    let fileType = '#file-type';
     let tabBrand = '.dashboard_tab-brand-box';
     let tabBrandBG = $(tabBrand).find('rect');
     let tabBrandLogo = $(tabBrand).find('path');
     let pythonLabel = '.dashboard_tab-label.python';
     let mojoLabel = '.dashboard_tab-label.mojo';
+    let progressLineCode = '.dashboard_progress-line';
     let pythonCode = '#pythonCode';
     let mojoCode = '#mojoCode';
 
-    tl.to(heading, { opacity: 1 })
+    const pythonCodeAnim = () => {
+      let tl = gsap.timeline();
+
+      tl.fromTo('#dashboard', { opacity: 0 }, { opacity: 1, duration: 0 }, '<').add(
+        codeAnimation(pythonCode),
+        '<'
+      );
+      return tl;
+    };
+
+    const mojoCodeAnim = () => {
+      let tl = gsap.timeline();
+      tl.to(tabBrand, { xPercent: 133 }, '+=2')
+        .to(tabBrandBG, { fill: '#B5C0F6' }, '<')
+        .to(tabBrandLogo, { fill: '#020C13' }, '<')
+        .to(pythonLabel, { opacity: 0 }, '<')
+        .to(mojoLabel, { opacity: '1', duration: 0 })
+        .add(letterAnimation(mojoLabel, 'label'), '<')
+        .set(pythonCode, { display: 'none' }, '<')
+        .set(mojoCode, { display: 'block' }, '<')
+        .add(codeAnimation(mojoCode), '<')
+        .add(gsap.delayedCall(3));
+      return tl;
+    };
+
+    let reveal = gsap.timeline({ delay: 0.6 });
+    reveal
+      .to(heading, { opacity: 1 })
+      .call(() => {
+        codeAnim.play();
+      })
       .add(letterAnimation('h1'), '<')
-      .to(par, { opacity: 1, duration: 0.5 }, '<1')
-      .to(btn, { opacity: 1, duration: 0.5 }, '<0.4')
-      .fromTo('#dashboard', { opacity: 0 }, { opacity: 1, duration: 0 }, '<')
-      .add(codeAnimation(pythonCode), '<')
-      .to(tabBrand, { xPercent: 133 }, '+=1')
-      .to(tabBrandBG, { fill: '#B5C0F6' }, '<')
-      .to(tabBrandLogo, { fill: '#020C13' }, '<')
-      .to(pythonLabel, { opacity: 0 }, '<')
-      .to(mojoLabel, { opacity: '1', duration: 0 })
-      .add(letterAnimation(mojoLabel, 'label'), '<')
-      .set(pythonCode, { display: 'none' }, '<')
-      .set(mojoCode, { display: 'block' }, '<')
-      .add(codeAnimation(mojoCode), '<');
+      .to(par, { opacity: 1, duration: 0.5 })
+      .to(btn, { opacity: 1, duration: 0.5 });
+
+    let codeAnim = gsap.timeline({ repeat: -1, paused: true });
+    // Python Code
+    codeAnim
+      .add(pythonCodeAnim())
+      // Mojo Code
+      .add(mojoCodeAnim());
   });
 
   // Tabs
@@ -152,10 +179,11 @@ $(document).ready(function () {
       // Find child ".hero-dashboard_code-block"
       const codeBlock = swiperInstance.slides[activeIndex].querySelector('.dashboard_code-block');
 
-      // Run codeAnimation() this function on that child
-      if (codeBlock) {
+      // Run codeAnimation() this function on that child only if it hasn't been animated before
+      if (codeBlock && !codeBlock.classList.contains('animated')) {
         $(codeBlock).show();
         codeAnimation(codeBlock);
+        codeBlock.classList.add('animated'); // Add 'animated' class after running the animation
       }
     }
 

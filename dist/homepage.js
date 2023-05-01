@@ -46,11 +46,31 @@
         globalLetterIndex++;
       });
       if (highlights.length) {
-        const currentBgColor = window.getComputedStyle(document.body).getPropertyValue("background-color");
-        const currentBgColorRGBA = currentBgColor.replace(/^rgb(a)?\(/, "").replace(/\)$/, "");
-        const currentBgColorHex = currentBgColor.match(/^#(?:[0-9a-f]{3}){1,2}$/i) ? currentBgColor : null;
-        const backgroundColor = currentBgColorHex || `rgba(${currentBgColorRGBA}, 0)`;
-        codeTimeline.from(highlights, { backgroundColor, duration: 0.35 });
+        const firstHighlight = highlights[0];
+        const currentBgColor = window.getComputedStyle(firstHighlight).getPropertyValue("background-color");
+        const currentBoxShadow = window.getComputedStyle(firstHighlight).getPropertyValue("box-shadow");
+        const hexToRGBA = (hex, alpha) => {
+          const [r, g, b] = hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        const rgbaToTransparent = (rgba) => {
+          const rgbaArray = rgba.replace(/^rgba?\(/, "").replace(/\)$/, "").split(",");
+          return `rgba(${rgbaArray[0]}, ${rgbaArray[1]}, ${rgbaArray[2]}, 0)`;
+        };
+        const isHex = (color) => /^#(?:[0-9a-f]{3}){1,2}$/i.test(color);
+        const initialBackgroundColor = isHex(currentBgColor) ? hexToRGBA(currentBgColor, 0) : rgbaToTransparent(currentBgColor);
+        const initialBoxShadow = currentBoxShadow.replace(/rgba?\([^)]+\)/g, (match) => {
+          return isHex(match) ? hexToRGBA(match, 0) : rgbaToTransparent(match);
+        });
+        Array.from(highlights).forEach((element2) => {
+          element2.style.backgroundColor = initialBackgroundColor;
+          element2.style.boxShadow = initialBoxShadow;
+        });
+        codeTimeline.to(highlights, {
+          backgroundColor: currentBgColor,
+          boxShadow: currentBoxShadow,
+          duration: 0.35
+        });
       }
     });
     return codeTimeline;
@@ -187,6 +207,7 @@
       $(".hero-headings").find("div").eq(1).html()
     ];
     function switchDeviceIcons() {
+      console.log("Devices");
       const hideClass = "hide";
       $(".hero-devices .hero-box_inner").each(function() {
         const icons = $(this).find(".hero-box_icon");
@@ -207,9 +228,9 @@
       items.removeClass("active");
       items.eq(index).addClass("active");
     }
-    function triggerElementClick(element) {
+    const triggerElementClick = (element) => {
       $(element).trigger("click");
-    }
+    };
     function addClassToElement(element, className) {
       $(element).addClass(className);
     }
@@ -255,9 +276,15 @@
       ).add(animateLabel($(parent).find(graphLegend).children()), "<+=0.3");
       return tl;
     };
+    let brandLogoClickTriggered = false;
     const initialReveal = () => {
       let main = gsap.timeline();
-      main.addLabel("Start").call(() => triggerElementClick(brandLogo)).call(() => updateNavigation(0)).add(letterAnimation(heroHeading, "heading"), "<").call(() => triggerElementClick(brandLogo)).from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, "<0.1").from(introText, { opacity: 0, duration: baseDuration }).fromTo(
+      main.addLabel("Start").call(() => {
+        if (!brandLogoClickTriggered) {
+          triggerElementClick(brandLogo);
+          brandLogoClickTriggered = true;
+        }
+      }).call(() => updateNavigation(0)).add(letterAnimation(heroHeading, "heading"), "<").call(() => triggerElementClick(brandLogo)).from(heroButtons, { opacity: 0, stagger: 0.1, duration: baseDuration }, "<0.1").from(introText, { opacity: 0, duration: baseDuration }).fromTo(
         $(modularBox),
         { width: "19em", opacity: 0 },
         { width: "12.2em", opacity: 1, duration: 1 },
@@ -298,31 +325,12 @@
     };
     const platfrom = () => {
       let main = gsap.timeline();
-      main.addLabel("Reveal").add(initialReveal());
-      let staggerDuration = (index) => {
-        return 2 - 0.15 * index;
-      };
-      const CloudsSwitch = gsap.timeline().to(heroBoxesRight, {
-        opacity: 0,
-        duration: 0.15
-      }).set(heroBoxesRight, {
-        x: "3em"
-      }).call(() => switchDeviceIcons).to(heroBoxesRight, {
-        opacity: 1,
-        x: "0",
-        duration: (index) => {
-          return staggerDuration(index);
-        },
-        stagger: 0.15
-      });
-      const repeatedCloudsSwitch = gsap.timeline().add(CloudsSwitch).delay(1).repeat(1).repeatDelay(1);
-      main.addLabel("loopDevices");
-      main.add(repeatedCloudsSwitch, "loopDevices");
+      main.addLabel("Reveal").add(initialReveal()).add(gsap.delayedCall(5));
       return main;
     };
     const inferenceEngine = () => {
       let main = gsap.timeline();
-      main.addLabel("showGraph").addLabel("animateGraph1").to(dashboardInner, { opacity: 0, display: "none" }, "<").add(animateLabel($(graphHead).children(), 0.05), "<").add(scaleGraph($(graphBox).eq(0)), "<").add(animateGraph($(graphBox).eq(0)), ">-0.4").addLabel("animateGraph2").add(scaleGraph($(graphBox).eq(1)), "<").add(animateGraph($(graphBox).eq(1)), ">-0.4").addLabel("animateGraph3").add(scaleGraph($(graphBox).eq(2)), "<").add(animateGraph($(graphBox).eq(2)), ">-0.4").add(gsap.delayedCall(1));
+      main.addLabel("showGraph").addLabel("animateGraph1").to(dashboardInner, { opacity: 0, display: "none" }, "<").add(animateLabel($(graphHead).children(), 0.05), "<").add(scaleGraph($(graphBox).eq(0)), "<").add(animateGraph($(graphBox).eq(0)), ">-0.4").addLabel("animateGraph2").add(scaleGraph($(graphBox).eq(1)), "<").add(animateGraph($(graphBox).eq(1)), ">-0.4").addLabel("animateGraph3").add(scaleGraph($(graphBox).eq(2)), "<").add(animateGraph($(graphBox).eq(2)), ">-0.4").add(gsap.delayedCall(6));
       return main;
     };
     const mojo = () => {
@@ -336,8 +344,8 @@
         { opacity: 1, display: "flex", duration: 0.5 }
       ).to(closeCircles, { opacity: 1, stagger: 0.1, duration: baseDuration }, "<-=0.3").add(letterAnimation(dashboardTitle + " div", "label"), "<").to([dashboardTitle, langTab], { opacity: 1, duration: baseDuration, stagger: 0.2 }, "<").to(dashboardCode, { opacity: 1, duration: baseDuration }, "<").addLabel("graph fade out").to(graphs, { opacity: 0, display: "none", duration: 0.5 });
       main.addLabel("pythonCode").add(codeAnimation(pythonCode), "pythonCode+0.3");
-      main.addLabel("switchCodeTabs").to(pythonTab, { opacity: 0, duration: baseDuration / 2 }, "switchCodeTabs").to(mojoTab, { opacity: 1, display: "flex", duration: baseDuration }, "<").set(pythonCode, { display: "none" }, "<").set(mojoCode, { display: "block" }, "<");
-      main.add(codeAnimation(mojoCode), "mojoCode+0.3").addLabel("mojoCode");
+      main.addLabel("switchCodeTabs", "+=2").to(pythonTab, { opacity: 0, duration: baseDuration / 2 }, "switchCodeTabs").to(mojoTab, { opacity: 1, display: "flex", duration: baseDuration }, "<").set(pythonCode, { display: "none" }, "<").set(mojoCode, { display: "block" }, "<");
+      main.add(codeAnimation(mojoCode), "mojoCode+0.3", "<");
       return main;
     };
     const heroTrigger = {
@@ -353,13 +361,19 @@
         scrollTrigger: heroTrigger
       });
       main.addLabel($(navigationItems).eq(0).text() + "-Start").add(platfrom(), "<").addLabel($(navigationItems).eq(0).text() + "-End").add(dashboardTransition()).addLabel($(navigationItems).eq(1).text() + "-Start").add(animateHeadings(1)).add(inferenceEngine(), "<").addLabel($(navigationItems).eq(1).text() + "-End").addLabel($(navigationItems).eq(2).text() + "-Start").add(animateHeadings(2)).add(mojo(), "<").addLabel($(navigationItems).eq(2).text() + "-End");
-      $(navigationItems).on("click", function() {
-        if ($(this).index() === 0) {
-          animateHeadings(0);
+      $(navigationItems).off("click").on("click", function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        let index = $(this).index();
+        let text = $(this).text();
+        if (index === 0) {
+          triggerElementClick(brandLogo);
+          main.seek(text + "-Start");
+          main.tweenFromTo(text + "-Start", text + "-End");
+        } else {
+          main.seek(text + "-Start").tweenFromTo(text + "-Start", text + "-End");
         }
         console.log("Click");
-        let text = $(this).text();
-        main.seek(text + "-Start").tweenFromTo(text + "-Start", text + "-End");
       });
       return main;
     };

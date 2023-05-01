@@ -46,11 +46,31 @@
         globalLetterIndex++;
       });
       if (highlights.length) {
-        const currentBgColor = window.getComputedStyle(document.body).getPropertyValue("background-color");
-        const currentBgColorRGBA = currentBgColor.replace(/^rgb(a)?\(/, "").replace(/\)$/, "");
-        const currentBgColorHex = currentBgColor.match(/^#(?:[0-9a-f]{3}){1,2}$/i) ? currentBgColor : null;
-        const backgroundColor = currentBgColorHex || `rgba(${currentBgColorRGBA}, 0)`;
-        codeTimeline.from(highlights, { backgroundColor, duration: 0.35 });
+        const firstHighlight = highlights[0];
+        const currentBgColor = window.getComputedStyle(firstHighlight).getPropertyValue("background-color");
+        const currentBoxShadow = window.getComputedStyle(firstHighlight).getPropertyValue("box-shadow");
+        const hexToRGBA = (hex, alpha) => {
+          const [r, g, b] = hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        const rgbaToTransparent = (rgba) => {
+          const rgbaArray = rgba.replace(/^rgba?\(/, "").replace(/\)$/, "").split(",");
+          return `rgba(${rgbaArray[0]}, ${rgbaArray[1]}, ${rgbaArray[2]}, 0)`;
+        };
+        const isHex = (color) => /^#(?:[0-9a-f]{3}){1,2}$/i.test(color);
+        const initialBackgroundColor = isHex(currentBgColor) ? hexToRGBA(currentBgColor, 0) : rgbaToTransparent(currentBgColor);
+        const initialBoxShadow = currentBoxShadow.replace(/rgba?\([^)]+\)/g, (match) => {
+          return isHex(match) ? hexToRGBA(match, 0) : rgbaToTransparent(match);
+        });
+        Array.from(highlights).forEach((element2) => {
+          element2.style.backgroundColor = initialBackgroundColor;
+          element2.style.boxShadow = initialBoxShadow;
+        });
+        codeTimeline.to(highlights, {
+          backgroundColor: currentBgColor,
+          boxShadow: currentBoxShadow,
+          duration: 0.35
+        });
       }
     });
     return codeTimeline;
@@ -112,6 +132,7 @@
         const style = window.getComputedStyle(element);
         if (style.overflow === "auto" || style.overflow === "scroll" || style.overflowX === "auto" || style.overflowX === "scroll" || style.overflowY === "auto" || style.overflowY === "scroll") {
           element.classList.add("no-scrollbar");
+          element.classList.add("swiper-no-swiping");
         }
       }
     }

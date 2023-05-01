@@ -39,7 +39,10 @@ $(document).ready(function () {
         style.overflowY === 'auto' ||
         style.overflowY === 'scroll'
       ) {
+        // Disable Scrollbar
         element.classList.add('no-scrollbar');
+        // Fix for inner scroll inside swipers
+        element.classList.add('swiper-no-swiping');
       }
     }
   }

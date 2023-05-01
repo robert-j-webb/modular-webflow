@@ -53,15 +53,47 @@ const revealLetters = (elements, letterDelay) => {
       globalLetterIndex++; // increment the global letter index
     });
     if (highlights.length) {
+      const firstHighlight = highlights[0];
       const currentBgColor = window
-        .getComputedStyle(document.body)
+        .getComputedStyle(firstHighlight)
         .getPropertyValue('background-color');
-      const currentBgColorRGBA = currentBgColor.replace(/^rgb(a)?\(/, '').replace(/\)$/, '');
-      const currentBgColorHex = currentBgColor.match(/^#(?:[0-9a-f]{3}){1,2}$/i)
-        ? currentBgColor
-        : null;
-      const backgroundColor = currentBgColorHex || `rgba(${currentBgColorRGBA}, 0)`;
-      codeTimeline.from(highlights, { backgroundColor, duration: 0.35 });
+      const currentBoxShadow = window
+        .getComputedStyle(firstHighlight)
+        .getPropertyValue('box-shadow');
+
+      const hexToRGBA = (hex, alpha) => {
+        const [r, g, b] = hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      };
+
+      const rgbaToTransparent = (rgba) => {
+        const rgbaArray = rgba
+          .replace(/^rgba?\(/, '')
+          .replace(/\)$/, '')
+          .split(',');
+        return `rgba(${rgbaArray[0]}, ${rgbaArray[1]}, ${rgbaArray[2]}, 0)`;
+      };
+
+      const isHex = (color) => /^#(?:[0-9a-f]{3}){1,2}$/i.test(color);
+
+      const initialBackgroundColor = isHex(currentBgColor)
+        ? hexToRGBA(currentBgColor, 0)
+        : rgbaToTransparent(currentBgColor);
+
+      const initialBoxShadow = currentBoxShadow.replace(/rgba?\([^)]+\)/g, (match) => {
+        return isHex(match) ? hexToRGBA(match, 0) : rgbaToTransparent(match);
+      });
+
+      Array.from(highlights).forEach((element) => {
+        element.style.backgroundColor = initialBackgroundColor;
+        element.style.boxShadow = initialBoxShadow;
+      });
+
+      codeTimeline.to(highlights, {
+        backgroundColor: currentBgColor,
+        boxShadow: currentBoxShadow,
+        duration: 0.35,
+      });
     }
   });
   return codeTimeline;
