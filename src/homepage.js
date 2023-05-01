@@ -23,7 +23,7 @@ $(document).ready(function () {
   const iconBoxArrow = '.hero-dashboard_arrow';
   const cloudBorder = '.hero-devices_border';
 
-  const introText = '#intro-text';
+  const introText = '.hero-paragraphs';
 
   // Dashboard Elements
   const dashboard = '#dashboard';
@@ -73,10 +73,20 @@ $(document).ready(function () {
   }
   function switchHeadings(index) {
     $(heroHeading).html(headings[index]);
-    let tlAnimation;
     wrapLetters(heroHeading);
     updateNavigation(index);
   }
+  function switchParagraphs(index) {
+    console.log('Fire');
+    $(introText)
+      .find('p')
+      .fadeOut()
+      .promise()
+      .done(function () {
+        $(introText).find('p').eq(index).fadeIn();
+      });
+  }
+
   function updateNavigation(index) {
     let items = $(navigationItems);
     items.removeClass('active');
@@ -102,10 +112,14 @@ $(document).ready(function () {
     headingsTimeline = gsap.timeline();
     width = width ? width : '90%';
     headingsTimeline
+      .call(() => switchParagraphs(index))
       .to(heroHeading, { opacity: 0, y: '2em', duration: 0.5 })
       .add(() => {
         let tl = gsap.timeline();
-        tl.call(() => checkWidth(width)).call(() => switchHeadings(index));
+        tl.call(() => {
+          checkWidth(width);
+          switchHeadings(index);
+        });
         return tl;
       })
       .to(heroHeading, { opacity: 1, y: '0em', duration: 0.5 });
@@ -340,6 +354,7 @@ $(document).ready(function () {
         let text = $(this).text();
 
         if (index === 0) {
+          animateHeadings(0);
           triggerElementClick(brandLogo);
           main.seek(text + '-Start');
           main.tweenFromTo(text + '-Start', text + '-End');
@@ -357,12 +372,14 @@ $(document).ready(function () {
 
   ScrollTrigger.matchMedia({
     '(min-width: 768px)': function () {
+      brandLogoClickTriggered = false;
       let tl = heroAnimation();
     },
     '(max-width: 767px)': function () {
       let tl = gsap.timeline({
         scrollTrigger: heroTrigger,
       });
+      brandLogoClickTriggered = false;
       tl.add(initialReveal());
       animateHeadings(0);
     },

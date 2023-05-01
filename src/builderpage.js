@@ -20,10 +20,9 @@ $(document).ready(function () {
     const pythonCodeAnim = () => {
       let tl = gsap.timeline();
 
-      tl.fromTo('#dashboard', { opacity: 0 }, { opacity: 1, duration: 0 }, '<').add(
-        codeAnimation(pythonCode),
-        '<'
-      );
+      tl.fromTo('#dashboard', { opacity: 0 }, { opacity: 1, duration: 0 }, '<')
+        .set(fileType, { text: 'PY' })
+        .add(codeAnimation(pythonCode), '<');
       return tl;
     };
 
@@ -34,6 +33,7 @@ $(document).ready(function () {
         .to(tabBrandLogo, { fill: '#020C13' }, '<')
         .to(pythonLabel, { opacity: 0 }, '<')
         .to(mojoLabel, { opacity: '1', duration: 0 })
+        .set(fileType, { text: '&#x1F525' })
         .add(letterAnimation(mojoLabel, 'label'), '<')
         .set(pythonCode, { display: 'none' }, '<')
         .set(mojoCode, { display: 'block' }, '<')
