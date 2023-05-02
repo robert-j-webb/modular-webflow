@@ -72,7 +72,6 @@ $(document).ready(function () {
   // --- Functions
   // Insta Functions
   function switchDeviceIcons() {
-    console.log('Devices');
     const hideClass = 'hide';
     $('.hero-devices .hero-box_inner').each(function () {
       const icons = $(this).find('.hero-box_icon');
@@ -89,7 +88,6 @@ $(document).ready(function () {
     updateNavigation(index);
   }
   function switchParagraphs(index) {
-    console.log('Fire' + index);
     $(introText).find('p').stop(true, true).fadeOut().eq(index).fadeIn();
   }
 
@@ -107,31 +105,23 @@ $(document).ready(function () {
 
   // Animated Functions
   let headingsTimeline = null;
-  const animateHeadings = (index, width) => {
-    const checkWidth = (width) => {
-      if (width) {
-        $(heroHeading).width(width);
-      } else {
-        $(heroHeading).removeAttr('style');
-      }
-    };
+  const animateHeadings = (index) => {
     headingsTimeline = gsap.timeline();
-    width = width ? width : '90%';
     headingsTimeline
-      .to(heroHeading, { opacity: 0, y: '2em', duration: 0.5 })
-      .add(() => {
-        let tl = gsap.timeline();
-        tl.call(() => {
-          checkWidth(width);
+      .to(heroHeading, {
+        opacity: 0,
+        y: '0.25em',
+        duration: 0.2,
+        onComplete: function () {
           switchHeadings(index);
           switchParagraphs(index);
-        });
-        return tl;
+        },
       })
       .to(heroHeading, { opacity: 1, y: '0em', duration: 0.5 });
 
     return headingsTimeline;
   };
+
   const animateLabel = (element, time) => {
     let duration = time;
     let tl = gsap.timeline();
@@ -353,6 +343,8 @@ $(document).ready(function () {
       .add(mojo(), '<')
       .addLabel(navigationsText[2] + '-End');
 
+    console.log(main);
+
     // --- Start Animation
 
     // --- Hero Navigation Clicks
@@ -373,8 +365,6 @@ $(document).ready(function () {
         }
 
         main.seek(text + '-Start').tweenFromTo(text + '-Start', text + '-End');
-
-        console.log('Click');
       });
 
     return main;

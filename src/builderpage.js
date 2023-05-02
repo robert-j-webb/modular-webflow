@@ -6,6 +6,7 @@ $(document).ready(function () {
     let heading = $(this).find('h1');
     let par = $(this).find('p');
     let btn = $(this).find('.button');
+    let tabBtn = '.dashboard_tab';
     let tab = '.dashboard_tab-inner';
     let fileType = '#file-type';
     let tabBrand = '.dashboard_tab-brand-box';
@@ -54,11 +55,31 @@ $(document).ready(function () {
       .to(btn, { opacity: 1, duration: 0.5 });
 
     let codeAnim = gsap.timeline({ repeat: -1, paused: true });
-    // Python Code
+    let codeVisible = 0;
     codeAnim
+      // Python Code
       .add(pythonCodeAnim())
+      .call(() => {
+        codeVisible = 0;
+      })
+      .addLabel('Python Code')
       // Mojo Code
-      .add(mojoCodeAnim());
+      .add(mojoCodeAnim())
+      .call(() => {
+        codeVisible = 1;
+      })
+      .addLabel('Mojo Code');
+
+    $(tabBtn).on('click', function () {
+      console.log(codeVisible);
+      if (codeVisible === 0) {
+        codeAnim.pause().seek('Mojo Code');
+        codeVisible = 1;
+      } else if (codeVisible === 1) {
+        codeAnim.pause().seek('Python Code');
+        codeVisible = 0;
+      }
+    });
   });
 
   // Tabs
@@ -229,6 +250,7 @@ $(document).ready(function () {
           observer: true,
           on: {
             init: (swiperInstance) => {
+              $('.dashboard_code-block').removeClass('animated');
               $(sliderCodes).hide();
               handleSwiperSlide(swiperInstance);
 
