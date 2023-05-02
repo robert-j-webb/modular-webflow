@@ -62,6 +62,13 @@ $(document).ready(function () {
     $('.hero-headings').find('div').eq(1).html(),
   ];
 
+  // Navigation
+  const navigationsText = [
+    $(navigationItems).eq(0).text(),
+    $(navigationItems).eq(1).text(),
+    $(navigationItems).eq(2).text(),
+  ];
+
   // --- Functions
   // Insta Functions
   function switchDeviceIcons() {
@@ -82,14 +89,8 @@ $(document).ready(function () {
     updateNavigation(index);
   }
   function switchParagraphs(index) {
-    console.log('Fire');
-    $(introText)
-      .find('p')
-      .fadeOut()
-      .promise()
-      .done(function () {
-        $(introText).find('p').eq(index).fadeIn();
-      });
+    console.log('Fire' + index);
+    $(introText).find('p').stop(true, true).fadeOut().eq(index).fadeIn();
   }
 
   function updateNavigation(index) {
@@ -117,13 +118,13 @@ $(document).ready(function () {
     headingsTimeline = gsap.timeline();
     width = width ? width : '90%';
     headingsTimeline
-      .call(() => switchParagraphs(index))
       .to(heroHeading, { opacity: 0, y: '2em', duration: 0.5 })
       .add(() => {
         let tl = gsap.timeline();
         tl.call(() => {
           checkWidth(width);
           switchHeadings(index);
+          switchParagraphs(index);
         });
         return tl;
       })
@@ -249,7 +250,10 @@ $(document).ready(function () {
     let main = gsap.timeline();
 
     // Initial Reveal
-    main.addLabel('Reveal').add(initialReveal()).add(gsap.delayedCall(5));
+    main
+      .addLabel('Reveal')
+      .add(initialReveal())
+      .add(gsap.delayedCall(5, () => {}));
 
     return main;
   };
@@ -269,7 +273,7 @@ $(document).ready(function () {
       .addLabel('animateGraph3')
       .add(scaleGraph($(graphBox).eq(2)), '<')
       .add(animateGraph($(graphBox).eq(2)), '>-0.4')
-      .add(gsap.delayedCall(6));
+      .add(gsap.delayedCall(6, () => {}));
     return main;
   };
   const mojo = () => {
@@ -317,7 +321,7 @@ $(document).ready(function () {
     trigger: '.section_headera',
     start: 'top center',
     end: 'bottom top',
-    toggleActions: 'play pause play pause',
+    toggleActions: 'play none none none',
   };
   const heroAnimation = () => {
     // Animation
@@ -325,26 +329,27 @@ $(document).ready(function () {
       delay: 0.5,
       ease: Power2.easeOut,
       scrollTrigger: heroTrigger,
+      paused: true,
     });
 
     // Define Animation
     main
       // Platform
-      .addLabel($(navigationItems).eq(0).text() + '-Start')
+      .addLabel(navigationsText[0] + '-Start')
       .add(platfrom(), '<')
-      .addLabel($(navigationItems).eq(0).text() + '-End')
+      .addLabel(navigationsText[0] + '-End')
       // Dashboard Transition
       .add(dashboardTransition())
       // Inference
-      .addLabel($(navigationItems).eq(1).text() + '-Start')
+      .addLabel(navigationsText[1] + '-Start')
       .add(animateHeadings(1))
       .add(inferenceEngine(), '<')
-      .addLabel($(navigationItems).eq(1).text() + '-End')
+      .addLabel(navigationsText[1] + '-End')
       // Mojo
-      .addLabel($(navigationItems).eq(2).text() + '-Start')
+      .addLabel(navigationsText[2] + '-Start')
       .add(animateHeadings(2))
       .add(mojo(), '<')
-      .addLabel($(navigationItems).eq(2).text() + '-End');
+      .addLabel(navigationsText[2] + '-End');
 
     // --- Start Animation
 
@@ -356,16 +361,16 @@ $(document).ready(function () {
         event.preventDefault();
 
         let index = $(this).index();
-        let text = $(this).text();
+        let text = navigationsText[index];
 
         if (index === 0) {
           animateHeadings(0);
-          triggerElementClick(brandLogo);
-          main.seek(text + '-Start');
-          main.tweenFromTo(text + '-Start', text + '-End');
-        } else {
-          main.seek(text + '-Start').tweenFromTo(text + '-Start', text + '-End');
+          if (brandLogoClickTriggered === true) {
+            triggerElementClick(brandLogo);
+          }
         }
+
+        main.seek(text + '-Start').tweenFromTo(text + '-Start', text + '-End');
 
         console.log('Click');
       });
@@ -378,14 +383,15 @@ $(document).ready(function () {
   ScrollTrigger.matchMedia({
     '(min-width: 768px)': function () {
       brandLogoClickTriggered = false;
-      let tl = heroAnimation();
+      const tl = heroAnimation();
+      tl.seek(navigationsText[1] + '-Start').addPause(navigationsText[1] + '-End');
     },
     '(max-width: 767px)': function () {
-      let tl = gsap.timeline({
+      let mobileAnim = gsap.timeline({
         scrollTrigger: heroTrigger,
       });
       brandLogoClickTriggered = false;
-      tl.add(initialReveal());
+      mobileAnim.add(initialReveal());
       animateHeadings(0);
     },
   });
