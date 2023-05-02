@@ -375,6 +375,7 @@ $(document).ready(function () {
   ScrollTrigger.matchMedia({
     '(min-width: 768px)': function () {
       brandLogoClickTriggered = false;
+      animateHeadings(1);
       const tl = heroAnimation();
       tl.seek(navigationsText[1] + '-Start').addPause(navigationsText[1] + '-End');
     },
