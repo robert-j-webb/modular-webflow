@@ -42,7 +42,7 @@ $(document).ready(function () {
         swiper = new Swiper('.steps_component .padding-small', {
           // Optional parameters
           slidesPerView: 1,
-          spaceBetween: 24,
+          spaceBetween: 0,
           speed: 250,
           observer: true,
 

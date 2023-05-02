@@ -253,6 +253,7 @@ $(document).ready(function () {
     main
       .addLabel('Reveal')
       .add(initialReveal())
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       .add(gsap.delayedCall(5, () => {}));
 
     return main;
@@ -273,6 +274,7 @@ $(document).ready(function () {
       .addLabel('animateGraph3')
       .add(scaleGraph($(graphBox).eq(2)), '<')
       .add(animateGraph($(graphBox).eq(2)), '>-0.4')
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       .add(gsap.delayedCall(6, () => {}));
     return main;
   };

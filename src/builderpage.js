@@ -1,4 +1,4 @@
-import { codeAnimation, codeFile, letterAnimation } from '$utils/globalFunctions';
+import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globalFunctions';
 
 $(document).ready(function () {
   // Hero Animation
@@ -38,7 +38,8 @@ $(document).ready(function () {
         .set(pythonCode, { display: 'none' }, '<')
         .set(mojoCode, { display: 'block' }, '<')
         .add(codeAnimation(mojoCode), '<')
-        .add(gsap.delayedCall(3));
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        .add(gsap.delayedCall(3, () => {}));
       return tl;
     };
 
@@ -112,8 +113,21 @@ $(document).ready(function () {
 
   const showCode = (nextIndex) => {
     tabCodes.eq(nextIndex).show();
-    tabTimeline.add(codeAnimation(tabCodes.eq(nextIndex)));
+    tabTimeline.add(codeAnimation(tabCodes.eq(nextIndex))).add(updateFileName(nextIndex), '<');
     tabTimeline.play();
+  };
+
+  const updateFileName = (nextIndex, customElement) => {
+    let fileNames = $('.dashboard_code .file-name');
+    let fileName = fileNames.eq(nextIndex).text();
+    let fileLabel = customElement ? $(customElement) : $('.dashboard_head-filename');
+
+    fileLabel.text('');
+
+    let tl = gsap.timeline();
+    tl.add(typeText(fileLabel, fileName));
+
+    return tl;
   };
 
   const initTabs = () => {
@@ -159,7 +173,7 @@ $(document).ready(function () {
    **************************************************************/
   let swiper;
   let init = false;
-  const sliderCodes = $('.tabs_slider .cardb_visual .hero-dashboard_code-block');
+  const sliderCodes = $('.tabs_slider .cardb_visual .dashboard_code-block');
 
   /* Which media query
    **************************************************************/
@@ -178,11 +192,16 @@ $(document).ready(function () {
 
       // Find child ".hero-dashboard_code-block"
       const codeBlock = swiperInstance.slides[activeIndex].querySelector('.dashboard_code-block');
+      const codeLabel = swiperInstance.slides[activeIndex].querySelector(
+        '.dashboard_head-filename'
+      );
 
       // Run codeAnimation() this function on that child only if it hasn't been animated before
       if (codeBlock && !codeBlock.classList.contains('animated')) {
         $(codeBlock).show();
-        codeAnimation(codeBlock);
+        let tl = gsap.timeline();
+        tl.add(updateFileName(activeIndex, codeLabel)).add(codeAnimation(codeBlock), '<');
+        showCode;
         codeBlock.classList.add('animated'); // Add 'animated' class after running the animation
       }
     }
@@ -210,10 +229,10 @@ $(document).ready(function () {
           observer: true,
           on: {
             init: (swiperInstance) => {
-              handleSwiperSlide(swiperInstance);
-            },
-            slideChange: () => {
               $(sliderCodes).hide();
+              handleSwiperSlide(swiperInstance);
+
+              $('.tabs_slider').find('.dashboard_head-filename');
             },
             transitionEnd: (swiperInstance) => {
               handleSwiperSlide(swiperInstance);
