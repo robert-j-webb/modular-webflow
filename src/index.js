@@ -182,6 +182,8 @@ $(document).ready(function () {
       .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' }, '<');
     return navReveal;
   }
+
+  // Scroll Disabler
   let scrollPosition;
   const disableScroll = () => {
     if (!menuOpenAnim) {
@@ -206,10 +208,6 @@ $(document).ready(function () {
   // Actions
   // Open on Click
   $('.navbar_menu-btn').on('click', openMenu);
-  $('.navbar_dropdown').on('click', function () {
-    if (!dropdownOpen) {
-    }
-  });
 
   // Functions
   function openMenu() {

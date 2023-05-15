@@ -89,9 +89,6 @@ if (document.getElementById('blog-posts-container')) {
       padding = 64;
     }
 
-    console.log(scrollPadding);
-    console.log(padding);
-
     scrollContainer.style.paddingLeft = scrollPadding + 'px';
     scrollContainer.style.paddingRight = scrollPadding + 'px';
     scrollContainer.style['scroll-padding-left'] = scrollPadding + 'px';

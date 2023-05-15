@@ -14,6 +14,7 @@ const ENTRY_POINTS = [
   'src/deployerpage.js',
   'src/devpage.js',
   'src/signup.js',
+  'src/get-started-flows.js',
   'src/legacy.js',
   'src/cookies.js',
 ];
