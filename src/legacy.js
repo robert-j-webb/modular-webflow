@@ -311,7 +311,7 @@ if (window.location.pathname === '/career-post') {
   document.getElementById('job-image').src = images[randomImage - 1];
 }
 
-// if url is /team
+/* if url is /team
 if (window.location.pathname === '/team') {
   // add event listener to all elements with class .team-overlay_close-link-wrapper
   document.querySelectorAll('.team-overlay_close-link-wrapper').forEach((element) => {
@@ -327,6 +327,7 @@ if (window.location.pathname === '/team') {
     });
   });
 }
+*/
 
 // if user presses the escape key close the overlay
 document.addEventListener('keydown', (e) => {
