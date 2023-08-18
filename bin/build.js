@@ -11,6 +11,7 @@ const ENTRY_POINTS = [
   'src/index.js',
   'src/builderpage.js',
   'src/homepage.js',
+  'src/homepage-new.js',
   'src/deployerpage.js',
   'src/devpage.js',
   'src/signup.js',
