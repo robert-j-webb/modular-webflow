@@ -1,12 +1,7 @@
 gsap.registerPlugin(ScrollTrigger);
 
-import {
-  animateHorizontalGraph,
-  codeAnimation,
-  codeFile,
-  letterAnimation,
-  wrapLetters,
-} from '$utils/globalFunctions';
+import { animateHorizontalGraph, letterAnimation } from '$utils/globalFunctions';
+import { Termynal } from '$utils/termynal';
 
 $(document).ready(function () {
   // Init Reveal
@@ -23,13 +18,50 @@ $(document).ready(function () {
           scale: 0,
         });
 
-        var termynal = new Termynal('#mojoCode');
+        // Define all Termynal instances on page load
+        termynalsArr.forEach((id) => {
+          defineTermynal(id);
+          initTermynal(id);
+        });
+
+        // Set up infinite loop animation for each Termynal instance
+        Object.values(termynals).forEach((instance) => {
+          restartAnimation(instance);
+        });
         $(`#mojoCode`).css('visibility', 'visible');
       }, 400);
     }
   }, 100);
 
+  let termynalsArr = ['termynal-1'];
+
+  function restartAnimation(termynalInstance) {
+    termynalInstance.container.addEventListener('termynal-anim-end', () => {
+      setTimeout(() => {
+        termynalInstance.init();
+      }, 3000); // (DEFINE THE DELAY BEFORE REINIT);
+    });
+  }
+
   // Dictionary to hold the Termynal objects by their IDs
+  const termynals = {};
+
+  function defineTermynal(elementID) {
+    console.log(`Defining Termynal for: ${elementID}`);
+    termynals[elementID] = new Termynal(`#${elementID}`, {
+      startDelay: 600,
+      noInit: true,
+    });
+  }
+
+  function initTermynal(elementID) {
+    if (termynals[elementID]) {
+      termynals[elementID].init();
+      $(`#${elementID}`).css('visibility', 'visible');
+    } else {
+      console.warn(`Termynal instance for ${elementID} not found.`);
+    }
+  }
 
   // ------------- End  of Hero Dashboard Animation ----------
   // --- Swieprs
@@ -76,14 +108,6 @@ $(document).ready(function () {
 
     return handleSwiper;
   }
-
-  const handleHeroSwiper = initSwiper('.hero-swiper', '(max-width: 767px)', {
-    on: {
-      slideChange: function () {
-        animateHeadings(this.activeIndex);
-      },
-    },
-  });
 
   initSwiper('.carda_slider', '(max-width: 991px)', {});
 
