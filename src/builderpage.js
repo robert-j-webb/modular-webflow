@@ -3,6 +3,7 @@ import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globa
 $(document).ready(function () {
   // Hero Animation
   $('#hero').each(function () {
+    let title = $(this).find('#titleButton');
     let heading = $(this).find('h1');
     let par = $(this).find('p');
     let btn = $(this).find('.button');
@@ -51,8 +52,7 @@ $(document).ready(function () {
         codeAnim.play();
       })
       .add(letterAnimation('h1'), '<')
-      .to(par, { opacity: 1, duration: 0.5 })
-      .to(btn, { opacity: 1, duration: 0.5 });
+      .fromTo(title, { opacity: 0 }, { opacity: 1, duration: 0.5 }, '<+0.5');
 
     let codeAnim = gsap.timeline({ repeat: -1, paused: true });
     let codeVisible = 0;
