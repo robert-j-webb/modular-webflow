@@ -2,6 +2,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 import { animateHorizontalGraph, letterAnimation } from '$utils/globalFunctions';
 
+import { Termynal } from './utils/termynal';
+
 $(document).ready(function () {
   // Init Reveal
   const intervalId = setInterval(function () {
