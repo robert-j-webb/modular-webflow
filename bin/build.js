@@ -18,6 +18,7 @@ const ENTRY_POINTS = [
   'src/get-started-flows.js',
   'src/legacy.js',
   'src/cookies.js',
+  'src/sales.js',
 ];
 
 // Config dev serving

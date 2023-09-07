@@ -1,5 +1,5 @@
 // --------- Termynal Code -------- /
-export class Termynal {
+class Termynal {
   /**
    * Construct the widget's settings.
    * @param {(string|Node)=} container - Query selector or container element.

@@ -179,6 +179,7 @@ $(document).ready(function () {
       .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
       .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
       .from(menuLinksItems, revealAnim, '-=0.2')
+      .fromTo($('.navbar_buttons-respo .button'), { opacity: 0 }, { opacity: 1, stagger: 0.2 })
       .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' }, '<');
     return navReveal;
   }
