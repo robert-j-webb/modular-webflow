@@ -300,12 +300,12 @@ if (window.location.pathname === '/career-post') {
 
   // array of 7 items
   let images = [
-    'https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5d9967c0a74ca7429_career-post-02.jpg',
-    'https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5e91ab786257fe203_career-post-01.jpg',
-    'https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c5bbb025deabbdb1fd_career-post-03.jpg',
-    'https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c52a77f6a73ed4f81a_career-post-06.jpg',
-    'https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c6fb5c4c90a145b452_career-post-05.jpg',
-    'https://uploads-ssl.webflow.com/629e315172c95f056b723934/62b936c64d12064c743d9cf3_career-post-07.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd160cec59c4c84093ec_career-post-02.jpeg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd15457e6979d96abfa7_career-post-01.jpeg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/642fcdff260d59b87c063981_career-post-03.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd16010cd68dae522de2_career-post-06.jpeg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6510c402906e7cec8ea5b43d_carrer-post-05.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd150c840597a839e9fc_career-post-07.jpeg',
   ];
 
   document.getElementById('job-image').src = images[randomImage - 1];
