@@ -300,7 +300,7 @@ if (window.location.pathname === '/career-post') {
 
   // array of 7 items
   let images = [
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd160cec59c4c84093ec_career-post-02.jpeg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6510c61533a997b6eb397375_career-post-02.jpg',
     'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd15457e6979d96abfa7_career-post-01.jpeg',
     'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/642fcdff260d59b87c063981_career-post-03.jpg',
     'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd16010cd68dae522de2_career-post-06.jpeg',
