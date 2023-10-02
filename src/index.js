@@ -156,15 +156,6 @@ $(document).ready(function () {
   const menuLinksItems = '.navbar_link';
   const menuButton = '.navbar_menu-btn';
 
-  // Variable Anim
-  let revealAnim = {
-    y: '100%',
-    opacity: 0,
-    stagger: {
-      each: 0.05,
-    },
-  };
-
   // Menu Animation
   let menuText = 'Close';
   function createNavReveal() {
@@ -178,7 +169,21 @@ $(document).ready(function () {
       .add(typeText(menuButton + ' div', () => menuText)) // Use a function that returns menuText value
       .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
       .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
-      .from(menuLinksItems, revealAnim, '-=0.2')
+      .fromTo(
+        menuLinksItems,
+        {
+          y: '100%',
+          opacity: 0,
+        },
+        {
+          y: '0%',
+          opacity: 1,
+          stagger: {
+            each: 0.05,
+          },
+        },
+        '-=0.2'
+      )
       .fromTo($('.navbar_buttons-respo .button'), { opacity: 0 }, { opacity: 1, stagger: 0.2 })
       .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' }, '<');
     return navReveal;
