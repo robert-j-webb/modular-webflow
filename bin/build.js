@@ -19,6 +19,7 @@ const ENTRY_POINTS = [
   'src/legacy.js',
   'src/cookies.js',
   'src/sales.js',
+  'src/modconf.js',
 ];
 
 // Config dev serving
