@@ -26,7 +26,6 @@ ScrollTrigger.matchMedia({
           start: 'top center',
           end: 'center center',
           scrub: 1,
-          markers: true,
         },
       });
 
@@ -75,7 +74,7 @@ ScrollTrigger.matchMedia({
 
 // ----- Detail
 $(document).ready(function () {
-  let faqhead = $('.mod-agenda_item');
+  let faqhead = $('.faq_head');
   let faqbutton = $('#faq-expand');
   let faqbuttontext = faqbutton.text();
 
