@@ -57,7 +57,6 @@ ScrollTrigger.matchMedia({
           start: 'top center',
           end: 'center center',
           scrub: 1,
-          markers: true,
         },
       });
       const actions = {
