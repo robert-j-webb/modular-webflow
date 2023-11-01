@@ -18,7 +18,7 @@ function processCards(cards, cols, actions) {
 /*** Different ScrollTrigger setups for various screen sizes (media queries) ***/
 ScrollTrigger.matchMedia({
   // desktop
-  '(min-width: 1440px)': function () {
+  '(min-width: 992px)': function () {
     $('.section_speakersmod .container-large').each(function () {
       let main = gsap.timeline({
         scrollTrigger: {
@@ -28,45 +28,15 @@ ScrollTrigger.matchMedia({
           scrub: 1,
         },
       });
-
-      const largeActions = {
-        1: (el) => main.add(gsapTo(el, '4rem'), '<'),
-        3: (el) => main.add(gsapTo(el, '4rem'), '<'),
-      };
 
       const smallActions = {
-        1: (el) => main.add(gsapTo(el, '8rem'), '<'),
-        2: (el) => main.add(gsapTo(el, '4rem'), '<'),
-        4: (el) => main.add(gsapTo(el, '8rem'), '<'),
-        5: (el) => main.add(gsapTo(el, '4rem'), '<'),
-      };
-
-      let cardsLarge = $(this).find('.speakers-collection_list.top').find('.speakers-card');
-      let cardsSmall = $(this).find('.speakers-collection_list.small').find('.speakers-card');
-
-      processCards(cardsLarge, 4, largeActions);
-      processCards(cardsSmall, 6, smallActions);
-    });
-  },
-  // mobile
-  '(max-width: 1339px) and (min-width: 992px)': function () {
-    $('.section_speakersmod .container-large').each(function () {
-      let main = gsap.timeline({
-        scrollTrigger: {
-          trigger: $(this),
-          start: 'top center',
-          end: 'center center',
-          scrub: 1,
-        },
-      });
-      const actions = {
         1: (el) => main.add(gsapTo(el, '4rem'), '<'),
         3: (el) => main.add(gsapTo(el, '4rem'), '<'),
       };
 
-      let cards = $(this).find('.speakers-collection_list').find('.speakers-card');
+      let cardsSmall = $(this).find('.speakers-collection_list.small').find('.speakers-card');
 
-      processCards(cards, 4, actions);
+      processCards(cardsSmall, 4, smallActions);
     });
   },
 });
