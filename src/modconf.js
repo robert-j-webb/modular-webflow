@@ -43,30 +43,32 @@ ScrollTrigger.matchMedia({
 
 // ----- Detail
 $(document).ready(function () {
-  let faqhead = $('.faq_head');
-  let faqbutton = $('#faq-expand');
-  let faqbuttontext = faqbutton.text();
+  $('.section_mod-agenda,.section_faqmod').each(function () {
+    let faqhead = $(this).find('.faq_head,.mod-agenda_item');
+    let faqbutton = $(this).find('#faq-expand');
+    let faqbuttontext = faqbutton.text();
 
-  // Faq Items
-  faqhead.each(function () {
-    $(this).attr('data-state', 'closed');
-  });
-  faqhead.on('click', function () {
-    var $this = $(this);
-    var state = $this.attr('data-state');
-    $this.attr('data-state', state === 'open' ? 'closed' : 'open');
-    $this.toggleClass('is-active');
-  });
+    // Faq Items
+    faqhead.each(function () {
+      $(this).attr('data-state', 'closed');
+    });
+    faqhead.on('click', function () {
+      var $this = $(this);
+      var state = $this.attr('data-state');
+      $this.attr('data-state', state === 'open' ? 'closed' : 'open');
+      $this.toggleClass('is-active');
+    });
 
-  // FaQ Button
-  faqbutton.click(function () {
-    var $button = $(this);
-    if ($button.text() === faqbuttontext) {
-      faqhead.filter('[data-state="closed"]').click();
-      $button.text('Hide All');
-    } else {
-      faqhead.filter('[data-state="open"]').click();
-      $button.text(faqbuttontext);
-    }
+    // FaQ Button
+    faqbutton.click(function () {
+      var $button = $(this);
+      if ($button.text() === faqbuttontext) {
+        faqhead.filter('[data-state="closed"]').click();
+        $button.text('Hide All');
+      } else {
+        faqhead.filter('[data-state="open"]').click();
+        $button.text(faqbuttontext);
+      }
+    });
   });
 });
