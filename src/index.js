@@ -14,11 +14,14 @@ $(document).ready(function () {
   // Register GSAP
   gsap.registerPlugin(ScrollTrigger);
 
-  // GSAP IMG SET
-  $('img').each(function () {
-    $(this).removeAttr('loading');
-    ScrollTrigger.refresh();
-  });
+  // Team has many images and does not appear to have problems when this is removed.
+  if (window.location.pathname !== '/team') {
+    // GSAP IMG SET
+    $('img').each(function () {
+      $(this).removeAttr('loading');
+      ScrollTrigger.refresh();
+    });
+  }
 
   // RemoveScrollBar for all overflow elements
   function addNoScrollbarClass() {
