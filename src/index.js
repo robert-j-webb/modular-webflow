@@ -69,18 +69,14 @@ $(document).ready(function () {
         gsap.set($(this), { height: '100%' });
       }
 
-      const scrollTrigger = ScrollTrigger.create({
-        trigger: $(this).closest('.line-mask_wrap'),
-        once: true,
-        start: '70% bottom',
-        invalidateOnRefresh: true,
-        onEnter: () => {
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].intersectionRatio <= 0) return;
           gsap.to($(this), { height: originalHeight, duration: 1.2 });
         },
-      });
-
-      // Add the ScrollTrigger instance to the lineMaskTriggers array
-      lineMaskTriggers.push(scrollTrigger);
+        { threshold: 1.0 }
+      );
+      intersectionObserver.observe(this);
     });
   }
   function debounce(func, wait) {
@@ -116,17 +112,15 @@ $(document).ready(function () {
     const codeBlock = $(this).find('.dashboard_code-block');
     codeBlock.hide();
 
-    ScrollTrigger.create({
-      trigger: $(this),
-      once: true,
-      start: '50% bottom',
-      invalidateOnRefresh: true,
-      toggleActions: 'play null null null',
-      onEnter: () => {
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].intersectionRatio <= 0) return;
         codeBlock.show();
         codeAnimation($(this));
       },
-    });
+      { threshold: 1.0 }
+    );
+    intersectionObserver.observe(this);
   });
 
   // -- CTA Animation
