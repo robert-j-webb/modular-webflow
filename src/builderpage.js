@@ -1,5 +1,5 @@
-import { tabs } from '$utils/activeTabs';
-import { codeAnimation, codeFile, letterAnimation } from '$utils/globalFunctions';
+import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globalFunctions';
+import { tabCarousel } from '$utils/tabCarousel';
 
 $(document).ready(function () {
   // Hero Animation
@@ -82,6 +82,42 @@ $(document).ready(function () {
       }
     });
   });
+  const activeClass = 'tab-active';
+  const progressLine = '.tabs_block-progress-line';
+  const fileNameSelector = '.dashboard_head-filename';
+  const tabTimeline = gsap.timeline({ paused: true });
+  const duration = 4000;
 
-  tabs();
+  tabCarousel({
+    tabs: $('.tabs_block-link-menu .tabs_block-link'),
+    cards: $('.tabs .cardb_visual .dashboard_code-block'),
+    onCardLeave: (card) => {
+      card.hide();
+    },
+    onTabLeave: (tab) => {
+      tab.removeClass(activeClass);
+      // If this is called mid animation (by a click) this will stop it.
+      tab.find(progressLine).stop();
+      tab.find(progressLine).css('width', '0');
+    },
+    onCardShow: (card) => {
+      return new Promise((resolve) => {
+        card.show();
+        const fileNameTxt = card.find('.file-name').text();
+        const fileNameEl = card.parent().parent().find(fileNameSelector);
+        fileNameEl.text('');
+        const typeFileNameTimeline = gsap.timeline();
+        typeFileNameTimeline.add(typeText(fileNameEl, fileNameTxt));
+        tabTimeline.add(codeAnimation(card)).add(typeFileNameTimeline, '<');
+        tabTimeline.play();
+        tabTimeline.then(resolve);
+      });
+    },
+    onTabShow: (tab) => {
+      return new Promise((resolve) => {
+        tab.addClass(activeClass);
+        tab.find(progressLine).animate({ width: '100%' }, duration, resolve);
+      });
+    },
+  });
 });
