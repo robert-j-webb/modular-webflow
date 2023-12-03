@@ -1,4 +1,5 @@
 import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globalFunctions';
+import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
 $(document).ready(function () {
   // Hero Animation
@@ -82,206 +83,74 @@ $(document).ready(function () {
     });
   });
 
-  // Tabs
-  const responsive = '(min-width: 992px)';
-  let isInitialized = false;
-
-  const tabLinks = $('.tabs_block-link-menu .tabs_block-link');
-  const tabCodes = $('.tabs .cardb_visual .dashboard_code-block');
+  /// Tabs implementation:
   const activeClass = 'tab-active';
-  const progressLine = $('.tabs_block-progress-line');
+  const progressLine = '.tabs_block-progress-line';
+  const fileNameSelector = '.dashboard_head-filename';
+  const tabTimeline = gsap.timeline({ paused: true });
   const duration = 4000;
 
-  let shouldAnimate = true;
-  let tabTimeline = gsap.timeline({ paused: true });
-
-  function switchTab() {
-    if (!shouldAnimate) {
-      return;
-    }
-    const currentTab = tabLinks.filter('.' + activeClass);
-    currentTab.find(progressLine).animate({ width: '100%' }, duration, function () {
-      // Reset
-      resetTabs();
-
-      // Add
-      const currentIndex = currentTab.index();
-      let nextIndex = currentIndex >= tabLinks.length - 1 ? 0 : currentIndex + 1;
-
-      // Ensure that the nextIndex is not the same as the currentIndex
-      if (nextIndex === currentIndex) {
-        nextIndex = currentIndex >= tabLinks.length - 2 ? 0 : currentIndex + 2;
-      }
-
-      tabLinks.eq(nextIndex).addClass(activeClass);
-      showCode(nextIndex);
-      switchTab();
+  // Animates a card, by typing the text and filename.
+  function cardAnimation(card) {
+    return new Promise((resolve) => {
+      card.show();
+      const fileNameTxt = card.find('.file-name').text();
+      const fileNameEl = card.parent().parent().find(fileNameSelector);
+      fileNameEl.text('');
+      const typeFileNameTimeline = gsap.timeline();
+      typeFileNameTimeline.add(typeText(fileNameEl, fileNameTxt));
+      tabTimeline.add(codeAnimation(card)).add(typeFileNameTimeline, '<');
+      tabTimeline.play();
+      tabTimeline.then(resolve);
     });
   }
 
-  const resetTabs = () => {
-    tabTimeline.clear();
-    tabLinks.removeClass(activeClass);
-    progressLine.css('width', '0');
-    tabCodes.hide();
-  };
-
-  const stopAnimation = () => {
-    shouldAnimate = false;
-    tabLinks.find(progressLine).stop(true, true); // stop the animation immediately
-    resetTabs();
-  };
-
-  const showCode = (nextIndex) => {
-    tabCodes.eq(nextIndex).show();
-    tabTimeline.add(codeAnimation(tabCodes.eq(nextIndex))).add(updateFileName(nextIndex), '<');
-    tabTimeline.play();
-  };
-
-  const updateFileName = (nextIndex, customElement) => {
-    let fileNames = $('.dashboard_code .file-name');
-    let fileName = fileNames.eq(nextIndex).text();
-    let fileLabel = customElement ? $(customElement) : $('.dashboard_head-filename');
-
-    fileLabel.text('');
-
-    let tl = gsap.timeline();
-    tl.add(typeText(fileLabel, fileName));
-
-    return tl;
-  };
-
-  const initTabs = () => {
-    isInitialized = true;
-    tabLinks.eq(0).addClass(activeClass);
-
-    // Start looped animation
-    switchTab();
-    showCode(0);
-
-    // User Click
-    tabLinks.on('click', function () {
-      const nextIndex = $(this).index();
-      stopAnimation();
-      $(this).addClass(activeClass);
-      $(this).find(progressLine).animate({ width: '100%' }, 200);
-      showCode(nextIndex);
-    });
-  };
-
-  $(window).on('load resize', function () {
-    if (window.matchMedia(responsive).matches) {
-      if (!isInitialized) {
-        // Define a ScrollTrigger for the .tabs element
-        const trigger = ScrollTrigger.create({
-          trigger: '.tabs',
-          start: 'top center',
-          onEnter: () => {
-            initTabs();
-            trigger.kill(); // Remove the ScrollTrigger once the function has been called
-          },
-        });
-      }
-    } else {
-      if (isInitialized) {
-        stopAnimation();
-        isInitialized = false;
-      }
-    }
+  // Initializes the tab carousel for desktop
+  tabCarousel({
+    tabs: $('.tabs_block-link-menu .tabs_block-link'),
+    cards: $('.tabs .cardb_visual .dashboard_code-block'),
+    onCardLeave: (card) => {
+      card.hide();
+    },
+    onTabLeave: (tab) => {
+      tab.removeClass(activeClass);
+      // If this is called mid animation (by a click) this will stop it.
+      tab.find(progressLine).stop();
+      tab.find(progressLine).css('width', '0');
+    },
+    onCardShow: cardAnimation,
+    onTabShow: (tab) => {
+      return new Promise((resolve) => {
+        tab.addClass(activeClass);
+        tab.find(progressLine).animate({ width: '100%' }, duration, resolve);
+      });
+    },
   });
 
-  /* Swiper
-   **************************************************************/
-  let swiper;
-  let init = false;
-  const sliderCodes = $('.tabs_slider .cardb_visual .dashboard_code-block');
+  swiperCarousel({
+    sliderSelector: '.tabs_slider',
+    // On init and when the swiper slides, we animate the progressbar and code
+    // block, but only animate the code the first time it's shown.
+    animateOnSlide(activeSlide) {
+      // Set progressLine to 0 and then start an animation for it.
+      activeSlide
+        .find(progressLine)
+        .stop(true, true)
+        .css('width', '0')
+        .animate({ width: '100%' }, duration);
 
-  /* Which media query
-   **************************************************************/
-  function swiperMode() {
-    const mobile = window.matchMedia('(min-width: 0px) and (max-width: 991px)');
-    const desktop = window.matchMedia(responsive);
-
-    function handleSwiperSlide(swiperInstance) {
-      // Get Active Index
-      const { activeIndex } = swiperInstance;
-
-      // Run ProgressBar
-      progressLine.stop(true, true);
-      progressLine.css('width', '0');
-      $(swiperInstance.slides[activeIndex]).find(progressLine).animate({ width: '100%' }, duration);
-
-      // Find child ".hero-dashboard_code-block"
-      const codeBlock = swiperInstance.slides[activeIndex].querySelector('.dashboard_code-block');
-      const codeLabel = swiperInstance.slides[activeIndex].querySelector(
-        '.dashboard_head-filename'
-      );
+      const codeBlock = activeSlide.find('.dashboard_code-block');
 
       // Run codeAnimation() this function on that child only if it hasn't been animated before
-      if (codeBlock && !codeBlock.classList.contains('animated')) {
-        $(codeBlock).show();
-        let tl = gsap.timeline();
-        tl.add(updateFileName(activeIndex, codeLabel)).add(codeAnimation(codeBlock), '<');
-        showCode;
-        codeBlock.classList.add('animated'); // Add 'animated' class after running the animation
+      if (codeBlock && !codeBlock.hasClass('animated')) {
+        cardAnimation(codeBlock);
+        codeBlock.addClass('animated');
       }
-    }
-
-    // Enable (for desktop)
-    if (desktop.matches) {
-      if (init) {
-        swiper.destroy(true, true);
-        init = false;
-      }
-    }
-
-    // Disable (for desktop)
-    else if (mobile.matches) {
-      if (!init) {
-        init = true;
-        swiper = new Swiper('.tabs_slider', {
-          // Optional parameters
-          slidesPerView: 1,
-          spaceBetween: 24,
-          speed: 250,
-          autoplay: {
-            delay: duration,
-          },
-          observer: true,
-          on: {
-            init: (swiperInstance) => {
-              $('.dashboard_code-block').removeClass('animated');
-              $(sliderCodes).hide();
-              handleSwiperSlide(swiperInstance);
-
-              $('.tabs_slider').find('.dashboard_head-filename');
-            },
-            transitionEnd: (swiperInstance) => {
-              handleSwiperSlide(swiperInstance);
-            },
-          },
-          // Enable lazy loading
-          pagination: {
-            el: '.swiper-navigation',
-            type: 'bullets',
-            clickable: true,
-            bulletActiveClass: 'w-active',
-            bulletClass: 'w-slider-dot',
-          },
-        });
-      }
-    }
-  }
-
-  /* On Load
-   **************************************************************/
-  window.addEventListener('load', function () {
-    swiperMode();
-  });
-
-  /* On Resize
-   **************************************************************/
-  window.addEventListener('resize', function () {
-    swiperMode();
+    },
+    onInit() {
+      const sliderCodes = $('.tabs_slider .cardb_visual .dashboard_code-block');
+      $(sliderCodes).hide();
+    },
+    duration,
   });
 });
