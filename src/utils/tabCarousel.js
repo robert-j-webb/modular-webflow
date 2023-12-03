@@ -50,3 +50,39 @@ export function tabCarousel({ tabs, cards, onCardLeave, onTabLeave, onCardShow, 
   );
   intersectionObserver.observe(tabs[0]);
 }
+
+// Uses swiper to make a carousel. Used as the mobile version of the carousel.
+export function swiperCarousel({ animateOnSlide, sliderSelector, onInit, duration }) {
+  function handleSwiperSlide({ activeIndex, slides }) {
+    if (slides.length === 0) {
+      return;
+    }
+    animateOnSlide($(slides[activeIndex]));
+  }
+
+  new Swiper(sliderSelector, {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    speed: 250,
+    autoplay: {
+      delay: duration,
+    },
+    observer: true,
+    on: {
+      init: (swiperInstance) => {
+        onInit();
+        handleSwiperSlide(swiperInstance);
+      },
+      transitionEnd: (swiperInstance) => {
+        handleSwiperSlide(swiperInstance);
+      },
+    },
+    pagination: {
+      el: '.swiper-navigation',
+      type: 'bullets',
+      clickable: true,
+      bulletActiveClass: 'w-active',
+      bulletClass: 'w-slider-dot',
+    },
+  });
+}

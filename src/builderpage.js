@@ -1,5 +1,5 @@
 import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globalFunctions';
-import { tabCarousel } from '$utils/tabCarousel';
+import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
 $(document).ready(function () {
   // Hero Animation
@@ -127,52 +127,30 @@ $(document).ready(function () {
     },
   });
 
-  // On init and when the swiper slides, we animate the progressbar and code
-  // block, but only animate the code the first time it's shown.
-  function handleSwiperSlide({ activeIndex, slides }) {
-    if (slides.length === 0) {
-      return;
-    }
-    // Set progressLine to 0 and then start an animation for it.
-    $(slides[activeIndex])
-      .find(progressLine)
-      .stop(true, true)
-      .css('width', '0')
-      .animate({ width: '100%' }, duration);
+  swiperCarousel({
+    sliderSelector: '.tabs_slider',
+    // On init and when the swiper slides, we animate the progressbar and code
+    // block, but only animate the code the first time it's shown.
+    animateOnSlide(activeSlide) {
+      // Set progressLine to 0 and then start an animation for it.
+      activeSlide
+        .find(progressLine)
+        .stop(true, true)
+        .css('width', '0')
+        .animate({ width: '100%' }, duration);
 
-    const codeBlock = $(slides[activeIndex].querySelector('.dashboard_code-block'));
+      const codeBlock = activeSlide.find('.dashboard_code-block');
 
-    // Run codeAnimation() this function on that child only if it hasn't been animated before
-    if (codeBlock && !codeBlock.hasClass('animated')) {
-      cardAnimation(codeBlock);
-      codeBlock.addClass('animated');
-    }
-  }
-
-  new Swiper('.tabs_slider', {
-    slidesPerView: 1,
-    spaceBetween: 24,
-    speed: 250,
-    autoplay: {
-      delay: duration,
+      // Run codeAnimation() this function on that child only if it hasn't been animated before
+      if (codeBlock && !codeBlock.hasClass('animated')) {
+        cardAnimation(codeBlock);
+        codeBlock.addClass('animated');
+      }
     },
-    observer: true,
-    on: {
-      init: (swiperInstance) => {
-        const sliderCodes = $('.tabs_slider .cardb_visual .dashboard_code-block');
-        $(sliderCodes).hide();
-        handleSwiperSlide(swiperInstance);
-      },
-      transitionEnd: (swiperInstance) => {
-        handleSwiperSlide(swiperInstance);
-      },
+    onInit() {
+      const sliderCodes = $('.tabs_slider .cardb_visual .dashboard_code-block');
+      $(sliderCodes).hide();
     },
-    pagination: {
-      el: '.swiper-navigation',
-      type: 'bullets',
-      clickable: true,
-      bulletActiveClass: 'w-active',
-      bulletClass: 'w-slider-dot',
-    },
+    duration,
   });
 });
