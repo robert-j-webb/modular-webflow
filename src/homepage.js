@@ -1,5 +1,4 @@
 gsap.registerPlugin(ScrollTrigger);
-
 import {
   animateHorizontalGraph,
   codeAnimation,
@@ -7,6 +6,7 @@ import {
   letterAnimation,
   wrapLetters,
 } from '$utils/globalFunctions';
+import { tabCarousel } from '$utils/tabCarousel';
 
 $(document).ready(function () {
   // Base Hero Elements
@@ -569,3 +569,39 @@ function isElementInView(elem) {
   // Check if the element is within the viewport
   return elemTop < docViewBottom && elemBottom > docViewTop;
 }
+
+/// Tabs implementation:
+const activeClass = 'tab-active';
+const progressLine = '.tabs_block-progress-line';
+const duration = 4000;
+
+// Animates a card, by typing the text and filename.
+function cardAnimation(card) {
+  return new Promise((resolve) => {
+    card.show();
+    card.css('opacity', '0.0');
+    card.animate({ opacity: '1' }, duration, resolve);
+  });
+}
+
+// Initializes the tab carousel for desktop
+tabCarousel({
+  tabs: $('.tabs_block-link-menu .tabs_block-link'),
+  cards: $('.tabs_visuals > img'),
+  onCardLeave: (card) => {
+    card.hide();
+  },
+  onTabLeave: (tab) => {
+    tab.removeClass(activeClass);
+    // If this is called mid animation (by a click) this will stop it.
+    tab.find(progressLine).stop();
+    tab.find(progressLine).css('width', '0');
+  },
+  onCardShow: cardAnimation,
+  onTabShow: (tab) => {
+    return new Promise((resolve) => {
+      tab.addClass(activeClass);
+      tab.find(progressLine).animate({ width: '100%' }, duration, resolve);
+    });
+  },
+});
