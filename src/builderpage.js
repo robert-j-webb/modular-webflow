@@ -82,12 +82,30 @@ $(document).ready(function () {
       }
     });
   });
+
+  /// Tabs implementation:
   const activeClass = 'tab-active';
   const progressLine = '.tabs_block-progress-line';
   const fileNameSelector = '.dashboard_head-filename';
   const tabTimeline = gsap.timeline({ paused: true });
   const duration = 4000;
 
+  // Animates a card, by typing the text and filename.
+  function cardAnimation(card) {
+    return new Promise((resolve) => {
+      card.show();
+      const fileNameTxt = card.find('.file-name').text();
+      const fileNameEl = card.parent().parent().find(fileNameSelector);
+      fileNameEl.text('');
+      const typeFileNameTimeline = gsap.timeline();
+      typeFileNameTimeline.add(typeText(fileNameEl, fileNameTxt));
+      tabTimeline.add(codeAnimation(card)).add(typeFileNameTimeline, '<');
+      tabTimeline.play();
+      tabTimeline.then(resolve);
+    });
+  }
+
+  // Initializes the tab carousel for desktop
   tabCarousel({
     tabs: $('.tabs_block-link-menu .tabs_block-link'),
     cards: $('.tabs .cardb_visual .dashboard_code-block'),
@@ -100,24 +118,61 @@ $(document).ready(function () {
       tab.find(progressLine).stop();
       tab.find(progressLine).css('width', '0');
     },
-    onCardShow: (card) => {
-      return new Promise((resolve) => {
-        card.show();
-        const fileNameTxt = card.find('.file-name').text();
-        const fileNameEl = card.parent().parent().find(fileNameSelector);
-        fileNameEl.text('');
-        const typeFileNameTimeline = gsap.timeline();
-        typeFileNameTimeline.add(typeText(fileNameEl, fileNameTxt));
-        tabTimeline.add(codeAnimation(card)).add(typeFileNameTimeline, '<');
-        tabTimeline.play();
-        tabTimeline.then(resolve);
-      });
-    },
+    onCardShow: cardAnimation,
     onTabShow: (tab) => {
       return new Promise((resolve) => {
         tab.addClass(activeClass);
         tab.find(progressLine).animate({ width: '100%' }, duration, resolve);
       });
+    },
+  });
+
+  // On init and when the swiper slides, we animate the progressbar and code
+  // block, but only animate the code the first time it's shown.
+  function handleSwiperSlide({ activeIndex, slides }) {
+    if (slides.length === 0) {
+      return;
+    }
+    // Set progressLine to 0 and then start an animation for it.
+    $(slides[activeIndex])
+      .find(progressLine)
+      .stop(true, true)
+      .css('width', '0')
+      .animate({ width: '100%' }, duration);
+
+    const codeBlock = $(slides[activeIndex].querySelector('.dashboard_code-block'));
+
+    // Run codeAnimation() this function on that child only if it hasn't been animated before
+    if (codeBlock && !codeBlock.hasClass('animated')) {
+      cardAnimation(codeBlock);
+      codeBlock.addClass('animated');
+    }
+  }
+
+  new Swiper('.tabs_slider', {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    speed: 250,
+    autoplay: {
+      delay: duration,
+    },
+    observer: true,
+    on: {
+      init: (swiperInstance) => {
+        const sliderCodes = $('.tabs_slider .cardb_visual .dashboard_code-block');
+        $(sliderCodes).hide();
+        handleSwiperSlide(swiperInstance);
+      },
+      transitionEnd: (swiperInstance) => {
+        handleSwiperSlide(swiperInstance);
+      },
+    },
+    pagination: {
+      el: '.swiper-navigation',
+      type: 'bullets',
+      clickable: true,
+      bulletActiveClass: 'w-active',
+      bulletClass: 'w-slider-dot',
     },
   });
 });

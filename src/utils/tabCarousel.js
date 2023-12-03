@@ -1,3 +1,5 @@
+// Sets up a carousel given tabs, card, and some functions to run on leave and enter.
+// Only starts the carousel when the first tab scrolls into view.
 export function tabCarousel({ tabs, cards, onCardLeave, onTabLeave, onCardShow, onTabShow }) {
   if (tabs.length !== cards.length) {
     throw new Error(`Cards length: ${cards.length} did not match tabs length: ${tabs.length}`);
@@ -25,8 +27,6 @@ export function tabCarousel({ tabs, cards, onCardLeave, onTabLeave, onCardShow, 
     }
   }
 
-  // This isn't quite right for swiper manual select - it's not a click on tab,
-  // its a swipe that causes this.
   tabs.each((idx, tabEl) => {
     tabEl.onclick = () => {
       // Don't wait for promises to resolve, do everything simultaneously.
