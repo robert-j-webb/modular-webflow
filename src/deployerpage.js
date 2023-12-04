@@ -4,6 +4,7 @@ import {
   animateHorizontalGraph,
   letterAnimation,
 } from '$utils/globalFunctions';
+import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
 // Hero Animation
 $(document).ready(function () {

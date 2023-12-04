@@ -24,10 +24,10 @@ $(document).ready(function () {
     });
   }
 
-  // Initializes the tab carousel for desktop
+  // TABS 1
   tabCarousel({
-    tabs: $('.tabs_block-link-menu .tabs_block-link'),
-    cards: $('.tabs .cardb_visual .dashboard_code-block'),
+    tabs: $('.tabs').eq(0).find('.tabs_block-link-menu .tabs_block-link'),
+    cards: $('.tabs').eq(0).find('.cardb_visual .dashboard_code-block'),
     onCardLeave: (card) => {
       card.hide();
     },
@@ -47,7 +47,7 @@ $(document).ready(function () {
   });
 
   swiperCarousel({
-    sliderSelector: '.tabs_slider',
+    sliderSelector: '.tabs_slider._1',
     // On init and when the swiper slides, we animate the progressbar and code
     // block, but only animate the code the first time it's shown.
     animateOnSlide(activeSlide) {
@@ -67,7 +67,7 @@ $(document).ready(function () {
       }
     },
     onInit() {
-      const sliderCodes = $('.tabs_slider .cardb_visual .dashboard_code-block');
+      const sliderCodes = $('.tabs_slider').eq(0).find('.cardb_visual .dashboard_code-block');
       $(sliderCodes).hide();
     },
     duration,

@@ -1,4 +1,5 @@
 import { codeAnimation, letterAnimation, typeText } from '$utils/globalFunctions';
+import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
 document.documentElement.classList.add('js-enabled');
 
@@ -98,7 +99,9 @@ $(document).ready(function () {
   }
   // Set up the ScrollTriggers on window resize, debounce the handler with 250ms delay
   let lastWindowWidth = $(window).width();
-  setupLineMaskScrollTriggers();
+  setTimeout(() => {
+    setupLineMaskScrollTriggers();
+  }, 500);
   $(window).on(
     'resize',
     debounce(() => {
@@ -139,7 +142,6 @@ $(document).ready(function () {
       paused: true,
       scrollTrigger: {
         trigger: triggerElement,
-        markers: true,
         // trigger element - viewport
         start: 'center bottom',
         onEnter: () => {
@@ -339,4 +341,61 @@ $(document).ready(function () {
       }, 50);
     }
   });
+
+  if ($('.tabs.max-tab').length) {
+    const activeClass = 'tab-active';
+    const progressLine = '.tabs_block-progress-line';
+    const duration = 4000;
+
+    // Animates a card, by typing the text and filename.
+    function cardAnimation(card) {
+      return new Promise((resolve) => {
+        card.addClass('active');
+        resolve();
+      });
+    }
+    // TABS 2
+    tabCarousel({
+      tabs: $('.tabs.max-tab .tabs_block-link-menu .tabs_block-link'),
+      cards: $('.tabs.max-tab .max-products .max-products_grid-cell'),
+      onCardLeave: (card) => {
+        card.removeClass('active');
+      },
+      onTabLeave: (tab) => {
+        tab.removeClass(activeClass);
+        // If this is called mid animation (by a click) this will stop it.
+        tab.find(progressLine).stop();
+        tab.find(progressLine).css('width', '0');
+      },
+      onCardShow: cardAnimation,
+      onTabShow: (tab) => {
+        return new Promise((resolve) => {
+          tab.addClass(activeClass);
+          tab.find(progressLine).animate({ width: '100%' }, duration, resolve);
+        });
+      },
+    });
+
+    swiperCarousel({
+      sliderSelector: '.tabs_slider.max-tab',
+      // On init and when the swiper slides, we animate the progressbar and code
+      // block, but only animate the code the first time it's shown.
+      animateOnSlide(activeSlide) {
+        // Set progressLine to 0 and then start an animation for it.
+
+        activeSlide
+          .find(progressLine)
+          .stop(true, true)
+          .css('width', '0')
+          .animate({ width: '100%' }, duration);
+
+        let cards = $('.tabs_slider.max-tab .max-products .max-products_grid-cell');
+
+        cards.removeClass('active');
+        cards.eq(activeSlide.index()).addClass('active');
+      },
+      onInit() {},
+      duration,
+    });
+  }
 });
