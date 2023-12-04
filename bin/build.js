@@ -21,6 +21,7 @@ const ENTRY_POINTS = [
   'src/sales.js',
   'src/modconf.js',
   'src/maxpage.js',
+  'src/maxserving.js',
 ];
 
 // Config dev serving
