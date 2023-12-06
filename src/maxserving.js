@@ -1,4 +1,3 @@
-import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globalFunctions';
 import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
 $(document).ready(function () {
@@ -12,8 +11,24 @@ $(document).ready(function () {
   function cardAnimation(card) {
     return new Promise((resolve) => {
       card.show();
-      card.css('opacity', '0.0');
-      card.animate({ opacity: '1' }, 200, resolve);
+      gsap.fromTo;
+      let tl = gsap.timeline({
+        ease: Power2.easeOut,
+      });
+      tl.fromTo(
+        card.find('.graphc_item'),
+        {
+          scale: 0,
+          opacity: 0,
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          stagger: 0.2,
+        },
+        { duration: 600 }
+      );
+      setTimeout(resolve, 600);
     });
   }
 
