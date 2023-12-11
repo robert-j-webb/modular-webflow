@@ -1,1 +1,300 @@
-"use strict";(()=>{var P=r=>{let t=e=>{if(e.nodeType===Node.TEXT_NODE){if(!e.parentNode.classList.contains("letter")){let n=e.textContent,o=document.createDocumentFragment();for(let a=0;a<n.length;a++){let i=document.createElement("span");i.className="letter",i.textContent=n[a],o.appendChild(i)}e.parentNode.replaceChild(o,e)}}else e.nodeType===Node.ELEMENT_NODE&&e.tagName!=="BR"&&Array.from(e.childNodes).forEach(t)};$(r).contents().each(function(){t(this)})},_=(r,t)=>{let e=gsap.timeline(),n=0;return $(r).each((o,a)=>{let i=$(a).find(".letter").not(".line-numbers-row .code-letter"),l=$(a).find(".word-highlight");if(i.each((g,c)=>{e.fromTo(c,{visibility:"hidden"},{visibility:"initial"},n*t,"<"),n++}),l.length){let g=l[0],c=window.getComputedStyle(g).getPropertyValue("background-color"),h=window.getComputedStyle(g).getPropertyValue("box-shadow"),d=(s,u)=>{let[C,N,q]=s.match(/\w\w/g).map(S=>parseInt(S,16));return`rgba(${C}, ${N}, ${q}, ${u})`},m=s=>{let u=s.replace(/^rgba?\(/,"").replace(/\)$/,"").split(",");return`rgba(${u[0]}, ${u[1]}, ${u[2]}, 0)`},b=s=>/^#(?:[0-9a-f]{3}){1,2}$/i.test(s),T=b(c)?d(c,0):m(c),E=h.replace(/rgba?\([^)]+\)/g,s=>b(s)?d(s,0):m(s));Array.from(l).forEach(s=>{s.style.backgroundColor=T,s.style.boxShadow=E}),e.to(l,{backgroundColor:c,boxShadow:h,duration:.35},"<")}}),e},p=(r,t)=>{let e;return t==="label"?e=.03:t==="heading"?e=.01:typeof t=="number"?e=t:e=.01,P(r),_(r,e)};var w=r=>{$(r).each(function(){let t={val:0},e=$(this).text(),n=parseFloat(e),o=e%1>=.5&&e%1<1;if(!isNaN(n)){$(this).css("visibility","hidden");let a=()=>{let i;Math.abs(n-t.val)<=.01?i=n%1===0?n.toFixed(0):n.toFixed(2):t.val>=1?i=Math.floor(t.val).toFixed(0):i=t.val.toFixed(2),$(this).text(i)};TweenLite.to(t,1,{val:n,onUpdate:a,onStart:()=>$(this).css("visibility","visible")})}})},f=r=>{let t=gsap.timeline();return t.add(p(`.graph${r}_head .text-size-metadata`),"label").add(()=>w(`.graph${r}_head .graph-number`),"<"),t},A=(r,t)=>{let e=gsap.timeline();return $(r).each(function(n){let o=$(this).find(`.graph${t}_box`),a=$(this).find(`.graph${t}_label div`),i=$(this).find(`.graph${t}_row-num div`),l=gsap.timeline();l.from(o,{scaleX:0,duration:1}).add(()=>{w(i)},"<").add(p(a,"label")),e.add(l,n*.2)}),e},B=r=>{gsap.timeline().fromTo(r,{scaleY:0},{scaleY:1,duration:1},"<")},x=(r,t,e)=>{let n=$(e),o=gsap.timeline({ease:Power2.easeOut,paused:!0,scrollTrigger:{trigger:n,start:"70% bottom",onEnter:()=>{o.play()}}});return o.add(f(t)),o.add(A(r,t),"<"),o},y=(r,t,e)=>{let n=$(e),o=gsap.timeline({ease:Power2.easeOut,paused:!0,scrollTrigger:{trigger:n,start:"70% bottom",onEnter:()=>{o.play()}}}),a=$(r).find(".text-size-label"),i=$(e).find(".graphd_legend-dot"),l=$(r).find(".graph-charts");return o.add(f(t)),o.add(p(a,"label"),"<").add(B(l),"<").fromTo(i,{scale:.5,opacity:0},{scale:1,opacity:1},"<"),o},v=(r,t,e)=>{let n=$(e),o=gsap.timeline({ease:Power2.easeOut,paused:!0,scrollTrigger:{trigger:n,start:"70% bottom",onEnter:()=>{o.play()}}}),a=$(r).find(".text-size-label"),i=$(r).find(".graphc_item");return o.add(f(t)),o.fromTo(i,{scale:0,opacity:0},{scale:1,opacity:1,stagger:.2}).add(p(a,"label")),o};$(document).ready(function(){$("#hero").each(function(){let t=gsap.timeline({delay:.2}),e=$(this).find("h1"),n=$(this).find("p"),o=$(this).find(".button");t.to(e,{opacity:1}),t.add(p(e),"<"),t.to(n,{opacity:1,duration:.5},"<1"),t.to(o,{opacity:1,duration:.5},"<0.4"),t.add(y(".graphd","d",".graphd"),"<")});function r(t,e){let n=typeof t;return typeof e!="string"||e.trim()===""?t:e==="true"&&n==="boolean"?!0:e==="false"&&n==="boolean"?!1:isNaN(e)&&n==="string"?e:!isNaN(e)&&n==="number"?+e:t}$(document).ready(function(){let t=()=>{window.matchMedia("(min-width: 992px)").matches?$("[tr-marquee-element='component']").each(function(){let e=$(this),n=e.find("[tr-marquee-element='panel']"),o=r(100,e.attr("tr-marquee-speed")),a=r(!1,e.attr("tr-marquee-vertical")),i=r(!1,e.attr("tr-marquee-reverse")),l=-100;i&&(l=100);let g=d=>{a?gsap.set(n,{yPercent:d*l}):gsap.set(n,{xPercent:d*l})},c=gsap.timeline(),h=ScrollTrigger.create({trigger:"body",start:"top top",end:"bottom bottom",onUpdate:d=>{let m=d.progress;g(m)}});e.data("scrollTrigger",h)}):$("[tr-marquee-element='component']").each(function(){let e=$(this),n=e.find("[tr-marquee-element='panel']"),o=e.data("scrollTrigger");o&&(o.kill(),e.removeData("scrollTrigger")),gsap.set(n,{clearProps:"all"})})};t(),$(window).on("resize",t)}),$(".graphb_row").each(function(){x($(this),"b",".graphb")}),$(".graphc_box").each(function(){v($(this),"c",".graphc")})});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/utils/globalFunctions.js
+  var wrapLetters = (element) => {
+    const processNode = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (!node.parentNode.classList.contains("letter")) {
+          const codeText = node.textContent;
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < codeText.length; i++) {
+            const span = document.createElement("span");
+            span.className = "letter";
+            span.textContent = codeText[i];
+            fragment.appendChild(span);
+          }
+          node.parentNode.replaceChild(fragment, node);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName !== "BR") {
+          const childNodes = Array.from(node.childNodes);
+          childNodes.forEach(processNode);
+        }
+      }
+    };
+    $(element).contents().each(function() {
+      processNode(this);
+    });
+  };
+  var revealLetters = (elements, letterDelay) => {
+    const codeTimeline = gsap.timeline();
+    let globalLetterIndex = 0;
+    $(elements).each((elementIndex, element) => {
+      const letters = $(element).find(".letter").not(".line-numbers-row .code-letter");
+      const highlights = $(element).find(".word-highlight");
+      letters.each((letterIndex, letter) => {
+        codeTimeline.fromTo(
+          letter,
+          { visibility: "hidden" },
+          { visibility: "initial" },
+          globalLetterIndex * letterDelay,
+          "<"
+        );
+        globalLetterIndex++;
+      });
+      if (highlights.length) {
+        const firstHighlight = highlights[0];
+        const currentBgColor = window.getComputedStyle(firstHighlight).getPropertyValue("background-color");
+        const currentBoxShadow = window.getComputedStyle(firstHighlight).getPropertyValue("box-shadow");
+        const hexToRGBA = (hex, alpha) => {
+          const [r, g, b] = hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        const rgbaToTransparent = (rgba) => {
+          const rgbaArray = rgba.replace(/^rgba?\(/, "").replace(/\)$/, "").split(",");
+          return `rgba(${rgbaArray[0]}, ${rgbaArray[1]}, ${rgbaArray[2]}, 0)`;
+        };
+        const isHex = (color) => /^#(?:[0-9a-f]{3}){1,2}$/i.test(color);
+        const initialBackgroundColor = isHex(currentBgColor) ? hexToRGBA(currentBgColor, 0) : rgbaToTransparent(currentBgColor);
+        const initialBoxShadow = currentBoxShadow.replace(/rgba?\([^)]+\)/g, (match) => {
+          return isHex(match) ? hexToRGBA(match, 0) : rgbaToTransparent(match);
+        });
+        Array.from(highlights).forEach((element2) => {
+          element2.style.backgroundColor = initialBackgroundColor;
+          element2.style.boxShadow = initialBoxShadow;
+        });
+        codeTimeline.to(
+          highlights,
+          {
+            backgroundColor: currentBgColor,
+            boxShadow: currentBoxShadow,
+            duration: 0.35
+          },
+          "<"
+        );
+      }
+    });
+    return codeTimeline;
+  };
+  var letterAnimation = (elements, letterType) => {
+    let letterDelay;
+    if (letterType === "label") {
+      letterDelay = 0.03;
+    } else if (letterType === "heading") {
+      letterDelay = 0.01;
+    } else if (typeof letterType === "number") {
+      letterDelay = letterType;
+    } else {
+      letterDelay = 0.01;
+    }
+    wrapLetters(elements);
+    return revealLetters(elements, letterDelay);
+  };
+  var animateCounter = ($element) => {
+    $($element).each(function() {
+      const Cont = { val: 0 };
+      const originalText = $(this).text();
+      const targetValue = parseFloat(originalText);
+      const isOriginalHalf = originalText % 1 >= 0.5 && originalText % 1 < 1;
+      if (!isNaN(targetValue)) {
+        $(this).css("visibility", "hidden");
+        const onUpdate = () => {
+          let formattedValue;
+          if (Math.abs(targetValue - Cont.val) <= 0.01) {
+            formattedValue = targetValue % 1 === 0 ? targetValue.toFixed(0) : targetValue.toFixed(2);
+          } else if (Cont.val >= 1) {
+            formattedValue = Math.floor(Cont.val).toFixed(0);
+          } else {
+            formattedValue = Cont.val.toFixed(2);
+          }
+          $(this).text(formattedValue);
+        };
+        TweenLite.to(Cont, 1, {
+          val: targetValue,
+          onUpdate,
+          onStart: () => $(this).css("visibility", "visible")
+        });
+      } else {
+        return;
+      }
+    });
+  };
+  var graphHeadAnimation = (graphClassPrefix) => {
+    const masterTimeline = gsap.timeline();
+    masterTimeline.add(letterAnimation(`.graph${graphClassPrefix}_head .text-size-metadata`), "label").add(() => animateCounter(`.graph${graphClassPrefix}_head .graph-number`), "<");
+    return masterTimeline;
+  };
+  var animateGraphRow = (targets, graphClassPrefix) => {
+    const masterTimeline = gsap.timeline();
+    $(targets).each(function(index) {
+      let row = $(this).find(`.graph${graphClassPrefix}_box`);
+      let label = $(this).find(`.graph${graphClassPrefix}_label div`);
+      let number = $(this).find(`.graph${graphClassPrefix}_row-num div`);
+      const codeTimeline = gsap.timeline();
+      codeTimeline.from(row, { scaleX: 0, duration: 1 }).add(() => {
+        animateCounter(number);
+      }, "<").add(letterAnimation(label, "label"));
+      masterTimeline.add(codeTimeline, index * 0.2);
+    });
+    return masterTimeline;
+  };
+  var animateGraphChart = (target) => {
+    let tl = gsap.timeline();
+    tl.fromTo(
+      target,
+      {
+        scaleY: 0
+      },
+      { scaleY: 1, duration: 1 },
+      "<"
+    );
+  };
+  var animateHorizontalGraph = (target, graphType, trigger) => {
+    let triggerElement = $(trigger);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        start: "70% bottom",
+        onEnter: () => {
+          tl.play();
+        }
+      }
+    });
+    tl.add(graphHeadAnimation(graphType));
+    tl.add(animateGraphRow(target, graphType), "<");
+    return tl;
+  };
+  var animateChartGraph = (target, graphType, trigger) => {
+    let triggerElement = $(trigger);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        start: "70% bottom",
+        onEnter: () => {
+          tl.play();
+        }
+      }
+    });
+    let labels = $(target).find(".text-size-label");
+    let labelDot = $(trigger).find(".graphd_legend-dot");
+    let chart = $(target).find(".graph-charts");
+    tl.add(graphHeadAnimation(graphType));
+    tl.add(letterAnimation(labels, "label"), "<").add(animateGraphChart(chart), "<").fromTo(labelDot, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1 }, "<");
+    return tl;
+  };
+  var animateBoxGraph = (target, graphType, trigger) => {
+    let triggerElement = $(trigger);
+    let tl = gsap.timeline({
+      ease: Power2.easeOut,
+      paused: true,
+      scrollTrigger: {
+        trigger: triggerElement,
+        start: "70% bottom",
+        onEnter: () => {
+          tl.play();
+        }
+      }
+    });
+    let labels = $(target).find(".text-size-label");
+    let box = $(target).find(".graphc_item");
+    tl.add(graphHeadAnimation(graphType));
+    tl.fromTo(
+      box,
+      {
+        scale: 0,
+        opacity: 0
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        stagger: 0.2
+      }
+    ).add(letterAnimation(labels, "label"));
+    return tl;
+  };
+
+  // src/deployerpage.js
+  $(document).ready(function() {
+    $("#hero").each(function() {
+      let tl = gsap.timeline({ delay: 0.2 });
+      let heading = $(this).find("h1");
+      let par = $(this).find("p");
+      let btn = $(this).find(".button");
+      tl.to(heading, { opacity: 1 });
+      tl.add(letterAnimation(heading), "<");
+      tl.to(par, { opacity: 1, duration: 0.5 }, "<1");
+      tl.to(btn, { opacity: 1, duration: 0.5 }, "<0.4");
+      tl.add(animateChartGraph(".graphd", "d", ".graphd"), "<");
+    });
+    function attr(defaultVal, attrVal) {
+      const defaultValType = typeof defaultVal;
+      if (typeof attrVal !== "string" || attrVal.trim() === "")
+        return defaultVal;
+      if (attrVal === "true" && defaultValType === "boolean")
+        return true;
+      if (attrVal === "false" && defaultValType === "boolean")
+        return false;
+      if (isNaN(attrVal) && defaultValType === "string")
+        return attrVal;
+      if (!isNaN(attrVal) && defaultValType === "number")
+        return +attrVal;
+      return defaultVal;
+    }
+    $(document).ready(function() {
+      const initMarquee = () => {
+        if (window.matchMedia("(min-width: 992px)").matches) {
+          $("[tr-marquee-element='component']").each(function() {
+            const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']");
+            let speedSetting = attr(100, componentEl.attr("tr-marquee-speed")), verticalSetting = attr(false, componentEl.attr("tr-marquee-vertical")), reverseSetting = attr(false, componentEl.attr("tr-marquee-reverse")), moveDistanceSetting = -100;
+            if (reverseSetting)
+              moveDistanceSetting = 100;
+            const updateMarqueePosition = (progress) => {
+              if (verticalSetting) {
+                gsap.set(panelEl, { yPercent: progress * moveDistanceSetting });
+              } else {
+                gsap.set(panelEl, { xPercent: progress * moveDistanceSetting });
+              }
+            };
+            const marqueeTimeline = gsap.timeline();
+            const scrollTriggerInstance = ScrollTrigger.create({
+              trigger: "body",
+              start: "top top",
+              end: "bottom bottom",
+              onUpdate: (self) => {
+                const scrollProgress = self.progress;
+                updateMarqueePosition(scrollProgress);
+              }
+            });
+            componentEl.data("scrollTrigger", scrollTriggerInstance);
+          });
+        } else {
+          $("[tr-marquee-element='component']").each(function() {
+            const componentEl = $(this), panelEl = componentEl.find("[tr-marquee-element='panel']");
+            const st = componentEl.data("scrollTrigger");
+            if (st) {
+              st.kill();
+              componentEl.removeData("scrollTrigger");
+            }
+            gsap.set(panelEl, { clearProps: "all" });
+          });
+        }
+      };
+      initMarquee();
+      $(window).on("resize", initMarquee);
+    });
+    $(".graphb_row").each(function() {
+      animateHorizontalGraph($(this), "b", ".graphb");
+    });
+    $(".graphc_box").each(function() {
+      animateBoxGraph($(this), "c", ".graphc");
+    });
+  });
+})();
+//# sourceMappingURL=deployerpage.js.map
