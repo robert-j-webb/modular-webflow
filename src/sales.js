@@ -103,6 +103,7 @@ function updateStep() {
     submitBtn.text(stepsTexts[0]);
   }
   currentSteps.fadeIn('slow');
+  $('.hs-target_hardware').fadeIn('slow');
 
   // Scroll to the element
   const input = currentSteps.find('input').eq(0);

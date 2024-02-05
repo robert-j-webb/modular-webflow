@@ -346,6 +346,9 @@ document.addEventListener('keydown', (e) => {
 if (window.location.pathname.includes('/blog/')) {
   document.querySelectorAll('.blog-content-wrapper').forEach((element) => {
     var pTag = element.querySelector('p');
+    if (!pTag) {
+      return null;
+    }
     // get color value of pTag
     var pColor = window.getComputedStyle(pTag).getPropertyValue('color');
 
@@ -359,11 +362,13 @@ if (window.location.pathname.includes('/blog/')) {
 // if url contains /blog get value of color of .grid-wapper h2
 if (window.location.pathname.includes('/blog')) {
   var text = document.querySelector('.heading-2');
-  var textColor = window.getComputedStyle(text).getPropertyValue('color');
-  //for each .nested-author_link-block .small-body-text change color to textColor
-  document.querySelectorAll('.nested-author_link-block .small-body-text').forEach((element) => {
-    element.style.color = textColor;
-  });
+  if (text) {
+    var textColor = window.getComputedStyle(text).getPropertyValue('color');
+    //for each .nested-author_link-block .small-body-text change color to textColor
+    document.querySelectorAll('.nested-author_link-block .small-body-text').forEach((element) => {
+      element.style.color = textColor;
+    });
+  }
 }
 
 // CUSTOMER STORIES CAROUSEL
