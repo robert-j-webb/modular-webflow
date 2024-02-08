@@ -293,7 +293,7 @@ $(document).ready(function () {
           endTrigger: sections.eq(3),
           end: 'center center',
           scrub: 1,
-          markers: true,
+          markers: false,
         },
       });
       thirdIcons.fromTo(
