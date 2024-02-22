@@ -1,71 +1,226 @@
+import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globalFunctions';
+import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
+
 gsap.registerPlugin(ScrollTrigger);
 
-import { animateHorizontalGraph, letterAnimation } from '$utils/globalFunctions';
-
-import { Termynal } from './utils/termynal';
-
 $(document).ready(function () {
-  // Init Reveal
-  const intervalId = setInterval(function () {
-    if (window.gsap) {
-      clearInterval(intervalId); // stop checking for the object
-      setTimeout(() => {
-        let heroTl = gsap.timeline();
+  // #region Stats
+  let models = $('.perf_opt-item');
+  let types = $('.perf_opt-type_dropdown-item');
+  let dropdown = $('.perf_opt-type_dropdown');
+  let dropdownMenu = $('.perf_opt-type_dropdown-menu');
+  let dropdownMenuItems = $('.perf_opt-type_dropdown-item');
+  let dropdownOpen = false;
+  let typeIndex = 0;
 
-        heroTl.from('[hero-pattern-lines]', {
-          opacity: 0,
-        });
-        heroTl.from('[hero-pattern-square]', {
-          scale: 0,
-        });
+  // Functions
+  function formatNumber(number) {
+    // Define or replace with appropriate formatting logic
+    return number.toLocaleString('en');
+  }
+  const animateCounter = ($element, value) => {
+    $($element).each(function () {
+      const currentText = $(this).text().trim().replace(/,/g, ''); // Remove commas before parsing
+      const startValue = parseFloat(currentText) || 0; // Fallback to 0 if not a number
+      const targetValue = parseFloat(value);
 
-        // Define all Termynal instances on page load
-        termynalsArr.forEach((id) => {
-          defineTermynal(id);
-          initTermynal(id);
-        });
+      if (!isNaN(targetValue) && startValue !== targetValue) {
+        const Cont = { val: startValue }; // Initialize with current value
 
-        // Set up infinite loop animation for each Termynal instance
-        Object.values(termynals).forEach((instance) => {
-          restartAnimation(instance);
-        });
-        $(`#mojoCode`).css('visibility', 'visible');
-      }, 400);
-    }
-  }, 100);
+        // Determine the number of decimal places to animate based on the input and target values
+        const decimalPlaces = Math.max(
+          (startValue.toString().split('.')[1] || '').length,
+          (targetValue.toString().split('.')[1] || '').length
+        );
 
-  let termynalsArr = ['termynal-1'];
+        const onUpdate = () => {
+          // Use toFixed to control the number of decimal places during the animation
+          let formattedValue = formatNumber(Cont.val.toFixed(decimalPlaces));
+          $(this).text(formattedValue);
+        };
 
-  function restartAnimation(termynalInstance) {
-    termynalInstance.container.addEventListener('termynal-anim-end', () => {
-      setTimeout(() => {
-        termynalInstance.init();
-      }, 3000); // (DEFINE THE DELAY BEFORE REINIT);
+        gsap.fromTo(
+          Cont,
+          { val: startValue },
+          {
+            val: targetValue,
+            duration: 0.7,
+            ease: Power1.easeOut,
+            onUpdate: onUpdate,
+          }
+        );
+      }
     });
+  };
+  const updateText = ($element, value) => {
+    $($element).each(function () {
+      gsap.to($element, { text: value, duration: 0.5, ease: Power1.easeOut });
+    });
+  };
+
+  /* Models */
+  function updateModels(index) {
+    let selectedRadio = $('input[name="models"]:checked').closest(models);
+    selectedRadio = selectedRadio.length ? selectedRadio : models.eq(0);
+    models.removeClass('is-active');
+    selectedRadio.addClass('is-active');
+
+    let name = selectedRadio.find('span').text();
+    let vals1 = selectedRadio.attr('data-values-1').split(', ');
+    let vals2 = selectedRadio.attr('data-values-2').split(', ');
+
+    console.log(index);
+
+    animateCounter($('[data-number=1]'), vals1[index]);
+    animateCounter($('[data-number=2]'), vals2[index]);
+    animateCounter($('[data-label=stats-1]'), vals1[index]);
+    animateCounter($('[data-label=stats-2]'), vals2[index]);
+    updateText($('[data-label=model'), name);
   }
 
-  // Dictionary to hold the Termynal objects by their IDs
-  const termynals = {};
+  /* Type */
+  function updateTypes() {
+    let selectedType = $('input[name="type"]:checked').closest(types);
+    selectedType = selectedType.length ? selectedType : types.eq(0);
+    typeIndex = selectedType.closest('.w-dyn-item').index();
 
-  function defineTermynal(elementID) {
-    console.log(`Defining Termynal for: ${elementID}`);
-    termynals[elementID] = new Termynal(`#${elementID}`, {
-      startDelay: 600,
-      noInit: true,
-    });
+    types.removeClass('is-active');
+    selectedType.addClass('is-active');
+
+    let name = selectedType.find('span').text();
+
+    $('.perf_opt-type_dropdown div:first-child').text(name);
+    $('[data-label="type"]').text(name);
   }
 
-  function initTermynal(elementID) {
-    if (termynals[elementID]) {
-      termynals[elementID].init();
-      $(`#${elementID}`).css('visibility', 'visible');
+  /* Dropdown */
+  function animateDropdown() {
+    if (dropdownOpen) {
+      gsap.to(dropdownMenu, { height: 0, ease: Power1.easeOut });
+      gsap.to(dropdown.find('.icon-embed-custom1'), { rotate: 0, ease: Power1.easeOut });
     } else {
-      console.warn(`Termynal instance for ${elementID} not found.`);
+      gsap.to(dropdownMenu, { height: 'auto', ease: Power1.easeOut });
+      gsap.to(dropdown.find('.icon-embed-custom1'), { rotate: 180, ease: Power1.easeOut });
     }
   }
 
-  // ------------- End  of Hero Dashboard Animation ----------
-  // --- Swieprs
+  // -- Load
+  gsap.set(dropdownMenu, {
+    height: '0',
+    onComplete: () => {
+      dropdownMenu.show();
+    },
+  });
+  updateModels();
+  updateTypes();
+
+  // -- Logic
+  models.add(types).on('change', () => {
+    updateTypes();
+    updateModels(typeIndex);
+  });
+
+  // Open Click
+  dropdown.on('click', function () {
+    animateDropdown();
+    dropdownOpen = !dropdownOpen;
+  });
+  types.on('change', function () {
+    if (dropdownOpen) {
+      animateDropdown();
+      dropdownOpen = false;
+    }
+  });
+
+  $(document).on('click', function (event) {
+    if (
+      !$(event.target).closest(dropdown).length &&
+      !$(event.target).closest(dropdownMenu).length
+    ) {
+      if (dropdownOpen) {
+        animateDropdown();
+        dropdownOpen = false;
+      }
+    }
+  });
+
+  // #endregion
+
+  // #region Tabs
+  // #region Autoplay Tabs
+  const activeClass = 'tab-active';
+  const progressLine = '.tabs_block-progress-line';
+  const fileNameSelector = '.dashboard_head-filename';
+  const tabTimeline = gsap.timeline({ paused: true });
+  const duration = 4000;
+
+  // Animates a card, by typing the text and filename.
+  function cardAnimation(card) {
+    return new Promise((resolve) => {
+      card.show();
+      const fileNameTxt = card.find('.file-name').text();
+      const fileNameEl = card.parent().parent().find(fileNameSelector);
+      fileNameEl.text('');
+      const typeFileNameTimeline = gsap.timeline();
+      typeFileNameTimeline.add(typeText(fileNameEl, fileNameTxt));
+      tabTimeline.add(codeAnimation(card)).add(typeFileNameTimeline, '<');
+      tabTimeline.play();
+      tabTimeline.then(resolve);
+    });
+  }
+
+  // TABS 1
+  tabCarousel({
+    tabs: $('.tabs').eq(0).find('.tabs_block-link-menu .tabs_block-link'),
+    cards: $('.tabs').eq(0).find('.cardb_visual .dashboard_code-block'),
+    onCardLeave: (card) => {
+      card.hide();
+    },
+    onTabLeave: (tab) => {
+      tab.removeClass(activeClass);
+      // If this is called mid animation (by a click) this will stop it.
+      tab.find(progressLine).stop();
+      tab.find(progressLine).css('width', '0');
+    },
+    onCardShow: cardAnimation,
+    onTabShow: (tab) => {
+      return new Promise((resolve) => {
+        tab.addClass(activeClass);
+        tab.find(progressLine).animate({ width: '100%' }, duration, resolve);
+      });
+    },
+  });
+
+  swiperCarousel({
+    sliderSelector: '.tabs_slider._1',
+    // On init and when the swiper slides, we animate the progressbar and code
+    // block, but only animate the code the first time it's shown.
+    animateOnSlide(activeSlide) {
+      // Set progressLine to 0 and then start an animation for it.
+      activeSlide
+        .find(progressLine)
+        .stop(true, true)
+        .css('width', '0')
+        .animate({ width: '100%' }, duration);
+
+      const codeBlock = activeSlide.find('.dashboard_code-block');
+
+      // Run codeAnimation() this function on that child only if it hasn't been animated before
+      if (codeBlock && !codeBlock.hasClass('animated')) {
+        cardAnimation(codeBlock);
+        codeBlock.addClass('animated');
+      }
+    },
+    onInit() {
+      const sliderCodes = $('.tabs_slider').eq(0).find('.cardb_visual .dashboard_code-block');
+      $(sliderCodes).hide();
+    },
+    duration,
+  });
+
+  // #endregion
+
+  // #region Swipers
   function initSwiper(swiperSelector, mediaQueryString, customConfig) {
     let swiperInstance;
     let initStatus = false;
@@ -85,7 +240,7 @@ $(document).ready(function () {
             touchMoveStopPropagation: false,
             preventInteractionOnTransition: true,
             pagination: {
-              el: '.swiper-navigation',
+              el: '.swiper-navigation.latest',
               type: 'bullets',
               clickable: true,
               bulletActiveClass: 'w-active',
@@ -104,135 +259,10 @@ $(document).ready(function () {
       }
     }
 
-    window.addEventListener('load', handleSwiper);
+    handleSwiper();
     window.addEventListener('resize', handleSwiper);
 
     return handleSwiper;
   }
-
-  initSwiper('.carda_slider', '(max-width: 991px)', {});
-
-  // --- Homepage Rest
-  // Model Deployment
-  $('#deployment-visual').each(function () {
-    let triggerElement = $(this);
-    let tl = gsap.timeline({
-      ease: Power2.easeOut,
-      paused: true,
-      scrollTrigger: {
-        trigger: triggerElement,
-        // trigger element - viewport
-        start: '50% bottom',
-        onEnter: () => {
-          // Play the timeline when the trigger element enters the viewport
-          tl.play();
-        },
-      },
-    });
-    let icons = $(this).find('.cardj_row1').add('.cardj_row2').find('.w-embed');
-    tl.fromTo(icons, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, stagger: 0.05 });
-    tl.fromTo($(this).find('.cardj_row2'), { opacity: 0 }, { opacity: 1 }, '<').add(
-      letterAnimation($(this).find('.text-size-tiny'), 'label')
-    );
-  });
-
-  // Hardware Animation
-  $('.cardd_visual.hardware').each(function () {
-    let triggerElement = $(this);
-    let tl = gsap.timeline({
-      ease: Power2.easeOut,
-      paused: true,
-      scrollTrigger: {
-        trigger: triggerElement,
-        // trigger element - viewport
-        start: '50% bottom',
-        onEnter: () => {
-          // Play the timeline when the trigger element enters the viewport
-          tl.play();
-        },
-      },
-    });
-    tl.fromTo(
-      $(this).find('.cardd_logo-box'),
-      { scale: 0.8, opacity: 0 },
-      { scale: 1, opacity: 1, stagger: 0.05 }
-    );
-    tl.fromTo(
-      $(this).find('.cardd_logo-line-2').add('.cardd_logo-line-1'),
-      { opacity: 0 },
-      { opacity: 1 }
-    );
-  });
-
-  // Discord Animation
-  $('.discord_box').each(function () {
-    let triggerElement = $(this);
-    let tl = gsap.timeline({
-      ease: Power2.easeOut,
-      paused: true,
-      scrollTrigger: {
-        trigger: triggerElement,
-        // trigger element - viewport
-        start: '50% bottom',
-        onEnter: () => {
-          // Play the timeline when the trigger element enters the viewport
-          tl.play();
-        },
-      },
-    });
-    // Add the animation to the timeline
-    tl.fromTo(
-      $(this).find('.discord_card'),
-      1,
-      { y: '1rem', opacity: 0 },
-      { y: '0rem', opacity: 1 }
-    )
-      .fromTo(
-        $(this).find('.discord_bg'),
-        1,
-        { y: '1rem', opacity: 0 },
-        { y: '0rem', opacity: 1 },
-        '<0.3'
-      )
-      .from(
-        $(this).find('.discord_avatar,.discord_message-text:first-child, .discord_message-time'),
-        0.5,
-        {
-          opacity: 0,
-          stagger: 0.15,
-        },
-        '<'
-      )
-      .add(letterAnimation($(this).find('.discord_message-text').eq(1), 0.03));
-  });
-
-  // Animate Graph
-  $('.grapha_row').each(function () {
-    animateHorizontalGraph($(this), 'a', '.grapha');
-  });
+  initSwiper('.latest_slider', '(max-width: 991px)', {});
 });
-
-// --- Flip Menu Color to Black
-$(window).on('load resize scroll', function () {
-  $('.section_videohero').each(function () {
-    if (isElementInView($(this))) {
-      $('.navbar_wrapper').addClass('white');
-    } else {
-      $('.navbar_wrapper').removeClass('white');
-    }
-  });
-});
-
-function isElementInView(elem) {
-  var $elem = $(elem);
-  var $window = $(window);
-
-  var docViewTop = $window.scrollTop();
-  var docViewBottom = docViewTop + $window.height();
-
-  var elemTop = $elem.offset().top;
-  var elemBottom = elemTop + $elem.height();
-
-  // Check if the element is within the viewport
-  return elemTop < docViewBottom && elemBottom > docViewTop;
-}
