@@ -4,6 +4,201 @@ import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 gsap.registerPlugin(ScrollTrigger);
 
 $(document).ready(function () {
+  // #region Hero Animation
+
+  let activeStage = 0;
+  let stageDelay = 2;
+  let stages = $('[class^=headerb_stage-]');
+  let stepTitles = ['Programmable', 'Perfomant', 'Portable'];
+  let loaded = false;
+
+  // Step 1
+  const heroStep0 = () => {
+    let tl = gsap.timeline({
+      ease: Power0.easeOut,
+      onStart: function () {
+        runOnStart(this);
+      },
+    });
+    let logoBox1 = $('#logo-box_1');
+    let logo1 = logoBox1.find('#logo_1');
+
+    let logoBox2 = $('#logo-box_2');
+    let logo2 = logoBox2.find('#logo_2');
+
+    let logoBox3 = $('#logo-box_3');
+    let logo3 = logoBox3.find('#logo_3');
+
+    let title = $('#title');
+    let versus = $('#vs');
+
+    let mojoBox = $('#mojo-box');
+
+    tl.add(cycleStage(0));
+    tl.fromTo(
+      [logoBox1, logoBox2, logoBox3],
+      { opacity: 0, xPercent: -10 },
+      { opacity: 1, xPercent: 0, stagger: 0.15 }
+    );
+    tl.fromTo(
+      [logo1, logo2, logo3],
+      { opacity: 0, xPercent: -10 },
+      { opacity: 1, xPercent: 0, stagger: 0.15 },
+      '<0.1'
+    );
+    tl.fromTo(title, { opacity: 0 }, { opacity: 1 });
+    tl.fromTo(mojoBox, { opacity: 0, xPercent: -100 }, { opacity: 1, xPercent: 0, duration: 1 });
+    tl.fromTo(versus, { opacity: 0 }, { opacity: 1 });
+
+    return tl;
+  };
+
+  // Step 2
+  const heroStep1 = () => {
+    let ootfBox = $('#ootb_logo');
+    let slowBar1 = $('#bar-slow_1');
+    let slowBar2 = $('#bar-slow_2');
+    let slowBar3 = $('#bar-slow_3');
+
+    let maxLogo = $('#max_logo');
+    let fastBar1 = $('#bar-fast_1');
+    let fastBar2 = $('#bar-fast_2');
+    let fastBar3 = $('#bar-fast_3');
+
+    let header = $('#headers');
+    let numbers = $('#numbers');
+    let grid = $('#grid');
+
+    let tl = gsap.timeline({
+      ease: Power0.easeOut,
+      onStart: function () {
+        runOnStart(this);
+      },
+    });
+
+    // Graph 1
+    tl.add(cycleStage(1));
+    tl.fromTo(
+      [ootfBox, maxLogo],
+      { opacity: 0, xPercent: -15 },
+      { opacity: 1, xPercent: 0, stagger: 0.15 }
+    );
+    tl.fromTo(grid, { scaleY: 0 }, { scaleY: 1 });
+    tl.fromTo([header, numbers], { opacity: 0 }, { opacity: 1, stagger: 0.15 });
+
+    // Slow Bars
+    tl.addLabel('bars-start');
+    tl.fromTo(slowBar3, { scaleX: 0 }, { scaleX: 1 }, 'bars-start');
+    tl.fromTo(slowBar2, { scaleX: 0 }, { scaleX: 0.428 }, '<');
+    tl.fromTo(slowBar1, { scaleX: 0 }, { scaleX: 0.295 }, '<');
+
+    tl.to(slowBar2, { scaleX: 1 });
+    tl.to(slowBar1, { scaleX: 0.695 }, '<');
+
+    tl.to(slowBar1, { scaleX: 1 });
+
+    tl.fromTo(fastBar3, { scaleX: 0 }, { scaleX: 1 }, 'bars-start');
+    tl.fromTo(fastBar2, { scaleX: 0 }, { scaleX: 1 }, '<');
+    tl.fromTo(fastBar1, { scaleX: 0 }, { scaleX: 1 }, '<');
+
+    return tl;
+  };
+
+  // Step 3
+  const heroStep2 = () => {
+    let tl = gsap.timeline({
+      ease: Power0.easeOut,
+      onStart: function () {
+        runOnStart(this);
+      },
+    });
+    tl.add(cycleStage(2));
+    tl.add(() => {}, '+=4');
+
+    return tl;
+  };
+
+  // Main
+  let main = gsap.timeline({
+    repeat: -1,
+    repeatDelay: stageDelay,
+  });
+
+  main.add(heroStep0());
+  main.add(heroStep1(), `+=${stageDelay}`);
+  main.add(heroStep2(), `+=${stageDelay}`);
+
+  // -- Functions
+  function runOnStart(instance) {
+    animateLabel();
+    animateProgressBar(instance._dur);
+    activeStage = (activeStage + 1) % stages.length;
+  }
+
+  function cycleStage(index) {
+    let tl = gsap.timeline();
+
+    tl.to(stages, {
+      opacity: 0,
+    });
+    tl.to(stages.eq(index), { opacity: 1 });
+
+    return tl;
+  }
+  // Header Animations
+  function animateProgressBar(duration) {
+    gsap.fromTo(
+      '.home-anim_progress-bar',
+      { width: '0%' },
+      { width: '100%', ease: 'none', duration: duration + stageDelay }
+    );
+  }
+
+  let activeAnimation = { timeline: null, splitInstance: null };
+
+  function revertLabel() {
+    return new Promise((resolve) => {
+      if (activeAnimation.timeline) {
+        activeAnimation.timeline.reverse().then(() => {
+          // Ensure SplitType changes are reverted after reversing the animation
+          if (activeAnimation.splitInstance && activeAnimation.splitInstance.split.revert) {
+            activeAnimation.splitInstance.split.revert(); // Revert changes made by SplitType
+          }
+          resolve(); // Resolve the promise after reverting
+        });
+      } else {
+        resolve(); // Resolve immediately if there's no animation to revert
+      }
+    });
+  }
+  function animateLabel() {
+    if (loaded) {
+      let parentContainer = document.querySelector('#hero-label');
+      let container = document.createElement('span');
+      container.textContent = `\u00A0${stepTitles[activeStage]}\u00A0`;
+      parentContainer.innerHTML = '';
+      parentContainer.appendChild(container);
+
+      // Initialize SplitType for the new content
+      activeAnimation.splitInstance = new SplitType(container, { types: 'chars' });
+      let tl = gsap.timeline();
+
+      // Animate characters appearing
+      $(parentContainer).css({ 'padding-right': '0.2em', 'padding-left': '0.2em' });
+      tl.fromTo(
+        $(activeAnimation.splitInstance.chars),
+        { opacity: 0 },
+        { opacity: 1, ease: 'power2', stagger: 0.04 }
+      );
+
+      // Update the global activeAnimation object
+      activeAnimation.timeline = tl;
+    }
+    loaded = true;
+  }
+
+  // #endregion
+
   // #region Stats
   let models = $('.perf_opt-item');
   let types = $('.perf_opt-type_dropdown-item');
@@ -147,6 +342,7 @@ $(document).ready(function () {
   // #endregion
 
   // #region Tabs
+
   // #region Autoplay Tabs
   const activeClass = 'tab-active';
   const progressLine = '.tabs_block-progress-line';
@@ -265,4 +461,5 @@ $(document).ready(function () {
     return handleSwiper;
   }
   initSwiper('.latest_slider', '(max-width: 991px)', {});
+  // #endregion
 });
