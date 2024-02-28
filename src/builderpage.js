@@ -2,11 +2,56 @@ import { codeAnimation, codeFile, letterAnimation, typeText } from '$utils/globa
 import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
 $(document).ready(function () {
+  // #region Hero Slideshow
+
+  function init() {
+    let animation = gsap.timeline({});
+    let targets = $('.headerb_visual img');
+    let numberOfTargets = targets.length;
+
+    let duration = 2; //change this
+    let pause = 0.75; // change this
+
+    let stagger = duration + pause;
+    let repeatDelay = stagger * (numberOfTargets - 1) + pause;
+
+    gsap.set('.headerb_visual', { autoAlpha: 1 });
+    animation
+      .from(targets, {
+        duration: duration,
+        opacity: 0,
+        stagger: {
+          each: stagger,
+          repeat: -1,
+          repeatDelay: repeatDelay,
+        },
+      })
+      .to(
+        targets,
+        {
+          duration: duration,
+          opacity: 0,
+          stagger: {
+            each: stagger,
+            repeat: -1,
+            repeatDelay: repeatDelay,
+          },
+        },
+        stagger
+      );
+  }
+
+  init();
+  animation.pause(imgDuration);
+  gsap.delayedCall(1, () => animation.play());
+
+  // #endregon
+  // #region Tabs
   /// Tabs implementation:
   const activeClass = 'tab-active';
   const progressLine = '.tabs_block-progress-line';
   const fileNameSelector = '.dashboard_head-filename';
-  const tabTimeline = gsap.timeline({ paused: true });
+  const tabTimeline = gsap.timeline({ imgPaused: true });
   const duration = 4000;
 
   // Animates a card, by typing the text and filename.
@@ -72,4 +117,6 @@ $(document).ready(function () {
     },
     duration,
   });
+
+  // #endregion
 });

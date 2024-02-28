@@ -15,7 +15,9 @@ $(document).ready(function () {
   // Step 1
   const heroStep0 = () => {
     let tl = gsap.timeline({
-      ease: Power0.easeOut,
+      defaults: {
+        ease: Power3.easeOut,
+      },
       onStart: function () {
         runOnStart(this);
       },
@@ -46,9 +48,9 @@ $(document).ready(function () {
       { opacity: 1, xPercent: 0, stagger: 0.15 },
       '<0.1'
     );
-    tl.fromTo(title, { opacity: 0 }, { opacity: 1 });
-    tl.fromTo(mojoBox, { opacity: 0, xPercent: -100 }, { opacity: 1, xPercent: 0, duration: 1 });
-    tl.fromTo(versus, { opacity: 0 }, { opacity: 1 });
+    tl.fromTo(title, { opacity: 0 }, { opacity: 1 }, '<0.2');
+    tl.fromTo(mojoBox, { opacity: 0, xPercent: -60 }, { opacity: 1, xPercent: 0, duration: 1 });
+    tl.fromTo(versus, { opacity: 0 }, { opacity: 1 }, '<0.5');
 
     return tl;
   };
@@ -69,8 +71,12 @@ $(document).ready(function () {
     let numbers = $('#numbers');
     let grid = $('#grid');
 
+    let barsDuration = 0.7;
+
     let tl = gsap.timeline({
-      ease: Power0.easeOut,
+      defaults: {
+        ease: Power2.easeOut,
+      },
       onStart: function () {
         runOnStart(this);
       },
@@ -79,27 +85,26 @@ $(document).ready(function () {
     // Graph 1
     tl.add(cycleStage(1));
     tl.fromTo(
-      [ootfBox, maxLogo],
+      [ootfBox, maxLogo, header, numbers],
       { opacity: 0, xPercent: -15 },
-      { opacity: 1, xPercent: 0, stagger: 0.15 }
+      { opacity: 1, xPercent: 0, duration: 0.5 }
     );
-    tl.fromTo(grid, { scaleY: 0 }, { scaleY: 1 });
-    tl.fromTo([header, numbers], { opacity: 0 }, { opacity: 1, stagger: 0.15 });
+    tl.fromTo(grid, { scaleY: 0 }, { scaleY: 1, duration: 0.5 }, '<');
 
     // Slow Bars
-    tl.addLabel('bars-start');
-    tl.fromTo(slowBar3, { scaleX: 0 }, { scaleX: 1 }, 'bars-start');
-    tl.fromTo(slowBar2, { scaleX: 0 }, { scaleX: 0.428 }, '<');
-    tl.fromTo(slowBar1, { scaleX: 0 }, { scaleX: 0.295 }, '<');
+    tl.addLabel('bars-start', '<0.2');
+    tl.fromTo(slowBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, 'bars-start');
+    tl.fromTo(slowBar2, { scaleX: 0 }, { scaleX: 0.428, duration: barsDuration }, '<');
+    tl.fromTo(slowBar1, { scaleX: 0 }, { scaleX: 0.295, duration: barsDuration }, '<');
 
-    tl.to(slowBar2, { scaleX: 1 });
-    tl.to(slowBar1, { scaleX: 0.695 }, '<');
+    tl.to(slowBar2, { scaleX: 1, duration: barsDuration });
+    tl.to(slowBar1, { scaleX: 0.695, duration: barsDuration }, '<');
 
-    tl.to(slowBar1, { scaleX: 1 });
+    tl.to(slowBar1, { scaleX: 1, duration: barsDuration });
 
-    tl.fromTo(fastBar3, { scaleX: 0 }, { scaleX: 1 }, 'bars-start');
-    tl.fromTo(fastBar2, { scaleX: 0 }, { scaleX: 1 }, '<');
-    tl.fromTo(fastBar1, { scaleX: 0 }, { scaleX: 1 }, '<');
+    tl.fromTo(fastBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, 'bars-start');
+    tl.fromTo(fastBar2, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, '<');
+    tl.fromTo(fastBar1, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, '<');
 
     return tl;
   };
@@ -140,8 +145,9 @@ $(document).ready(function () {
 
     tl.to(stages, {
       opacity: 0,
+      duration: 0.2,
     });
-    tl.to(stages.eq(index), { opacity: 1 });
+    tl.set(stages.eq(index), { opacity: 1 });
 
     return tl;
   }
