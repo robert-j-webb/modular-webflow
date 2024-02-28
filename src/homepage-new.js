@@ -9,7 +9,7 @@ $(document).ready(function () {
   let activeStage = 0;
   let stageDelay = 2;
   let stages = $('[class^=headerb_stage-]');
-  let stepTitles = ['Programmable', 'Perfomant', 'Portable'];
+  let stepTitles = ['Programmable', 'Performant', 'Portable'];
   let loaded = false;
 
   // Step 1
