@@ -39,13 +39,15 @@ $(document).ready(function () {
         },
         stagger
       );
+
+    animation.pause(duration);
+    gsap.delayedCall(1, () => animation.play());
   }
 
   init();
-  animation.pause(imgDuration);
-  gsap.delayedCall(1, () => animation.play());
 
-  // #endregon
+  // #endregion
+
   // #region Tabs
   /// Tabs implementation:
   const activeClass = 'tab-active';
