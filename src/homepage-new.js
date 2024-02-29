@@ -118,6 +118,7 @@ $(document).ready(function () {
       },
     });
     tl.add(cycleStage(2));
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     tl.add(() => {}, '+=4');
 
     return tl;
@@ -207,12 +208,10 @@ $(document).ready(function () {
 
   // #region Stats
   let models = $('.perf_opt-item');
+  let colsWrap = $('.perf_stats-wrap');
+  let cols = $('.perf_stat');
+  let colsLine = $('.perf_stats-line');
   let types = $('.perf_opt-type_dropdown-item');
-  let dropdown = $('.perf_opt-type_dropdown');
-  let dropdownMenu = $('.perf_opt-type_dropdown-menu');
-  let dropdownMenuItems = $('.perf_opt-type_dropdown-item');
-  let dropdownOpen = false;
-  let typeIndex = 0;
 
   // Functions
   function formatNumber(number) {
@@ -260,89 +259,64 @@ $(document).ready(function () {
   };
 
   /* Models */
-  function updateModels(index) {
+  function updateModels() {
     let selectedRadio = $('input[name="models"]:checked').closest(models);
     selectedRadio = selectedRadio.length ? selectedRadio : models.eq(0);
     models.removeClass('is-active');
     selectedRadio.addClass('is-active');
 
     let name = selectedRadio.find('span').text();
-    let vals1 = selectedRadio.attr('data-values-1').split(', ');
-    let vals2 = selectedRadio.attr('data-values-2').split(', ');
+    let vals1 = selectedRadio.attr('data-values-1');
+    let vals2 = selectedRadio.attr('data-values-2');
+    let type = selectedRadio.attr('data-type');
 
-    console.log(index);
-
-    animateCounter($('[data-number=1]'), vals1[index]);
-    animateCounter($('[data-number=2]'), vals2[index]);
-    animateCounter($('[data-label=stats-1]'), vals1[index]);
-    animateCounter($('[data-label=stats-2]'), vals2[index]);
-    updateText($('[data-label=model'), name);
-  }
-
-  /* Type */
-  function updateTypes() {
-    let selectedType = $('input[name="type"]:checked').closest(types);
-    selectedType = selectedType.length ? selectedType : types.eq(0);
-    typeIndex = selectedType.closest('.w-dyn-item').index();
-
-    types.removeClass('is-active');
-    selectedType.addClass('is-active');
-
-    let name = selectedType.find('span').text();
-
-    $('.perf_opt-type_dropdown div:first-child').text(name);
-    $('[data-label="type"]').text(name);
-  }
-
-  /* Dropdown */
-  function animateDropdown() {
-    if (dropdownOpen) {
-      gsap.to(dropdownMenu, { height: 0, ease: Power1.easeOut });
-      gsap.to(dropdown.find('.icon-embed-custom1'), { rotate: 0, ease: Power1.easeOut });
-    } else {
-      gsap.to(dropdownMenu, { height: 'auto', ease: Power1.easeOut });
-      gsap.to(dropdown.find('.icon-embed-custom1'), { rotate: 180, ease: Power1.easeOut });
+    // Check if vals1 or vals2 are not filled
+    if (vals1.length === 0 && vals2.length > 0) {
+      updateCols(0); // Case 1: Val 1 is not filled
+    } else if (vals2.length === 0 && vals1.length > 0) {
+      updateCols(1); // Case 2: Val 2 is not filled
+    } else if (vals1.length > 0 && vals2.length > 0) {
+      matchCols();
     }
+
+    // Run animateCounter/updateText only if corresponding values are filled
+    if (vals1.length > 0) {
+      animateCounter($('[data-number=1]'), vals1);
+      animateCounter($('[data-label=stats-1]'), vals1);
+      updateText(cols.eq(0).find('[data-label=model]'), name);
+      updateText(cols.eq(0).find('[data-label=type]'), type);
+    }
+    if (vals2.length > 0) {
+      animateCounter($('[data-number=2]'), vals2);
+      animateCounter($('[data-label=stats-2]'), vals2);
+      updateText(cols.eq(1).find('[data-label=model]'), name);
+      updateText(cols.eq(1).find('[data-label=type]'), type);
+    }
+  }
+
+  /* Condition */
+  function updateCols(index) {
+    if (index === 0) {
+      colsWrap.css('justify-content', 'flex-end');
+      cols.eq(1).css('width', '100%');
+    } else if (index === 1) {
+      colsWrap.css('justify-content', 'flex-end');
+      cols.eq(0).css('width', '100%');
+    }
+    colsLine.css('transform', 'scale(0)');
+  }
+
+  function matchCols() {
+    cols.css('width', '50%');
+    colsLine.css('transform', 'scale(1)');
   }
 
   // -- Load
-  gsap.set(dropdownMenu, {
-    height: '0',
-    onComplete: () => {
-      dropdownMenu.show();
-    },
-  });
   updateModels();
-  updateTypes();
 
   // -- Logic
   models.add(types).on('change', () => {
-    updateTypes();
-    updateModels(typeIndex);
-  });
-
-  // Open Click
-  dropdown.on('click', function () {
-    animateDropdown();
-    dropdownOpen = !dropdownOpen;
-  });
-  types.on('change', function () {
-    if (dropdownOpen) {
-      animateDropdown();
-      dropdownOpen = false;
-    }
-  });
-
-  $(document).on('click', function (event) {
-    if (
-      !$(event.target).closest(dropdown).length &&
-      !$(event.target).closest(dropdownMenu).length
-    ) {
-      if (dropdownOpen) {
-        animateDropdown();
-        dropdownOpen = false;
-      }
-    }
+    updateModels();
   });
 
   // #endregion
