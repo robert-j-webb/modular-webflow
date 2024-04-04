@@ -284,6 +284,10 @@ if (window.location.pathname === '/career-post') {
   fetch(`https://boards-api.greenhouse.io/v1/boards/${greenhouse}/jobs/${jobId}`)
     .then((response) => response.json())
     .then((data) => {
+      if (data.status === 404) {
+        window.location.href = '/careers';
+        return;
+      }
       let job = data;
       let jobTitle = job.title;
       let jobLocation = job.location.name;
