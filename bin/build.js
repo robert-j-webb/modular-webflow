@@ -22,6 +22,7 @@ const ENTRY_POINTS = [
   'src/modconf.js',
   'src/maxpage.js',
   'src/maxserving.js',
+  'src/performance.js',
 ];
 
 // Config dev serving
