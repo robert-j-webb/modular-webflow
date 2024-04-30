@@ -198,9 +198,7 @@ $(document).ready(function () {
 
   // Swiper instances
   let swipers = {
-    swiper1: initializeSwiper('.perf2_slider-1', {
-      initialSlide: 5,
-    }),
+    swiper1: initializeSwiper('.perf2_slider-1', {}),
     swiper2: initializeSwiper('.perf2_slider-2'),
   };
 
@@ -257,9 +255,6 @@ $(document).ready(function () {
 
       let debounceTimer;
 
-      swiper.on('init', function () {
-        updateStats(swipers);
-      });
       swiper.on('slideChange', function () {
         const modelOrInstance = this.slides[this.activeIndex]?.innerText;
         clearTimeout(debounceTimer);
@@ -274,6 +269,18 @@ $(document).ready(function () {
       swiper.init();
     }
   }
+
+  let scrollSwipers = gsap.timeline({
+    scrollTrigger: {
+      trigger: $('.perf2r'),
+      start: 'center bottom',
+      markers: true,
+      onEnter: () => {
+        swipers.swiper1.slideTo(5, 800, updateStats(swipers));
+        swipers.swiper2.slideTo(1, 800);
+      },
+    },
+  });
 
   //#endregion
 });
