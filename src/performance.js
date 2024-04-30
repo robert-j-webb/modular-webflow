@@ -204,6 +204,27 @@ $(document).ready(function () {
     swiper2: initializeSwiper('.perf2_slider-2'),
   };
 
+  let numPerformanceSelections = 0;
+  let initialViewOfPerformance;
+
+  // Keep track of when the user first views the performance slider.
+  const observer = new IntersectionObserver(
+    (entry) => {
+      if (entry[0].isIntersecting) {
+        initialViewOfPerformance = new Date();
+        observer.disconnect();
+      }
+    },
+    { root: null, threshold: 0.5 }
+  );
+  observer.observe(document.querySelector('.perf2_slider-1'));
+
+  window.addEventListener('beforeunload', () => {
+    const timeInSeconds = Math.round((new Date() - initialViewOfPerformance) / 1000);
+    amplitude.track('timeSpentOnPerformance', { timeInSeconds });
+    amplitude.track('totalClicksOnPerformance', { count: numPerformanceSelections });
+  });
+
   // Swiper Logic
   function initializeSwiper(selector, options) {
     return new Swiper(selector, {
@@ -240,8 +261,11 @@ $(document).ready(function () {
         updateStats(swipers);
       });
       swiper.on('slideChange', function () {
+        const modelOrInstance = this.slides[this.activeIndex]?.innerText;
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
+          numPerformanceSelections = numPerformanceSelections + 1;
+          amplitude.track('performanceSelected', { modelOrInstance });
           toggleNames(this, true);
           updateStats(swipers);
         }, 300);
