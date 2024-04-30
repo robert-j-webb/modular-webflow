@@ -274,7 +274,6 @@ $(document).ready(function () {
     scrollTrigger: {
       trigger: $('.perf2r'),
       start: 'center bottom',
-      markers: true,
       onEnter: () => {
         swipers.swiper1.slideTo(5, 800, updateStats(swipers));
         swipers.swiper2.slideTo(1, 800);
