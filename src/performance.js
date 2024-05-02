@@ -5,61 +5,63 @@ gsap.registerPlugin(ScrollTrigger);
 
 $(document).ready(function () {
   //#region HeroAnimtion
-  // Step 2
-  const heroStep1 = () => {
-    let ootfBox = $('#ootb_logo');
-    let slowBar1 = $('#bar-slow_1');
-    let slowBar2 = $('#bar-slow_2');
-    let slowBar3 = $('#bar-slow_3');
+  if (window.location.href.endsWith('/performance')) {
+    // Step 2
+    const heroStep1 = () => {
+      let ootfBox = $('#ootb_logo');
+      let slowBar1 = $('#bar-slow_1');
+      let slowBar2 = $('#bar-slow_2');
+      let slowBar3 = $('#bar-slow_3');
 
-    let maxLogo = $('#max_logo');
-    let fastBar1 = $('#bar-fast_1');
-    let fastBar2 = $('#bar-fast_2');
-    let fastBar3 = $('#bar-fast_3');
+      let maxLogo = $('#max_logo');
+      let fastBar1 = $('#bar-fast_1');
+      let fastBar2 = $('#bar-fast_2');
+      let fastBar3 = $('#bar-fast_3');
 
-    let header = $('#headers');
-    let numbers = $('#numbers');
-    let grid = $('#grid');
+      let header = $('#headers');
+      let numbers = $('#numbers');
+      let grid = $('#grid');
 
-    let barsDuration = 0.7;
+      let barsDuration = 0.7;
 
-    let tl = gsap.timeline({
-      defaults: {
-        ease: Power2.easeOut,
-      },
-    });
+      let tl = gsap.timeline({
+        defaults: {
+          ease: Power2.easeOut,
+        },
+      });
 
-    // Graph 1
-    tl.to($('.headerb_stage-2'), { opacity: 1 });
-    tl.fromTo(
-      [ootfBox, maxLogo, header, numbers],
-      { opacity: 0, xPercent: -15 },
-      { opacity: 1, xPercent: 0, duration: 0.5 }
-    );
-    tl.fromTo(grid, { scaleY: 0 }, { scaleY: 1, duration: 0.5 }, '<');
+      // Graph 1
+      tl.to($('.headerb_stage-2'), { opacity: 1 });
+      tl.fromTo(
+        [ootfBox, maxLogo, header, numbers],
+        { opacity: 0, xPercent: -15 },
+        { opacity: 1, xPercent: 0, duration: 0.5 }
+      );
+      tl.fromTo(grid, { scaleY: 0 }, { scaleY: 1, duration: 0.5 }, '<');
 
-    // Slow Bars
-    tl.addLabel('bars-start', '<0.2');
-    tl.fromTo(slowBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, 'bars-start');
-    tl.fromTo(slowBar2, { scaleX: 0 }, { scaleX: 0.428, duration: barsDuration }, '<');
-    tl.fromTo(slowBar1, { scaleX: 0 }, { scaleX: 0.295, duration: barsDuration }, '<');
+      // Slow Bars
+      tl.addLabel('bars-start', '<0.2');
+      tl.fromTo(slowBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, 'bars-start');
+      tl.fromTo(slowBar2, { scaleX: 0 }, { scaleX: 0.428, duration: barsDuration }, '<');
+      tl.fromTo(slowBar1, { scaleX: 0 }, { scaleX: 0.295, duration: barsDuration }, '<');
 
-    tl.to(slowBar2, { scaleX: 1, duration: barsDuration });
-    tl.to(slowBar1, { scaleX: 0.695, duration: barsDuration }, '<');
+      tl.to(slowBar2, { scaleX: 1, duration: barsDuration });
+      tl.to(slowBar1, { scaleX: 0.695, duration: barsDuration }, '<');
 
-    tl.to(slowBar1, { scaleX: 1, duration: barsDuration });
+      tl.to(slowBar1, { scaleX: 1, duration: barsDuration });
 
-    tl.fromTo(fastBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, 'bars-start');
-    tl.fromTo(fastBar2, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, '<');
-    tl.fromTo(fastBar1, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, '<');
+      tl.fromTo(fastBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, 'bars-start');
+      tl.fromTo(fastBar2, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, '<');
+      tl.fromTo(fastBar1, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, '<');
 
-    return tl;
-  };
+      return tl;
+    };
 
-  // Main
-  let main = gsap.timeline({});
+    // Main
+    let main = gsap.timeline({});
 
-  main.add(heroStep1());
+    main.add(heroStep1());
+  }
   //#endregion
 
   // #region Performance
