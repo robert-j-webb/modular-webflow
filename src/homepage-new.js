@@ -206,13 +206,6 @@ $(document).ready(function () {
 
   // #endregion
 
-  // #region Stats
-  let models = $('.perf_opt-item');
-  let colsWrap = $('.perf_stats-wrap');
-  let cols = $('.perf_stat');
-  let colsLine = $('.perf_stats-line');
-  let types = $('.perf_opt-type_dropdown-item');
-
   // Functions
   function formatNumber(number) {
     // Define or replace with appropriate formatting logic

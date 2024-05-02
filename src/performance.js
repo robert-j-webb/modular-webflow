@@ -186,9 +186,9 @@ $(document).ready(function () {
     let instanceIndex = allSwipers.swiper2.realIndex;
 
     // Stats
-    instanceTitles.each(function () {
-      let index = $(this).index();
-      updateText($(this), instances[index]);
+    instanceTitles.each(function (index, element) {
+      console.log(index);
+      updateText($(element), instances[index]);
     });
 
     animateCounter(statNumberEl, performances[instanceIndex]);
@@ -272,7 +272,7 @@ $(document).ready(function () {
 
   let scrollSwipers = gsap.timeline({
     scrollTrigger: {
-      trigger: $('.perf2r'),
+      trigger: $('.perf2'),
       start: 'center bottom',
       onEnter: () => {
         swipers.swiper1.slideTo(5, 800, updateStats(swipers));
