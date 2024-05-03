@@ -4,16 +4,51 @@ import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 document.documentElement.classList.add('js-enabled');
 
 $(document).ready(function () {
-  // Init Reveal
-  const intervalId = setInterval(function () {
-    if (window.gsap) {
-      clearInterval(intervalId); // stop checking for the object
-      $('.main-wrapper').delay(300).fadeTo('slow', 1); // run the fadeTo method
-    }
-  }, 100);
-
   // Register GSAP
   gsap.registerPlugin(ScrollTrigger);
+
+  // #region Utilities
+
+  // Hero - Copy to Clipboard
+  let curlCopy = $('.curl_copy');
+  let copyTimeout;
+
+  if (curlCopy) {
+    curlCopy.on('click', function (e) {
+      e.preventDefault();
+
+      let data = $(this).find('[data-copy]').text();
+      console.log(data);
+      copyTextToClipboard(data);
+
+      amplitude.track('copyMojoDownload');
+    });
+
+    function copyTextToClipboard(text) {
+      var textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        var successful = document.execCommand('copy');
+
+        clearTimeout(copyTimeout);
+        $('#copy-icon').hide();
+        $('#copy-success').show();
+
+        copyTimeout = setTimeout(() => {
+          $('#copy-icon').show();
+          $('#copy-success').hide();
+        }, 4000);
+      } catch (err) {}
+      document.body.removeChild(textArea);
+    }
+  }
 
   // Team has many images and does not appear to have problems when this is removed.
   if (window.location.pathname !== '/team') {
@@ -52,7 +87,9 @@ $(document).ready(function () {
   }
   addNoScrollbarClass();
 
-  // -- Lines Animation
+  // #endregion
+
+  // #region Line Animation
   let lineMaskTriggers = [];
   function setupLineMaskScrollTriggers() {
     // Kill existing line mask triggers before setting up new ones
@@ -97,6 +134,7 @@ $(document).ready(function () {
       timeout = setTimeout(later, wait);
     };
   }
+
   // Set up the ScrollTriggers on window resize, debounce the handler with 250ms delay
   let lastWindowWidth = $(window).width();
   setTimeout(() => {
@@ -114,6 +152,9 @@ $(document).ready(function () {
     }, 250)
   );
 
+  // #endregion
+
+  // #region Codes Animation
   // -- Code Blocks Animations to view
   $('.dashboard_inner[code-animation]').each(function () {
     const codeBlock = $(this).find('.dashboard_code-block');
@@ -153,7 +194,9 @@ $(document).ready(function () {
     tl.add(letterAnimation(label)).add(letterAnimation(text));
   });
 
-  // -- Menu
+  // #endregion
+
+  // #region Menu
 
   // Base
   var menuOpenAnim = false;
@@ -342,6 +385,9 @@ $(document).ready(function () {
     }
   });
 
+  // #endregion
+
+  // #region Tabs
   if ($('.tabs.max-tab').length) {
     const activeClass = 'tab-active';
     const progressLine = '.tabs_block-progress-line';
@@ -398,4 +444,6 @@ $(document).ready(function () {
       duration,
     });
   }
+
+  // #endregion
 });
