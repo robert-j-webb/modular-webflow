@@ -18,7 +18,6 @@ $(document).ready(function () {
       e.preventDefault();
 
       let data = $(this).find('[data-copy]').text();
-      console.log(data);
       copyTextToClipboard(data);
 
       amplitude.track('copyMojoDownload');
@@ -38,12 +37,15 @@ $(document).ready(function () {
         var successful = document.execCommand('copy');
 
         clearTimeout(copyTimeout);
+
         $('#copy-icon').hide();
         $('#copy-success').show();
+        $('.curl_copy-tip-text').text('Copied!');
 
         copyTimeout = setTimeout(() => {
           $('#copy-icon').show();
           $('#copy-success').hide();
+          $('.curl_copy-tip-text').text('Copy');
         }, 4000);
       } catch (err) {}
       document.body.removeChild(textArea);
@@ -319,7 +321,6 @@ $(document).ready(function () {
   const animateMovingDiv = (element, rect, duration, direction) => {
     let subLinks = $(element).find(dropdownLinks);
     let subMain = $(element).find('.navbar_dropdown-main');
-    console.log(subMain);
     const tl = gsap.timeline({ defaults: { ease: 'circ.out' } });
     tl.to(movingDiv, {
       top: `${rect.top}px`,
