@@ -297,19 +297,20 @@ if (window.location.pathname === '/career-post') {
     });
 
   function getRandomNumber() {
-    return Math.floor(Math.random() * 6) + 1;
+    return Math.floor(Math.random() * 7) + 1;
   }
 
-  var randomImage = getRandomNumber(6);
+  var randomImage = getRandomNumber(7);
 
   // array of 7 items
   let images = [
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6510c61533a997b6eb397375_career-post-02.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd15457e6979d96abfa7_career-post-01.jpeg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/642fcdff260d59b87c063981_career-post-03.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd16010cd68dae522de2_career-post-06.jpeg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6510c402906e7cec8ea5b43d_carrer-post-05.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/6512fd150c840597a839e9fc_career-post-07.jpeg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c3fb8390c982f26ed_careers_1.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c2a0972c00c89b518_careers_2.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d866f802f73558a82_careers_3.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d68cb5b9855976a3e_careers_4.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4cef8736f278b329bd_careers_5.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d99662e786edecf7a_careers_6.jpg',
+    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c58f7db9766875803_careers_7.jpg',
   ];
 
   document.getElementById('job-image').src = images[randomImage - 1];
