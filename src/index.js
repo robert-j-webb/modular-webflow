@@ -221,7 +221,7 @@ $(document).ready(function () {
       .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
       .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
       .fromTo(
-        menuLinksItems,
+        [menuLinksItems, '.navbar_link-icon'],
         {
           y: '100%',
           opacity: 0,
@@ -291,98 +291,10 @@ $(document).ready(function () {
   }
 
   // Menu Dropdown Animation
-  const dropdowns = $('.navbar_dropdown');
-  const dropdownInner = $('.navbar_dropdown-inner');
-  const dropdownLinks = $('.navbar_dropdown-link-list');
-  const movingDiv = $('.navbar_dropdown-bg');
-  let lastIndex;
-  let divIsActive;
-  let leaeveDropdown;
-  let duration = 0.5;
-
-  const setInitialStyles = (element, rect, centerX) => {
-    movingDiv.fadeIn();
-    divIsActive = true;
-    gsap.set(movingDiv, {
-      top: `${rect.top}px`,
-      left: `${rect.left}px`,
-      width: `${rect.width}px`,
-      height: `${rect.height}px`,
-    });
-  };
-
-  const hideMovingDiv = () => {
-    const tl = gsap.timeline({ defaults: { ease: Circ.easeOut } });
-    tl.to(movingDiv, { duration: duration, autoAlpha: 0 });
-    divIsActive = false;
-    return tl;
-  };
-
-  const animateMovingDiv = (element, rect, duration, direction) => {
-    let subLinks = $(element).find(dropdownLinks);
-    let subMain = $(element).find('.navbar_dropdown-main');
-    const tl = gsap.timeline({ defaults: { ease: 'circ.out' } });
-    tl.to(movingDiv, {
-      top: `${rect.top}px`,
-      left: `${rect.left}px`,
-      width: `${rect.width}px`,
-      height: `${rect.height}px`,
-      autoAlpha: divIsActive ? 1 : 0,
-      duration: duration,
-      delay: 0.2,
-    });
-    tl.to($(element).find(dropdownInner), { opacity: 1, duration: 0.2 }, '<0.05');
-    tl.add(animateLinks(subLinks.add(subMain), direction), '<');
-    return tl;
-  };
-
-  const animateLinks = (links, direction, duration) => {
-    const xPercent = direction === 'left' ? -5 : 5;
-    const tl = gsap.timeline({ defaults: { ease: 'circ.out' } });
-    return tl.fromTo(links, { xPercent: xPercent }, { xPercent: 0, duration: 0.4 });
-  };
-
-  const moveDiv = (element) => {
-    gsap.killTweensOf(movingDiv);
-
-    let submenu = $(element).find(dropdownInner)[0];
-    let rect = submenu.getBoundingClientRect();
-    let rectX = element.getBoundingClientRect();
-    let centerX = rectX.width / 2;
-    let direction;
-
-    if (!divIsActive) {
-      setInitialStyles(element, rect, centerX);
-    }
-
-    if (lastIndex < $(element).index()) {
-      direction = 'right';
-    } else if (lastIndex > $(element).index()) {
-      direction = 'left';
-    }
-
-    const movingDivTimeline = animateMovingDiv(element, rect, duration, direction);
-
-    lastIndex = $(element).index();
-  };
-
-  // Events
-  var dropdownTimeout;
-
-  dropdowns.on('mouseenter', function () {
-    if ($(window).width() > 991) {
-      clearTimeout(dropdownTimeout); // Clear any existing timeout
-      moveDiv(this);
-    }
-  });
-
-  dropdowns.on('mouseleave', function () {
-    if ($(window).width() > 991) {
-      gsap.killTweensOf(movingDiv);
-      gsap.to($(this).find(dropdownInner), { opacity: 0 });
-      dropdownTimeout = setTimeout(function () {
-        hideMovingDiv();
-      }, 50);
+  $('.navbar_dropdown').on('click', function () {
+    if ($(window).width() < 992) {
+      $('.navbar_dropdown').removeClass('is-active');
+      $(this).addClass('is-active');
     }
   });
 
