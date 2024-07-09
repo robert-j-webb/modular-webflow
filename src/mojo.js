@@ -70,26 +70,45 @@ tabCarousel({
 let codeSlides = $('.mojo-tabs_dashboard').eq(1).find('.dashboard_code-block');
 
 // SWIPER 1
-new Swiper('.mojo-tabs_slider', {
-  slidesPerView: 'auto',
-  spaceBetween: 12,
-  speed: 250,
-  autoplay: {
-    delay: duration,
-  },
-  centeredSlides: true,
-  observer: true,
-  on: {
-    slideChange: (swiperInstance) => {
-      progressLine.eq(1).stop();
-      progressLine.eq(1).css('width', '0');
-      codeSlides.fadeOut(100, () => {
-        let activeCard = codeSlides.eq(swiperInstance.realIndex);
-        progressLine.eq(1).animate({ width: '100%' }, duration);
-        activeCard.fadeIn();
-        revealText(activeCard);
-      });
+function initSwiper() {
+  new Swiper('.mojo-tabs_slider', {
+    slidesPerView: 'auto',
+    spaceBetween: 12,
+    speed: 250,
+    autoplay: {
+      delay: duration,
     },
+    centeredSlides: true,
+    observer: true,
+    on: {
+      init: () => {
+        progressLine.eq(1).stop(true, true).css('width', '0%');
+        progressLine.eq(1).animate({ width: '100%' }, duration);
+      },
+      slideChange: (swiperInstance) => {
+        progressLine.eq(1).stop(true, true).css('width', '0%');
+        codeSlides.fadeOut(100, () => {
+          let activeCard = codeSlides.eq(swiperInstance.realIndex);
+          progressLine.eq(1).animate({ width: '100%' }, duration);
+          activeCard.fadeIn();
+          revealText(activeCard);
+        });
+      },
+    },
+  });
+}
+
+let observer = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        initSwiper();
+        observer.unobserve(entry.target); // Stop observing once the Swiper is initialized
+      }
+    });
   },
-});
+  { threshold: 0.1 }
+); // Adjust the threshold as needed
+
+observer.observe(document.querySelector('.mojo-tabs_slider'));
 // #endregion
