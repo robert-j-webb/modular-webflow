@@ -206,6 +206,7 @@ $(document).ready(function () {
   const menuLinks = '.navbar_part.links';
   const menuLinksItems = '.navbar_link';
   const menuButton = '.navbar_menu-btn';
+  const navLines = $('.navbar_ham-line');
 
   // Menu Animation
   let menuText = 'Close';
@@ -217,7 +218,10 @@ $(document).ready(function () {
           disableScroll();
         },
       })
-      .add(typeText(menuButton + ' div', () => menuText)) // Use a function that returns menuText value
+      .fromTo(navLines.eq(0), { y: '0px', rotate: '0deg' }, { y: '7px', rotate: '45deg' }, '<')
+      .fromTo(navLines.eq(1), { opacity: 1 }, { opacity: 0 }, '<')
+      .fromTo(navLines.eq(2), { y: '0px', rotate: '0deg' }, { y: '-7px', rotate: '-45deg' }, '<')
+      .fromTo('.navbar_menu-close', { x: '0.4rem', opacity: 0 }, { x: '0', opacity: 1 }, '<')
       .fromTo(menuLinks, { display: 'none' }, { display: 'flex' }, '<')
       .fromTo(menuLinks, { yPercent: -100 }, { yPercent: 0 }, '<')
       .fromTo(
@@ -235,7 +239,6 @@ $(document).ready(function () {
         },
         '-=0.2'
       )
-      .fromTo($('.navbar_buttons-respo .button'), { opacity: 0 }, { opacity: 1, stagger: 0.2 })
       .fromTo(menuLinksItems, { pointerEvents: 'none' }, { pointerEvents: 'auto' }, '<');
     return navReveal;
   }

@@ -55,19 +55,19 @@ tabCarousel({
   onTabLeave: (tab) => {
     tab.removeClass(activeClass);
     // If this is called mid animation (by a click) this will stop it.
-    progressLine.stop();
-    progressLine.css('width', '0');
+    progressLine.eq(0).stop();
+    progressLine.eq(0).css('width', '0');
   },
   onCardShow: cardAnimation,
   onTabShow: (tab) => {
     return new Promise((resolve) => {
       tab.addClass(activeClass);
-      progressLine.animate({ width: '100%' }, duration, resolve);
+      progressLine.eq(0).animate({ width: '100%' }, duration, resolve);
     });
   },
 });
 
-let cards = $('.mojo-tabs_dashboard').eq(1).find('.dashboard_code-block');
+let codeSlides = $('.mojo-tabs_dashboard').eq(1).find('.dashboard_code-block');
 
 // SWIPER 1
 new Swiper('.mojo-tabs_slider', {
@@ -81,11 +81,11 @@ new Swiper('.mojo-tabs_slider', {
   observer: true,
   on: {
     slideChange: (swiperInstance) => {
-      progressLine.stop();
-      progressLine.css('width', '0');
-      cards.fadeOut(100, () => {
-        let activeCard = cards.eq(swiperInstance.realIndex);
-        progressLine.animate({ width: '100%' }, duration);
+      progressLine.eq(1).stop();
+      progressLine.eq(1).css('width', '0');
+      codeSlides.fadeOut(100, () => {
+        let activeCard = codeSlides.eq(swiperInstance.realIndex);
+        progressLine.eq(1).animate({ width: '100%' }, duration);
         activeCard.fadeIn();
         revealText(activeCard);
       });

@@ -245,7 +245,7 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
                 jobListItem.classList.add('greenhouse-job-position-link');
                 jobListItem.setAttribute(
                   'href',
-                  `https://${hostName}/career-post?${jobId}&gh_jid=${jobId}`
+                  `https://${hostName}/company/career-post?${jobId}&gh_jid=${jobId}`
                 );
                 jobListItem.setAttribute('data-job-id', jobId);
                 jobListItem.innerHTML = `<h4 class="greenhouse-job-position-link-title">${jobTitle}</h4><div class="greenhouse-job-position-link-location">${jobLocation}</div><div class="greenhouse-job-position-link-divider"></div>`;
@@ -268,7 +268,7 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
 }
 
 // if current url is /career-post get job id from url and fetch data from API and display it in the page
-if (window.location.pathname === '/career-post') {
+if (window.location.pathname === '/company/career-post') {
   if (window.location.host === 'modular-dev.webflow.io') {
     var greenhouse = 'modtestingsite';
   } else {
@@ -285,7 +285,7 @@ if (window.location.pathname === '/career-post') {
     .then((response) => response.json())
     .then((data) => {
       if (data.status === 404) {
-        window.location.href = '/careers';
+        window.location.href = '/company/careers';
         return;
       }
       let job = data;
