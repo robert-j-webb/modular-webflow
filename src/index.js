@@ -358,5 +358,35 @@ $(document).ready(function () {
     });
   }
 
+  function amplitudeTrack(anchorTag, trackTitle) {
+    return () => {
+      amplitude.track(trackTitle, {
+        href: window.location.href,
+        location: anchorTag.dataset.analyticsLocation,
+      });
+    };
+  }
+
+  // Delay these calls to avoid blocking main thread
+  setTimeout(() => {
+    [...document.querySelectorAll('a')]
+      .filter((a) => a.href === 'https://docs.modular.com/max/install')
+      .forEach((a) => {
+        a.onclick = amplitudeTrack(a, 'DownloadMaxClicked');
+      });
+  }, 100);
+
+  setTimeout(() => {
+    [...document.querySelectorAll('a')]
+      .filter((a) => a.href === 'https://modular-prod-dev.webflow.io/enterprise#form')
+      .forEach((a) => {
+        a.onclick = amplitudeTrack(a, 'ContactSalesClicked');
+      });
+  }, 200);
+  setTimeout(() => {
+    [...document.querySelectorAll('[data-analytics-onclick]')].forEach((a) => {
+      a.onclick = amplitudeTrack(a, a.dataset.analyticsOnclick);
+    });
+  }, 300);
   // #endregion
 });
