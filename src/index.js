@@ -91,71 +91,6 @@ $(document).ready(function () {
 
   // #endregion
 
-  // #region Line Animation
-  let lineMaskTriggers = [];
-  function setupLineMaskScrollTriggers() {
-    // Kill existing line mask triggers before setting up new ones
-    lineMaskTriggers.forEach((st) => st.kill());
-    lineMaskTriggers = [];
-    $('.line-mask').attr('style', '');
-
-    $('.line-mask').each(function () {
-      const computedStyle = window.getComputedStyle($(this)[0]);
-      const originalHeight = computedStyle.getPropertyValue('height');
-
-      if ($(this).closest('.line-mask_wrap').hasClass('bottom')) {
-        gsap.set($(this), { height: '0%' });
-      } else {
-        gsap.set($(this), { height: '100%' });
-      }
-
-      const scrollTrigger = ScrollTrigger.create({
-        trigger: $(this).closest('.line-mask_wrap'),
-        once: true,
-        start: '70% bottom',
-        invalidateOnRefresh: true,
-        onEnter: () => {
-          gsap.to($(this), { height: originalHeight, duration: 1.2 });
-        },
-      });
-
-      // Add the ScrollTrigger instance to the lineMaskTriggers array
-      lineMaskTriggers.push(scrollTrigger);
-    });
-  }
-  function debounce(func, wait) {
-    let timeout;
-    return function () {
-      const context = this,
-        args = arguments;
-      const later = function () {
-        timeout = null;
-        func.apply(context, args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }
-
-  // Set up the ScrollTriggers on window resize, debounce the handler with 250ms delay
-  let lastWindowWidth = $(window).width();
-  setTimeout(() => {
-    setupLineMaskScrollTriggers();
-  }, 500);
-  $(window).on(
-    'resize',
-    debounce(() => {
-      const currentWindowWidth = $(window).width();
-
-      if (currentWindowWidth !== lastWindowWidth) {
-        setupLineMaskScrollTriggers();
-        lastWindowWidth = currentWindowWidth;
-      }
-    }, 250)
-  );
-
-  // #endregion
-
   // #region Codes Animation
   // -- Code Blocks Animations to view
   $('.dashboard_inner[code-animation]').each(function () {
@@ -173,27 +108,6 @@ $(document).ready(function () {
         codeAnimation($(this));
       },
     });
-  });
-
-  // -- CTA Animation
-  $('#ctaBox').each(function () {
-    let label = $(this).find('#ctaLabel');
-    let text = $(this).find('#ctaText');
-    let triggerElement = $(this);
-    let tl = gsap.timeline({
-      ease: Power2.easeOut,
-      paused: true,
-      scrollTrigger: {
-        trigger: triggerElement,
-        // trigger element - viewport
-        start: 'center bottom',
-        onEnter: () => {
-          // Play the timeline when the trigger element enters the viewport
-          tl.play();
-        },
-      },
-    });
-    tl.add(letterAnimation(label)).add(letterAnimation(text));
   });
 
   // #endregion
@@ -361,6 +275,9 @@ $(document).ready(function () {
     });
   }
 
+  // #endregion
+
+  // #region AmplitudeTrack
   function amplitudeTrack(anchorTag, trackTitle) {
     return () => {
       amplitude.track(trackTitle, {

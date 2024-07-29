@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../bin/live-reload.js", "../src/careers.js"],
+  "sourcesContent": ["new EventSource(`${SERVE_ORIGIN}/esbuild`).addEventListener('change', () => location.reload());\n", "const swiper = new Swiper('.about-team_slider', {\n  // Optional parameters\n  slidesPerView: 'auto',\n  spaceBetween: 20,\n  // Navigation arrows\n  navigation: {\n    nextEl: '.swiper-arrow.next',\n    prevEl: '.swiper-arrow.prev',\n  },\n});\n\nconst swiperModal = new Swiper('.about-team_modal-slider .max-width-full', {\n  // Optional parameters\n  slidesPerView: 1,\n  direction: 'vertical',\n  spaceBetween: 20,\n  mousewheel: {\n    enabled: true,\n    forceToAxis: true,\n    thresholdDelta: 25,\n  },\n  freeMode: false,\n  shortSwipes: false,\n});\n"],
+  "mappings": ";;;AAAA,MAAI,YAAY,GAAG,iCAAsB,EAAE,iBAAiB,UAAU,MAAM,SAAS,OAAO,CAAC;;;ACA7F,MAAM,SAAS,IAAI,OAAO,sBAAsB;AAAA;AAAA,IAE9C,eAAe;AAAA,IACf,cAAc;AAAA;AAAA,IAEd,YAAY;AAAA,MACV,QAAQ;AAAA,MACR,QAAQ;AAAA,IACV;AAAA,EACF,CAAC;AAED,MAAM,cAAc,IAAI,OAAO,4CAA4C;AAAA;AAAA,IAEzE,eAAe;AAAA,IACf,WAAW;AAAA,IACX,cAAc;AAAA,IACd,YAAY;AAAA,MACV,SAAS;AAAA,MACT,aAAa;AAAA,MACb,gBAAgB;AAAA,IAClB;AAAA,IACA,UAAU;AAAA,IACV,aAAa;AAAA,EACf,CAAC;",
+  "names": []
+}

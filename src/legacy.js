@@ -201,7 +201,9 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
 
       // append departments with jobs to the element with class .greenhouse-tabs-menu
       function appendDepartmentsWithJobs(departmentsWithJobs) {
+        var jobsForDepartment;
         let tabNumber = 1;
+        document.querySelector('.greenhouse-tabs-menu').innerHTML = '';
         for (let i = 0; i < departmentsWithJobs.length; i++) {
           let department = departmentsWithJobs[i];
           let departmentName = department.name;
@@ -231,7 +233,7 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
               return jobsForDepartment;
             }
 
-            var jobsForDepartment = getJobsForDepartment(jobPositions, departmentId);
+            jobsForDepartment = getJobsForDepartment(jobPositions, departmentId);
 
             // for each job in jobsForDepartment append a job to the element with class .greenhouse-tabs-content
             function appendJobsForDepartment(jobsForDepartment) {
@@ -254,7 +256,7 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
             }
             appendJobsForDepartment(jobsForDepartment);
           });
-          departmentListItem.innerHTML = `<div class="greenhouse-tabs-number">${tabNumber}</div><h3 class="greenhouse-tab-link-title">${departmentName}</h3>`;
+          departmentListItem.innerHTML = `</div><h3 class="greenhouse-tab-link-title">${departmentName}</h3><div class="greenhouse-tab-counter">(${department.jobs.length})</div>`;
           document.querySelector('.greenhouse-tabs-menu').appendChild(departmentListItem);
           tabNumber++;
         }
