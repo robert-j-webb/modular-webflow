@@ -24,10 +24,12 @@ const swiperModal = new Swiper('.about-team_modal-slider .max-width-full', {
     0: {
       direction: 'horizontal',
       spaceBetween: 8,
+      autoHeight: true,
     },
     992: {
       direction: 'vertical',
       spaceBetween: 20,
+      autoHeight: false,
     },
   },
 });

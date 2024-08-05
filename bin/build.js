@@ -9,22 +9,15 @@ const PRODUCTION = process.env.NODE_ENV === 'production';
 // Config entrypoint files
 const ENTRY_POINTS = [
   'src/index.js',
-  'src/builderpage.js',
-  'src/homepage.js',
   'src/homepage-new.js',
-  'src/deployerpage.js',
-  'src/devpage.js',
-  'src/signup.js',
-  'src/get-started-flows.js',
   'src/legacy.js',
   'src/cookies.js',
   'src/sales.js',
   'src/modconf.js',
-  'src/maxpage.js',
-  'src/maxserving.js',
   'src/performance.js',
   'src/mojo.js',
   'src/about.js',
+  'src/careers.js',
 ];
 
 // Config dev serving

@@ -1,31 +1,6 @@
-"use strict";
-(() => {
-  // bin/live-reload.js
-  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
-
-  // src/careers.js
-  var swiper = new Swiper(".about-team_slider", {
-    // Optional parameters
-    slidesPerView: "auto",
-    spaceBetween: 20,
-    // Navigation arrows
-    navigation: {
-      nextEl: ".swiper-arrow.next",
-      prevEl: ".swiper-arrow.prev"
-    }
-  });
-  var swiperModal = new Swiper(".about-team_modal-slider .max-width-full", {
-    // Optional parameters
-    slidesPerView: 1,
-    direction: "vertical",
-    spaceBetween: 20,
-    mousewheel: {
-      enabled: true,
-      forceToAxis: true,
-      thresholdDelta: 25
-    },
-    freeMode: false,
-    shortSwipes: false
-  });
-})();
-//# sourceMappingURL=careers.js.map
+"use strict";(()=>{window.location.host==="modular-dev.webflow.io"?s="modtestingsite":s="modularai";var s,M=window.location.hostname;function T(o,a){let e=[];for(let n=0;n<o.departments.length;n++)o.departments[n].id===a&&(e=o.departments[n].jobs);return e}function h(o){document.querySelector(".greenhouse-tabs-content").innerHTML="";for(let a=0;a<o.length;a++){let e=o[a],n=e.title,i=e.id,p=e.location.name,c=document.createElement("a");c.classList.add("greenhouse-job-position-link"),c.setAttribute("href",`https://${M}/company/career-post?${i}&gh_jid=${i}`),c.setAttribute("data-job-id",i),c.innerHTML=`<h4 class="greenhouse-job-position-link-title">${n}</h4><div class="greenhouse-job-position-link-location">${p}</div><div class="greenhouse-job-position-link-divider"></div>`,document.querySelector(".greenhouse-tabs-content").appendChild(c)}}if(document.querySelector(".greenhouse-tabs-layout")){async function o(){let e=await(await fetch(`https://boards-api.greenhouse.io/v1/boards/${s}/jobs`)).json();function n(r){let l=document.querySelector(".greenhouse-tabs-menu");l.innerHTML="";let t=document.createElement("a");t.classList.add("greenhouse-tab-link"),t.href="#",t.innerHTML=`
+          <h3 class="greenhouse-tab-link-title">All</h3>
+          <div class="greenhouse-tab-counter">(${r.length})</div>`,t.addEventListener("click",m=>{let u=document.querySelector(".cc-current");u&&u.classList.remove("cc-current"),m.target.classList.add("cc-current"),h(r)}),l.appendChild(t)}n(e.jobs);var c=await(await fetch(`https://boards-api.greenhouse.io/v1/boards/${s}/departments`)).json();function v(r){let l=[];for(let t=0;t<r.departments.length;t++)r.departments[t].jobs.length>0&&l.push(r.departments[t]);return l}var L=v(c);function y(r){let l=document.querySelector(".greenhouse-tabs-menu");r.forEach(t=>{let{id:m,name:u,jobs:_}=t,d=document.createElement("a");d.classList.add("greenhouse-tab-link"),d.dataset.departmentId=m,d.href="#",d.innerHTML=`
+                  <h3 class="greenhouse-tab-link-title">${u}</h3>
+                  <div class="greenhouse-tab-counter">(${_.length})</div>
+              `,d.addEventListener("click",E=>{let f=document.querySelector(".cc-current");f&&f.classList.remove("cc-current"),E.target.classList.add("cc-current");let $=T(c,m);h($)}),l.appendChild(d)})}y(L),document.querySelector(".greenhouse-tabs-menu").firstElementChild.click()}o()}if(window.location.pathname==="/company/career-post"){let o=function(){return Math.floor(Math.random()*7)+1};D=o,window.location.host==="modular-dev.webflow.io"?s="modtestingsite":s="modularai",w=`https://boards.greenhouse.io/embed/job_board/js?for=${s}`,b=document.createElement("script"),b.src=w,document.body.appendChild(b),j=window.location.search.split("=")[1],fetch(`https://boards-api.greenhouse.io/v1/boards/${s}/jobs/${j}`).then(e=>e.json()).then(e=>{if(e.status===404){window.location.href="/company/careers";return}let n=e,i=n.title,p=n.location.name;document.getElementById("job-title").innerHTML=i,document.getElementById("job-location").innerHTML=p,document.getElementById("job-breadcrumb").innerHTML=i}),g=o(7);let a=["https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c3fb8390c982f26ed_careers_1.jpg","https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c2a0972c00c89b518_careers_2.jpg","https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d866f802f73558a82_careers_3.jpg","https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d68cb5b9855976a3e_careers_4.jpg","https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4cef8736f278b329bd_careers_5.jpg","https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d99662e786edecf7a_careers_6.jpg","https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c58f7db9766875803_careers_7.jpg"];document.getElementById("job-image").src=a[g-1]}var s,w,b,j,g,D,k=new Swiper(".careers-testimonial_list",{slidesPerView:"auto",spaceBetween:20,navigation:{nextEl:".swiper-arrow.next",prevEl:".swiper-arrow.prev"}});})();
