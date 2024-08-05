@@ -12,14 +12,10 @@ const swiper = new Swiper('.about-team_slider', {
 const swiperModal = new Swiper('.about-team_modal-slider .max-width-full', {
   // Optional parameters
   slidesPerView: 1,
-
-  mousewheel: {
-    enabled: true,
-    forceToAxis: true,
-    thresholdDelta: 25,
+  navigation: {
+    prevEl: '.about-team-modal-arrow.prev',
+    nextEl: '.about-team-modal-arrow.next',
   },
-  freeMode: false,
-  shortSwipes: false,
   breakpoints: {
     0: {
       direction: 'horizontal',
@@ -43,8 +39,10 @@ $('[data-modal="hide"]').on('click', hideModal);
 function revealModal(index) {
   swiperModal.slideTo(index);
   $('.about-team_modal').fadeIn();
+  $('html, body').addClass('overflow-hidden');
 }
 
 function hideModal() {
   $('.about-team_modal').fadeOut();
+  $('html, body').removeClass('overflow-hidden');
 }
