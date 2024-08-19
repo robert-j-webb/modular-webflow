@@ -308,5 +308,45 @@ $(document).ready(function () {
       a.onclick = amplitudeTrack(a, a.dataset.analyticsOnclick);
     });
   }, 300);
+  let timeStartedOnPage = new Date();
+
+  function trackTimeOnPage(path) {
+    if (!timeStartedOnPage) {
+      return;
+    }
+    const durationInSeconds = (new Date().getTime() - timeStartedOnPage.getTime()) / 1000;
+    amplitude.track('timeOnPage', {
+      duration: `${Math.round(durationInSeconds)}`,
+      minutes: `${Math.round(durationInSeconds / 60)}`,
+      path,
+    });
+  }
+
+  function scrollPercentage() {
+    const { documentElement } = document,
+      { body } = document;
+
+    return (
+      ((documentElement.scrollTop || body.scrollTop) /
+        ((documentElement.scrollHeight || body.scrollHeight) - documentElement.clientHeight)) *
+      100
+    );
+  }
+
+  let maxScroll = 0;
+
+  setInterval(() => {
+    const curScroll = scrollPercentage();
+    if (curScroll > maxScroll) {
+      maxScroll = curScroll;
+    }
+  }, 500);
+
+  window.addEventListener('beforeunload', () => {
+    trackTimeOnPage(window.location.pathname);
+    amplitude.track('MaxScrollPercentage', { maxScroll });
+    return undefined;
+  });
+
   // #endregion
 });
