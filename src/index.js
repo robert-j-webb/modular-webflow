@@ -310,15 +310,15 @@ $(document).ready(function () {
   }, 300);
   let timeStartedOnPage = new Date();
 
-  function trackTimeOnPage(path) {
+  function trackTimeOnPage(pathname) {
     if (!timeStartedOnPage) {
       return;
     }
-    const durationInSeconds = (new Date().getTime() - timeStartedOnPage.getTime()) / 1000;
-    amplitude.track('timeOnPage', {
+    const durationInSeconds = Math.round(new Date().getTime() - timeStartedOnPage.getTime()) / 1000;
+    amplitude.track('TimeOnPage', {
       duration: `${Math.round(durationInSeconds)}`,
       minutes: `${Math.round(durationInSeconds / 60)}`,
-      path,
+      pathname,
     });
   }
 
@@ -326,10 +326,10 @@ $(document).ready(function () {
     const { documentElement } = document,
       { body } = document;
 
-    return (
+    return Math.round(
       ((documentElement.scrollTop || body.scrollTop) /
         ((documentElement.scrollHeight || body.scrollHeight) - documentElement.clientHeight)) *
-      100
+        100
     );
   }
 
@@ -343,8 +343,9 @@ $(document).ready(function () {
   }, 500);
 
   window.addEventListener('beforeunload', () => {
-    trackTimeOnPage(window.location.pathname);
-    amplitude.track('MaxScrollPercentage', { maxScroll });
+    const { pathname } = window.location;
+    trackTimeOnPage(pathname);
+    amplitude.track('MaxScrollPercentage', { maxScroll, pathname });
     return undefined;
   });
 
