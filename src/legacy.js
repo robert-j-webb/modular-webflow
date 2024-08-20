@@ -200,25 +200,6 @@ if (window.location.pathname === '/company/career-post') {
       document.getElementById('job-location').innerHTML = jobLocation;
       document.getElementById('job-breadcrumb').innerHTML = jobTitle;
     });
-
-  function getRandomNumber() {
-    return Math.floor(Math.random() * 7) + 1;
-  }
-
-  var randomImage = getRandomNumber(7);
-
-  // array of 7 items
-  let images = [
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c3fb8390c982f26ed_careers_1.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c2a0972c00c89b518_careers_2.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d866f802f73558a82_careers_3.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d68cb5b9855976a3e_careers_4.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4cef8736f278b329bd_careers_5.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4d99662e786edecf7a_careers_6.jpg',
-    'https://uploads-ssl.webflow.com/63f9f100025c058594957cca/664e0a4c58f7db9766875803_careers_7.jpg',
-  ];
-
-  document.getElementById('job-image').src = images[randomImage - 1];
 }
 
 // Make color of nested collections text the same as other text in the section

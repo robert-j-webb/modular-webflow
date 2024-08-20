@@ -12,6 +12,7 @@ const swiper = new Swiper('.about-team_slider', {
 const swiperModal = new Swiper('.about-team_modal-slider .max-width-full', {
   // Optional parameters
   slidesPerView: 1,
+  noSwiping: false,
   navigation: {
     prevEl: '.about-team-modal-arrow.prev',
     nextEl: '.about-team-modal-arrow.next',
@@ -33,6 +34,12 @@ const swiperModal = new Swiper('.about-team_modal-slider .max-width-full', {
 $('.about-team_card').on('click', function () {
   revealModal($(this).closest('.w-dyn-item').index());
 });
+
+$('.blog-detail_hero-list-item')
+  .not('[fs-cmsstatic-element]')
+  .on('click', function () {
+    revealModal($(this).closest('.w-dyn-item').index());
+  });
 
 $('[data-modal="hide"]').on('click', hideModal);
 
