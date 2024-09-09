@@ -290,7 +290,7 @@ $(document).ready(function () {
   // Delay these calls to avoid blocking main thread
   setTimeout(() => {
     [...document.querySelectorAll('a')]
-      .filter((a) => a.href === 'https://docs.modular.com/max/install')
+      .filter((a) => a.href === 'https://docs.modular.com/')
       .forEach((a) => {
         a.onclick = amplitudeTrack(a, 'DownloadMaxClicked');
       });
@@ -298,7 +298,7 @@ $(document).ready(function () {
 
   setTimeout(() => {
     [...document.querySelectorAll('a')]
-      .filter((a) => a.href === 'https://modular-prod-dev.webflow.io/enterprise#form')
+      .filter((a) => a.href === 'https://modular.com/enterprise#form')
       .forEach((a) => {
         a.onclick = amplitudeTrack(a, 'ContactSalesClicked');
       });
