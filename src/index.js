@@ -1,3 +1,5 @@
+import { Experiment } from '@amplitude/experiment-js-client';
+
 import { codeAnimation, letterAnimation, typeText } from '$utils/globalFunctions';
 import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
@@ -350,4 +352,27 @@ $(document).ready(function () {
   });
 
   // #endregion
+
+  async function experimentCode() {
+    const experiment = Experiment.initializeWithAmplitudeAnalytics(
+      'client-ejPfaOrUEtTflNBKKrNtLWx5IB1QbAmy'
+    );
+    await experiment.start();
+    Object.values(experiment.all()).forEach((val) => {
+      if (val.payload) {
+        const hideStr = val.payload.hide
+          ? `.${val.payload.hide} { display: none !important; }\n`
+          : '';
+        const showStr = val.payload.hide
+          ? `.${val.payload.show} { display: block !important; }`
+          : '';
+        const style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = hideStr + showStr;
+        document.getElementsByTagName('head')[0].appendChild(style);
+      }
+    });
+  }
+
+  experimentCode();
 });
