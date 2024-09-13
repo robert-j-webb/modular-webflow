@@ -55,6 +55,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "@amplitude/experiment-js-client": "^1.11.0",
     "@finsweet/ts-utils": "^0.39.0",
     "gsap": "^3.11.5",
     "swiper": "^9.1.1"
