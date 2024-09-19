@@ -358,9 +358,9 @@ $(document).ready(function () {
       'client-ejPfaOrUEtTflNBKKrNtLWx5IB1QbAmy'
     );
     await experiment.fetch();
-    Object.values(experiment.variants.getAll()).forEach((val) => {
+    Object.entries(experiment.variants.getAll()).forEach(([key, val]) => {
       if (val.payload) {
-        experiment.exposure(val.key);
+        experiment.exposure(key);
         const hideStr = val.payload.hide
           ? `.${val.payload.hide} { display: none !important; }\n`
           : '';
