@@ -357,8 +357,8 @@ $(document).ready(function () {
     const experiment = Experiment.initializeWithAmplitudeAnalytics(
       'client-ejPfaOrUEtTflNBKKrNtLWx5IB1QbAmy'
     );
-    await experiment.start();
-    Object.values(experiment.all()).forEach((val) => {
+    await experiment.fetch();
+    Object.values(experiment.variants.getAll()).forEach((val) => {
       if (val.payload) {
         const hideStr = val.payload.hide
           ? `.${val.payload.hide} { display: none !important; }\n`
