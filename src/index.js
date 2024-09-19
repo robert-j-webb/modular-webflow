@@ -360,6 +360,7 @@ $(document).ready(function () {
     await experiment.fetch();
     Object.values(experiment.variants.getAll()).forEach((val) => {
       if (val.payload) {
+        experiment.exposure(val.key);
         const hideStr = val.payload.hide
           ? `.${val.payload.hide} { display: none !important; }\n`
           : '';
