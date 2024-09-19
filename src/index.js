@@ -364,7 +364,7 @@ $(document).ready(function () {
           ? `.${val.payload.hide} { display: none !important; }\n`
           : '';
         const showStr = val.payload.hide
-          ? `.${val.payload.show} { display: block !important; }`
+          ? `.${val.payload.show} { display: flex !important; }`
           : '';
         const style = document.createElement('style');
         style.type = 'text/css';
