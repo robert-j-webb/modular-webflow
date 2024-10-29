@@ -376,4 +376,29 @@ $(document).ready(function () {
   }
 
   experimentCode();
+
+  // Finds elements with `.inject-install` and then puts install instructions
+  // inside of them. Sets some style properties too since I was a bit too lazy
+  // for a class here. Additionally, the way it finds the inner text is a bit odd.
+  // It's additionally lazy by being in an interval that just runs 4 times a
+  // second instead of being more correct, but this crude logic is not causing
+  // any issues.
+  let deviceId = '';
+  function installCommand(deviceId = '') {
+    return `curl -ssL https://magic.modular.com/${deviceId} | bash`;
+  }
+  const amplitudeIdInterval = setInterval(() => {
+    deviceId = amplitude.getDeviceId();
+    const codeEl = document.querySelector('.inject-install > pre');
+    if (codeEl) {
+      for (let installBlock of document.querySelectorAll('.inject-install')) {
+        installBlock.querySelector('code').style.textOverflow = 'ellipsis';
+        installBlock.querySelector('code').style.overflow = 'hidden';
+        installBlock.querySelector('code span:nth-of-type(2)').innerText = installCommand(deviceId);
+      }
+      if (deviceId) {
+        clearInterval(amplitudeIdInterval);
+      }
+    }
+  }, 250);
 });
