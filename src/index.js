@@ -383,22 +383,50 @@ $(document).ready(function () {
   // It's additionally lazy by being in an interval that just runs 4 times a
   // second instead of being more correct, but this crude logic is not causing
   // any issues.
-  let deviceId = '';
   function installCommand(deviceId = '') {
     return `curl -ssL https://magic.modular.com/${deviceId} | bash`;
   }
+  const cookieName = 'mod-id';
+  const prevModId = getCookie(cookieName);
+  let adblockId = null;
+  if (prevModId) {
+    adblockId = prevModId;
+  } else {
+    const cookieValue = 'www-' + crypto.randomUUID();
+    adblockId = cookieValue;
+    document.cookie = `${cookieName}=${cookieValue}; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=Lax; Secure;Path=/;`;
+  }
   const amplitudeIdInterval = setInterval(() => {
-    deviceId = amplitude.getDeviceId();
+    let amplitudeId = amplitude.getDeviceId();
     const codeEl = document.querySelector('.inject-install > pre');
     if (codeEl) {
       for (let installBlock of document.querySelectorAll('.inject-install')) {
         installBlock.querySelector('code').style.textOverflow = 'ellipsis';
         installBlock.querySelector('code').style.overflow = 'hidden';
-        installBlock.querySelector('code span:nth-of-type(2)').innerText = installCommand(deviceId);
+        installBlock.querySelector('code span:nth-of-type(2)').innerText = installCommand(
+          amplitudeId ? amplitudeId : adblockId
+        );
       }
-      if (deviceId) {
+      if (amplitudeId) {
         clearInterval(amplitudeIdInterval);
       }
     }
   }, 250);
 });
+
+// From https://www.w3schools.com/js/js_cookies.asp
+function getCookie(cname) {
+  let name = cname + '=';
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
