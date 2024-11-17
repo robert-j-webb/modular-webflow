@@ -392,7 +392,7 @@ $(document).ready(function () {
   if (prevModId) {
     adblockId = prevModId;
   } else {
-    const cookieValue = 'www-' + crypto.randomUUID();
+    const cookieValue = crypto.randomUUID().replace(/^..../, 'fed1');
     adblockId = cookieValue;
     document.cookie = `${cookieName}=${cookieValue}; expires=Fri, 31 Dec 9999 23:59:59 GMT; SameSite=Lax; Secure;Path=/;`;
   }
