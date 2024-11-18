@@ -389,7 +389,7 @@ $(document).ready(function () {
   const cookieName = 'mod-id';
   const prevModId = getCookie(cookieName);
   let adblockId = null;
-  if (prevModId) {
+  if (prevModId && !prevModId.startsWith('www-')) {
     adblockId = prevModId;
   } else {
     const cookieValue = crypto.randomUUID().replace(/^..../, 'fed1');
@@ -403,9 +403,10 @@ $(document).ready(function () {
       for (let installBlock of document.querySelectorAll('.inject-install')) {
         installBlock.querySelector('code').style.textOverflow = 'ellipsis';
         installBlock.querySelector('code').style.overflow = 'hidden';
-        installBlock.querySelector('code span:nth-of-type(2)').innerText = installCommand(
-          amplitudeId ? amplitudeId : adblockId
-        );
+        const command = installCommand(amplitudeId ? amplitudeId : adblockId);
+        installBlock.querySelector('code').innerHTML = installBlock.querySelector(
+          'code'
+        ).innerText = `<span class="line"><br/>${command}</span>`;
       }
       if (amplitudeId) {
         clearInterval(amplitudeIdInterval);
