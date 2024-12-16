@@ -1,6 +1,7 @@
 import { Experiment } from '@amplitude/experiment-js-client';
 
 import { codeAnimation, letterAnimation, typeText } from '$utils/globalFunctions';
+import { SniffEmailForAmplitude } from '$utils/sniffEmail';
 import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
 document.documentElement.classList.add('js-enabled');
@@ -280,6 +281,7 @@ $(document).ready(function () {
   // #endregion
 
   // #region AmplitudeTrack
+  SniffEmailForAmplitude();
   function amplitudeTrack(anchorTag, trackTitle) {
     return () => {
       amplitude.track(trackTitle, {
