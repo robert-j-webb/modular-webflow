@@ -357,7 +357,7 @@ $(document).ready(function () {
 
   async function experimentCode() {
     const experiment = Experiment.initializeWithAmplitudeAnalytics(
-      'client-ejPfaOrUEtTflNBKKrNtLWx5IB1QbAmy'
+      'client-fhQfFdzMgOCoCAWmoV0W8KvnbhFe2dUu'
     );
     await experiment.fetch();
     Object.entries(experiment.variants.getAll()).forEach(([key, val]) => {
