@@ -356,9 +356,12 @@ $(document).ready(function () {
   // #endregion
 
   async function experimentCode() {
-    const experiment = Experiment.initializeWithAmplitudeAnalytics(
-      'client-fhQfFdzMgOCoCAWmoV0W8KvnbhFe2dUu'
-    );
+    const isProd = new URL(window.location.href).host === 'modular-prod-dev.webflow.io';
+    const apiKey = isProd
+      ? 'client-fhQfFdzMgOCoCAWmoV0W8KvnbhFe2dUu'
+      : 'client-ejPfaOrUEtTflNBKKrNtLWx5IB1QbAmy';
+
+    const experiment = Experiment.initializeWithAmplitudeAnalytics(apiKey);
     await experiment.fetch();
     Object.entries(experiment.variants.getAll()).forEach(([key, val]) => {
       if (val.payload) {
