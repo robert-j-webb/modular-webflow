@@ -421,10 +421,6 @@ $(document).ready(function () {
         copyCurlEl.innerText &&
         copyCurlEl.innerText.includes('curl -ssL https://magic.modular.com | bash')
       ) {
-        copyCurlEl.parentElement.style.width = '100%';
-        copyCurlEl.style.textOverflow = 'ellipsis';
-        copyCurlEl.style.overflow = 'hidden';
-        copyCurlEl.style.whiteSpace = 'pre';
         copyCurlEl.innerText = command;
       }
     }
