@@ -358,9 +358,8 @@ $(document).ready(function () {
   async function experimentCode() {
     const isProd = new URL(window.location.href).host === 'modular-prod-dev.webflow.io';
     const apiKey = isProd
-      ? 'client-fhQfFdzMgOCoCAWmoV0W8KvnbhFe2dUu'
-      : 'client-ejPfaOrUEtTflNBKKrNtLWx5IB1QbAmy';
-
+      ? 'client-ejPfaOrUEtTflNBKKrNtLWx5IB1QbAmy'
+      : 'client-fhQfFdzMgOCoCAWmoV0W8KvnbhFe2dUu';
     const experiment = Experiment.initializeWithAmplitudeAnalytics(apiKey);
     await experiment.fetch();
     Object.entries(experiment.variants.getAll()).forEach(([key, val]) => {
