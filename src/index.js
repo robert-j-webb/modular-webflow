@@ -401,17 +401,31 @@ $(document).ready(function () {
   const amplitudeIdInterval = setInterval(() => {
     let amplitudeId = amplitude.getDeviceId();
     const codeEl = document.querySelector('.inject-install > pre');
+    const command = installCommand(amplitudeId ? amplitudeId : adblockId);
     if (codeEl) {
       for (let installBlock of document.querySelectorAll('.inject-install')) {
         installBlock.querySelector('code').style.textOverflow = 'ellipsis';
         installBlock.querySelector('code').style.overflow = 'hidden';
-        const command = installCommand(amplitudeId ? amplitudeId : adblockId);
         installBlock.querySelector('code').innerHTML = installBlock.querySelector(
           'code'
         ).innerText = `<span class="line"><br/>${command}</span>`;
       }
       if (amplitudeId) {
         clearInterval(amplitudeIdInterval);
+      }
+    }
+    const copyCurlEls = document.querySelectorAll('[fs-copyclip-element="copy-this"]');
+    for (let copyCurlEl of copyCurlEls) {
+      if (
+        copyCurlEl &&
+        copyCurlEl.innerText &&
+        copyCurlEl.innerText.includes('curl -ssL https://magic.modular.com | bash')
+      ) {
+        copyCurlEl.parentElement.style.width = '100%';
+        copyCurlEl.style.textOverflow = 'ellipsis';
+        copyCurlEl.style.overflow = 'hidden';
+        copyCurlEl.style.whiteSpace = 'pre';
+        copyCurlEl.innerText = command;
       }
     }
   }, 250);
