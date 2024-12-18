@@ -1,13 +1,15 @@
 export function SniffEmailForAmplitude() {
-  setInterval(() => {
-    sniffEmail();
+  const interval = setInterval(() => {
+    const inputs = document.querySelectorAll('input[type=email]');
+    if (inputs.length) {
+      sniffEmail(inputs);
+      clearInterval(interval);
+    }
   }, 1000);
 }
 
 let lastFire = '';
-function sniffEmail() {
-  const inputs = document.querySelectorAll('input[type=email]');
-
+function sniffEmail(inputs) {
   for (let input of inputs) {
     if (input.classList.contains('emailCheck')) {
       continue;
@@ -19,26 +21,26 @@ function sniffEmail() {
     const { formId } = formParent.dataset;
 
     const debouncedAmpCall = debounce((input, formId) => {
-      if (!input.checkValidity() || input.classList.contains('error')) {
+      if (!isValid(input)) {
         return;
       }
       lastFire = input.value;
       amplitude.track('emailInput', { email: input.value, formId });
     }, 3000);
-    input.addEventListener('blur', (ev) => {
+    input.addEventListener('input', (ev) => {
       if (ev.target.value === lastFire) {
         return;
       }
-      if (
-        ev.target.checkValidity() &&
-        !ev.target.classList.contains('error') &&
-        ev.target.value !== ''
-      ) {
+      if (isValid(ev.target)) {
         debouncedAmpCall(ev.target, formId);
       }
     });
     input.classList.add('emailCheck');
   }
+}
+
+function isValid(el) {
+  return el.checkValidity() && !el.classList.contains('error') && el.value !== '';
 }
 
 const debounce = (callback, wait) => {
