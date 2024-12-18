@@ -377,6 +377,7 @@ $(document).ready(function () {
         document.getElementsByTagName('head')[0].appendChild(style);
       }
     });
+    document.querySelector('.section_hp-hero').style.opacity = 1;
   }
 
   experimentCode();
