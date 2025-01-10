@@ -4,6 +4,8 @@ import { codeAnimation, letterAnimation, typeText } from '$utils/globalFunctions
 import { SniffEmailForAmplitude } from '$utils/sniffEmail';
 import { swiperCarousel, tabCarousel } from '$utils/tabCarousel';
 
+import { waitUntil } from './utils/wait';
+
 document.documentElement.classList.add('js-enabled');
 
 $(document).ready(function () {
@@ -379,10 +381,20 @@ $(document).ready(function () {
         }
       });
     } catch (e) {}
-    document.querySelector('.section_hp-hero').style.opacity = 1;
+    if (document.querySelector('.section_hp-hero')) {
+      document.querySelector('.section_hp-hero').style.opacity = 1;
+    }
   }
 
-  experimentCode();
+  waitUntil(() => window.amplitude && window.sessionReplay).then(() => {
+    const isProd = location.href.indexOf('www.modular.com') !== 0;
+    const sessionReplayTracking = window.sessionReplay.plugin({ sampleRate: isProd ? 0.1 : 0 });
+    window.amplitude.add(sessionReplayTracking);
+    window.amplitude.init(
+      isProd ? '3878a0571d1575870a7d0a5f7e644d23' : 'd8bf208ebdc1b1000d38da8b826a74c4'
+    );
+    experimentCode();
+  });
 
   // Finds elements with `.inject-install` and then puts install instructions
   // inside of them. Sets some style properties too since I was a bit too lazy
