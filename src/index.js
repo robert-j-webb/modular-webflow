@@ -8,9 +8,35 @@ import { waitUntil } from './utils/wait';
 
 document.documentElement.classList.add('js-enabled');
 
+document.querySelectorAll('h1,h2,h3').forEach((el) => {
+  const id = el.innerText
+    .toLowerCase()
+    .split(' ')
+    .map((a) => a.replace(/\W/g, ''))
+    .join('-');
+  el.style.position = 'relative';
+  const anchorEl = document.createElement('div');
+
+  anchorEl.style.position = 'absolute';
+  anchorEl.style.top = '-90px';
+  anchorEl.style.left = '0';
+
+  anchorEl.id = id;
+  el.appendChild(anchorEl);
+});
+
 $(document).ready(function () {
   // Register GSAP
   gsap.registerPlugin(ScrollTrigger);
+
+  if (window.location.hash) {
+    const hashEl = document.getElementById(window.location.hash.replace('#', ''));
+    setTimeout(() => {
+      window.scrollTo({
+        top: hashEl.getBoundingClientRect().top + window.scrollY,
+      });
+    }, 100);
+  }
 
   // #region Utilities
 
