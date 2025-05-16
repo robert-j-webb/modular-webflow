@@ -87,6 +87,9 @@ $(document).ready(function () {
   if (window.location.pathname !== '/team') {
     // GSAP IMG SET
     $('img').each(function () {
+      if ($(this).parent().hasClass('latest-blog_visual')) {
+        return;
+      }
       $(this).removeAttr('loading');
     });
     ScrollTrigger.refresh();
