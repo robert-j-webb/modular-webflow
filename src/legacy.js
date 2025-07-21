@@ -180,6 +180,11 @@ if (window.location.pathname === '/company/career-post') {
     greenhouse = 'modularai';
   }
 
+  // iOS uses the canonical link for the share URL, so we have to manually set it.
+  // We can not use webflow to do this because they are very particular about
+  // how canonical URL is set.
+  document.querySelector('link[rel="canonical"]').href = location.href;
+
   var greenhouseSrc = `https://boards.greenhouse.io/embed/job_board/js?for=${greenhouse}`;
   var greenhouseScript = document.createElement('script');
   greenhouseScript.src = greenhouseSrc;
