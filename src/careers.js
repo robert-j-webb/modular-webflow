@@ -98,6 +98,7 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
         const departmentListItem = document.createElement('a');
 
         departmentListItem.classList.add('greenhouse-tab-link');
+        departmentListItem.dataset.departmentName = departmentName;
         departmentListItem.dataset.departmentId = departmentId;
         departmentListItem.href = '#';
         departmentListItem.innerHTML = `
@@ -110,6 +111,11 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
           if (currentTab) currentTab.classList.remove('cc-current');
           e.target.classList.add('cc-current');
 
+          // Update the URL with the department name
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set('department', departmentName);
+          window.history.pushState({}, '', currentUrl);
+
           const jobsForDepartment = getJobsForDepartment(jobPositions, departmentId);
           appendJobsForDepartment(jobsForDepartment);
         });
@@ -120,10 +126,27 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
 
     appendDepartmentsWithJobs(departmentsWithJobs);
 
-    document.querySelector('.greenhouse-tabs-menu').firstElementChild.click();
+    // Select department based on query parameter or default to first tab
+    selectDepartmentFromQuery();
   }
 
   fetchData();
+}
+
+function selectDepartmentFromQuery() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const departmentParam = decodeURIComponent(urlParams.get('department'));
+
+  if (departmentParam) {
+    const tab = document.querySelector(`[data-department-name="${departmentParam}"]`);
+    if (tab) {
+      tab.click();
+      return;
+    }
+  }
+
+  // Default to first tab if no matching department found or no parameter provided
+  document.querySelector('.greenhouse-tabs-menu').firstElementChild.click();
 }
 
 // Career Detail
