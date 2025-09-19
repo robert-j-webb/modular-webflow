@@ -471,6 +471,8 @@ $(document).ready(function () {
       }
     }
   }, 250);
+
+  setupHookForFormSubmission();
 });
 
 // From https://www.w3schools.com/js/js_cookies.asp
@@ -488,4 +490,34 @@ function getCookie(cname) {
     }
   }
   return '';
+}
+
+function setupHookForFormSubmission() {
+  const form = document.getElementById('contactForm');
+
+  if (!form) return;
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    formData.append('oid', '00Da500001MRD5G');
+    formData.append('retURL', 'https://www.modular.com/company/talk-to-us');
+
+    try {
+      await fetch(
+        'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Da500001MRD5G',
+        {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors',
+        }
+      );
+      $('.contact-form').parent().css('display', 'none');
+      $('.contact-form_success').css('display', 'flex');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your request. Please try again.');
+    }
+  });
 }

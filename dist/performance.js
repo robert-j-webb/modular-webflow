@@ -1,1 +1,221 @@
-"use strict";(()=>{gsap.registerPlugin(ScrollTrigger);$(document).ready(function(){if(window.location.href.endsWith("/performance")){let e=()=>{let t=$("#ootb_logo"),a=$("#bar-slow_1"),r=$("#bar-slow_2"),s=$("#bar-slow_3"),c=$("#max_logo"),l=$("#bar-fast_1"),d=$("#bar-fast_2"),m=$("#bar-fast_3"),b=$("#headers"),p=$("#numbers"),f=$("#grid"),i=.7,o=gsap.timeline({defaults:{ease:Power2.easeOut}});return o.to($(".headerb_stage-2"),{opacity:1}),o.fromTo([t,c,b,p],{opacity:0,xPercent:-15},{opacity:1,xPercent:0,duration:.5}),o.fromTo(f,{scaleY:0},{scaleY:1,duration:.5},"<"),o.addLabel("bars-start","<0.2"),o.fromTo(s,{scaleX:0},{scaleX:1,duration:i},"bars-start"),o.fromTo(r,{scaleX:0},{scaleX:.428,duration:i},"<"),o.fromTo(a,{scaleX:0},{scaleX:.295,duration:i},"<"),o.to(r,{scaleX:1,duration:i}),o.to(a,{scaleX:.695,duration:i},"<"),o.to(a,{scaleX:1,duration:i}),o.fromTo(m,{scaleX:0},{scaleX:1,duration:i},"bars-start"),o.fromTo(d,{scaleX:0},{scaleX:1,duration:i},"<"),o.fromTo(l,{scaleX:0},{scaleX:1,duration:i},"<"),o};gsap.timeline({}).add(e())}let w=".perf2_model-mask",E,P;function C(e){return e.toLocaleString("en")}let _=(e,n)=>{$(e).each(function(){let t=$(this).text().trim().replace(/,/g,""),a=parseFloat(t)||0,r=parseFloat(n);if(console.log(r),!isNaN(r)&&a!==r){let s={val:a},c=1;console.log(c);let l=()=>{let d=C(parseFloat(s.val.toFixed(c)));$(this).text(d)};gsap.fromTo(s,{val:a},{val:r,duration:.7,ease:Power1.easeOut,onUpdate:l})}})},g=(e,n)=>{$(e).each(function(){gsap.to(e,{text:n,duration:.5,ease:Power1.easeOut})})};function x(e,n){let{activeIndex:t,slides:a}=e,r=a[t],s=l=>{let d=$(l).find(w),m=d.find("p").outerHeight();gsap.to(d,{height:m})},c=gsap.timeline({onComplete:()=>{n&&s(r)}});a.forEach(l=>{c.to($(l).find(w),{height:0,duration:.2},"<")})}function v(e){let n=e.swiper1.realIndex,t=$(e.swiper1.slides[n]),a=$("[stat-number]"),r=$("[model-name-full]"),s=$("[instance-name-full]"),c=$(".perf2_slider-2 .perf2_model-mask p"),l=[$("[data-instance-1-short]").text(),$("[data-instance-2-short]").text(),$("[data-instance-3-short]").text()],d=t.find("[data-model-full]").text(),m=[t.attr("data-instance-1-full"),t.attr("data-instance-2-full"),t.attr("data-instance-3-full")],b=[t.attr("data-performance-1-val"),t.attr("data-performance-2-val"),t.attr("data-performance-3-val")],p=e.swiper2.realIndex;c.each(function(f,i){console.log(f),g($(i),m[f])}),_(a,b[p]),g(r,d),g(s,l[p]+" "+m[p])}let u={swiper1:N(".perf2_slider-1",{}),swiper2:N(".perf2_slider-2")},h=0,T,y=new IntersectionObserver(e=>{e[0].isIntersecting&&(T=new Date,y.disconnect())},{root:null,threshold:.5});y.observe(document.querySelector(".perf2_slider-1")),window.addEventListener("beforeunload",()=>{let e=Math.round((new Date-T)/1e3);amplitude.track("timeSpentOnPerformance",{timeInSeconds:e}),amplitude.track("totalClicksOnPerformance",{count:h})});function N(e,n){return new Swiper(e,{slidesPerView:1,direction:"vertical",observer:!0,slideToClickedSlide:!0,init:!1,threshold:40,freeMode:{enabled:!0,sticky:!0},on:{init:function(){x(this,!0)}},mousewheel:{thresholdDelta:20},...n})}for(let e in u)if(u.hasOwnProperty(e)){let n=u[e],t;n.on("slideChange",function(){var r;let a=(r=this.slides[this.activeIndex])==null?void 0:r.innerText;clearTimeout(t),t=setTimeout(()=>{h=h+1,amplitude.track("performanceSelected",{modelOrInstance:a}),x(this,!0),v(u)},300)}),n.init()}let S=gsap.timeline({scrollTrigger:{trigger:$(".perf2"),start:"center bottom",onEnter:()=>{u.swiper1.slideTo(5,800,v(u)),u.swiper2.slideTo(1,800)}}})});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/performance.js
+  gsap.registerPlugin(ScrollTrigger);
+  $(document).ready(function() {
+    if (window.location.href.endsWith("/performance")) {
+      const heroStep1 = () => {
+        let ootfBox = $("#ootb_logo");
+        let slowBar1 = $("#bar-slow_1");
+        let slowBar2 = $("#bar-slow_2");
+        let slowBar3 = $("#bar-slow_3");
+        let maxLogo = $("#max_logo");
+        let fastBar1 = $("#bar-fast_1");
+        let fastBar2 = $("#bar-fast_2");
+        let fastBar3 = $("#bar-fast_3");
+        let header = $("#headers");
+        let numbers = $("#numbers");
+        let grid = $("#grid");
+        let barsDuration = 0.7;
+        let tl = gsap.timeline({
+          defaults: {
+            ease: Power2.easeOut
+          }
+        });
+        tl.to($(".headerb_stage-2"), { opacity: 1 });
+        tl.fromTo(
+          [ootfBox, maxLogo, header, numbers],
+          { opacity: 0, xPercent: -15 },
+          { opacity: 1, xPercent: 0, duration: 0.5 }
+        );
+        tl.fromTo(grid, { scaleY: 0 }, { scaleY: 1, duration: 0.5 }, "<");
+        tl.addLabel("bars-start", "<0.2");
+        tl.fromTo(slowBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, "bars-start");
+        tl.fromTo(slowBar2, { scaleX: 0 }, { scaleX: 0.428, duration: barsDuration }, "<");
+        tl.fromTo(slowBar1, { scaleX: 0 }, { scaleX: 0.295, duration: barsDuration }, "<");
+        tl.to(slowBar2, { scaleX: 1, duration: barsDuration });
+        tl.to(slowBar1, { scaleX: 0.695, duration: barsDuration }, "<");
+        tl.to(slowBar1, { scaleX: 1, duration: barsDuration });
+        tl.fromTo(fastBar3, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, "bars-start");
+        tl.fromTo(fastBar2, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, "<");
+        tl.fromTo(fastBar1, { scaleX: 0 }, { scaleX: 1, duration: barsDuration }, "<");
+        return tl;
+      };
+      let main = gsap.timeline({});
+      main.add(heroStep1());
+    }
+    const mask = ".perf2_model-mask";
+    let swiper1, swiper2;
+    function formatNumber(number) {
+      return number.toLocaleString("en");
+    }
+    const animateCounter = ($element, value) => {
+      $($element).each(function() {
+        const currentText = $(this).text().trim().replace(/,/g, "");
+        const startValue = parseFloat(currentText) || 0;
+        const targetValue = parseFloat(value);
+        console.log(targetValue);
+        if (!isNaN(targetValue) && startValue !== targetValue) {
+          const Cont = { val: startValue };
+          const decimalPlaces = 1;
+          console.log(decimalPlaces);
+          const onUpdate = () => {
+            let formattedValue = formatNumber(parseFloat(Cont.val.toFixed(decimalPlaces)));
+            $(this).text(formattedValue);
+          };
+          gsap.fromTo(
+            Cont,
+            { val: startValue },
+            {
+              val: targetValue,
+              duration: 0.7,
+              ease: Power1.easeOut,
+              onUpdate
+            }
+          );
+        }
+      });
+    };
+    const updateText = ($element, value) => {
+      $($element).each(function() {
+        gsap.to($element, { text: value, duration: 0.5, ease: Power1.easeOut });
+      });
+    };
+    function toggleNames(swiper, toggle) {
+      let { activeIndex, slides } = swiper;
+      let activeItem = slides[activeIndex];
+      const revealName = (item) => {
+        let target = $(item).find(mask);
+        let fullHeight = target.find("p").outerHeight();
+        gsap.to(target, {
+          height: fullHeight
+        });
+      };
+      const tl = gsap.timeline({
+        // Trigger reveal after hiding all
+        onComplete: () => {
+          if (toggle) {
+            revealName(activeItem);
+          }
+        }
+      });
+      slides.forEach((element) => {
+        tl.to(
+          $(element).find(mask),
+          {
+            height: 0,
+            duration: 0.2
+          },
+          "<"
+        );
+      });
+    }
+    function updateStats(allSwipers) {
+      let activeModelIndex = allSwipers.swiper1.realIndex;
+      let activeModel = $(allSwipers.swiper1.slides[activeModelIndex]);
+      let statNumberEl = $("[stat-number]");
+      let modelNameEl = $("[model-name-full]");
+      let instaceNameEl = $("[instance-name-full]");
+      let instanceTitles = $(".perf2_slider-2 .perf2_model-mask p");
+      let instanceNames = [
+        $("[data-instance-1-short]").text(),
+        $("[data-instance-2-short]").text(),
+        $("[data-instance-3-short]").text()
+      ];
+      let modelName = activeModel.find("[data-model-full]").text();
+      let instances = [
+        activeModel.attr("data-instance-1-full"),
+        activeModel.attr("data-instance-2-full"),
+        activeModel.attr("data-instance-3-full")
+      ];
+      let performances = [
+        activeModel.attr("data-performance-1-val"),
+        activeModel.attr("data-performance-2-val"),
+        activeModel.attr("data-performance-3-val")
+      ];
+      let instanceIndex = allSwipers.swiper2.realIndex;
+      instanceTitles.each(function(index, element) {
+        console.log(index);
+        updateText($(element), instances[index]);
+      });
+      animateCounter(statNumberEl, performances[instanceIndex]);
+      updateText(modelNameEl, modelName);
+      updateText(instaceNameEl, instanceNames[instanceIndex] + " " + instances[instanceIndex]);
+    }
+    let swipers = {
+      swiper1: initializeSwiper(".perf2_slider-1", {}),
+      swiper2: initializeSwiper(".perf2_slider-2")
+    };
+    let numPerformanceSelections = 0;
+    let initialViewOfPerformance;
+    const observer = new IntersectionObserver(
+      (entry) => {
+        if (entry[0].isIntersecting) {
+          initialViewOfPerformance = /* @__PURE__ */ new Date();
+          observer.disconnect();
+        }
+      },
+      { root: null, threshold: 0.5 }
+    );
+    observer.observe(document.querySelector(".perf2_slider-1"));
+    window.addEventListener("beforeunload", () => {
+      const timeInSeconds = Math.round((/* @__PURE__ */ new Date() - initialViewOfPerformance) / 1e3);
+      amplitude.track("timeSpentOnPerformance", { timeInSeconds });
+      amplitude.track("totalClicksOnPerformance", { count: numPerformanceSelections });
+    });
+    function initializeSwiper(selector, options) {
+      return new Swiper(selector, {
+        slidesPerView: 1,
+        direction: "vertical",
+        observer: true,
+        slideToClickedSlide: true,
+        init: false,
+        threshold: 40,
+        freeMode: {
+          enabled: true,
+          sticky: true
+        },
+        on: {
+          init: function() {
+            toggleNames(this, true);
+          }
+        },
+        mousewheel: {
+          thresholdDelta: 20
+        },
+        ...options
+      });
+    }
+    for (let key in swipers) {
+      if (swipers.hasOwnProperty(key)) {
+        let swiper = swipers[key];
+        let debounceTimer;
+        swiper.on("slideChange", function() {
+          const modelOrInstance = this.slides[this.activeIndex]?.innerText;
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            numPerformanceSelections = numPerformanceSelections + 1;
+            amplitude.track("performanceSelected", { modelOrInstance });
+            toggleNames(this, true);
+            updateStats(swipers);
+          }, 300);
+        });
+        swiper.init();
+      }
+    }
+    let scrollSwipers = gsap.timeline({
+      scrollTrigger: {
+        trigger: $(".perf2"),
+        start: "center bottom",
+        onEnter: () => {
+          swipers.swiper1.slideTo(5, 800, updateStats(swipers));
+          swipers.swiper2.slideTo(1, 800);
+        }
+      }
+    });
+  });
+})();
+//# sourceMappingURL=performance.js.map
