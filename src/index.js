@@ -499,8 +499,11 @@ function setupHookForFormSubmission() {
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const formData = new FormData(form);
+    // Optimistically show success message
+    $('.contact-form').parent().css('display', 'none');
+    $('.contact-form_success').css('display', 'flex');
 
+    const formData = new FormData(form);
     formData.append('oid', '00Da500001MRD5G');
     formData.append('retURL', 'https://www.modular.com/company/talk-to-us');
 
@@ -513,8 +516,8 @@ function setupHookForFormSubmission() {
           mode: 'no-cors',
         }
       );
-      $('.contact-form').parent().css('display', 'none');
-      $('.contact-form_success').css('display', 'flex');
+      // Remove ugly URL parameters
+      window.history.replaceState({}, '', window.location.href.split('?')[0]);
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('There was an error submitting your request. Please try again.');
