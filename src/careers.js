@@ -21,25 +21,26 @@ function getJobsForDepartment(jobPositions, departmentId) {
 
 // for each job in jobsForDepartment append a job to the element with class .greenhouse-tabs-content
 function appendJobsForDepartment(jobsForDepartment) {
-  document.querySelector('.greenhouse-tabs-content').innerHTML = '';
+  document.querySelector('.roles-list_item').innerHTML = '';
   for (let i = 0; i < jobsForDepartment.length; i++) {
     let job = jobsForDepartment[i];
     let jobTitle = job.title;
     let jobId = job.id;
     let jobLocation = job.location.name;
     let jobListItem = document.createElement('a');
-    jobListItem.classList.add('greenhouse-job-position-link');
+    jobListItem.classList.add('roles-list_link');
     jobListItem.setAttribute(
       'href',
       `https://${hostName}/company/career-post?${jobId}&gh_jid=${jobId}`
     );
     jobListItem.setAttribute('data-job-id', jobId);
-    jobListItem.innerHTML = `<h4 class="greenhouse-job-position-link-title">${jobTitle}</h4><div class="greenhouse-job-position-link-location">${jobLocation}</div><div class="greenhouse-job-position-link-divider"></div>`;
-    document.querySelector('.greenhouse-tabs-content').appendChild(jobListItem);
+    jobListItem.innerHTML = `<div><div class="margin-bottom margin-4"><p class="text-size-small-2 text-weight-medium text-style-tthoves">${jobTitle}</p></div><div class="text-color-twilight60-3"><p class="text-size-xsmall-7">${jobLocation}</p></div></div> <div class="text-color-twilight60-3"><div><p class="text-size-xsmall-7">Apply now</p></div></div>`;
+
+    document.querySelector('.roles-list_item').appendChild(jobListItem);
   }
 }
 
-if (document.querySelector('.greenhouse-tabs-layout')) {
+if (document.querySelector('.roles_wrap')) {
   async function fetchData() {
     const jobsResponse = await fetch(
       `https://boards-api.greenhouse.io/v1/boards/${greenhouse}/jobs`
@@ -47,20 +48,19 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
     const jobsData = await jobsResponse.json();
 
     function appendAllJobs(jobs) {
-      const tabsMenu = document.querySelector('.greenhouse-tabs-menu');
+      const tabsMenu = document.querySelector('.roles_wrap .roles-filters');
       tabsMenu.innerHTML = '';
 
       const departmentListItem = document.createElement('a');
-      departmentListItem.classList.add('greenhouse-tab-link');
+      departmentListItem.classList.add('tabs-item-2');
       departmentListItem.href = '#';
       departmentListItem.innerHTML = `
-          <h3 class="greenhouse-tab-link-title">All</h3>
-          <div class="greenhouse-tab-counter">(${jobs.length})</div>`;
+            <div>All</div>
+            <div>(${jobs.length})</div>`;
 
-      departmentListItem.addEventListener('click', (e) => {
-        const currentTab = document.querySelector('.cc-current');
-        if (currentTab) currentTab.classList.remove('cc-current');
-        e.target.classList.add('cc-current');
+      $(departmentListItem).on('click', function (e) {
+        $('.cc-current').removeClass('cc-current');
+        $(this).addClass('cc-current');
 
         appendJobsForDepartment(jobs);
       });
@@ -91,30 +91,26 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
     var departmentsWithJobs = findDepartmentsWithJobs(jobPositions);
 
     function appendDepartmentsWithJobs(departmentsWithJobs) {
-      const tabsMenu = document.querySelector('.greenhouse-tabs-menu');
+      const tabsMenu = document.querySelector('.roles_wrap .roles-filters');
 
       departmentsWithJobs.forEach((department) => {
         const { id: departmentId, name: departmentName, jobs } = department;
         const departmentListItem = document.createElement('a');
 
-        departmentListItem.classList.add('greenhouse-tab-link');
-        departmentListItem.dataset.departmentName = departmentName;
+        departmentListItem.classList.add('tabs-item-2');
         departmentListItem.dataset.departmentId = departmentId;
         departmentListItem.href = '#';
         departmentListItem.innerHTML = `
-                  <h3 class="greenhouse-tab-link-title">${departmentName}</h3>
-                  <div class="greenhouse-tab-counter">(${jobs.length})</div>
-              `;
+                    <div">${departmentName}</div>
+                    <div">(${jobs.length})</div>
+                `;
 
         departmentListItem.addEventListener('click', (e) => {
           const currentTab = document.querySelector('.cc-current');
           if (currentTab) currentTab.classList.remove('cc-current');
-          e.target.classList.add('cc-current');
 
-          // Update the URL with the department name
-          const currentUrl = new URL(window.location.href);
-          currentUrl.searchParams.set('department', departmentName);
-          window.history.pushState({}, '', currentUrl);
+          const targetLink = e.currentTarget.closest('a') || e.currentTarget.querySelector('a');
+          if (targetLink) targetLink.classList.add('cc-current');
 
           const jobsForDepartment = getJobsForDepartment(jobPositions, departmentId);
           appendJobsForDepartment(jobsForDepartment);
@@ -126,27 +122,10 @@ if (document.querySelector('.greenhouse-tabs-layout')) {
 
     appendDepartmentsWithJobs(departmentsWithJobs);
 
-    // Select department based on query parameter or default to first tab
-    selectDepartmentFromQuery();
+    document.querySelector('.roles-filters').firstElementChild.click();
   }
 
   fetchData();
-}
-
-function selectDepartmentFromQuery() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const departmentParam = decodeURIComponent(urlParams.get('department'));
-
-  if (departmentParam) {
-    const tab = document.querySelector(`[data-department-name="${departmentParam}"]`);
-    if (tab) {
-      tab.click();
-      return;
-    }
-  }
-
-  // Default to first tab if no matching department found or no parameter provided
-  document.querySelector('.greenhouse-tabs-menu').firstElementChild.click();
 }
 
 // Career Detail
