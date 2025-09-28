@@ -496,31 +496,60 @@ function setupHookForFormSubmission() {
   const form = document.getElementById('contactForm');
 
   if (!form) return;
-  form.addEventListener('submit', async function (e) {
-    e.preventDefault();
 
-    // Optimistically show success message
-    $('.contact-form').parent().css('display', 'none');
-    $('.contact-form_success').css('display', 'flex');
+  const select = form.querySelector('select');
+  form.action =
+    'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Da500001MRD5G';
+  form.method = 'POST';
 
-    const formData = new FormData(form);
-    formData.append('oid', '00Da500001MRD5G');
-    formData.append('retURL', 'https://www.modular.com/company/talk-to-us');
+  // We append an iframe so that we can avoid redirecting, which is the default
+  // behavior.
+  const iframe = document.createElement('iframe');
+  iframe.id = 'salesforce-iframe';
+  iframe.name = 'salesforce-iframe';
+  iframe.src = 'about:blank';
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  form.setAttribute('target', 'salesforce-iframe');
 
-    try {
-      await fetch(
-        'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Da500001MRD5G',
-        {
-          method: 'POST',
-          body: formData,
-          mode: 'no-cors',
+  // Sync checkboxes with hidden select element
+  const checkboxes = form.querySelectorAll('input[name="unused"][type="checkbox"]');
+
+  function updateSelectFromCheckboxes() {
+    // Clear all selections
+    Array.from(select.options).forEach((option) => {
+      option.selected = false;
+    });
+    // Set selected options based on checked checkboxes
+    checkboxes.forEach((checkbox) => {
+      if (checkbox.checked) {
+        const matchingOption = Array.from(select.options).find(
+          (option) => option.value === checkbox.value
+        );
+        if (matchingOption) {
+          matchingOption.selected = true;
+        } else {
+          console.log('No matching option found for checkbox', checkbox.value);
         }
-      );
-      // Remove ugly URL parameters
-      window.history.replaceState({}, '', window.location.href.split('?')[0]);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('There was an error submitting your request. Please try again.');
-    }
+      }
+    });
+  }
+
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', updateSelectFromCheckboxes);
+  });
+
+  updateSelectFromCheckboxes();
+
+  form.addEventListener('submit', async function () {
+    // Ensure select is updated before form submission
+    updateSelectFromCheckboxes();
+    checkboxes.forEach((checkbox) => {
+      checkbox.remove();
+    });
+
+    $('#contactForm').parent().css('display', 'none');
+    $('.contact-form_success').css('display', 'flex');
+    window.history.replaceState({}, '', window.location.href.split('?')[0]);
   });
 }
