@@ -493,7 +493,7 @@ function getCookie(cname) {
 }
 
 function setupHookForFormSubmission() {
-  const form = document.getElementById('contactForm');
+  const form = document.querySelector('form.salesforce-form');
 
   if (!form) return;
 
@@ -548,7 +548,7 @@ function setupHookForFormSubmission() {
       checkbox.remove();
     });
 
-    $('#contactForm').parent().css('display', 'none');
+    form.parentElement.style.display = 'none';
     $('.contact-form_success').css('display', 'flex');
     window.history.replaceState({}, '', window.location.href.split('?')[0]);
   });
