@@ -512,6 +512,75 @@ function setupHookForFormSubmission() {
   document.body.appendChild(iframe);
   form.setAttribute('target', 'salesforce-iframe');
 
+  // Show an error for the email input when users use an email from a personal
+  // email address.
+  const emailInput = form.querySelector('input[name="email"]');
+  const submitButton = form.querySelector('input[type="submit"], button[type="submit"]');
+  let errorMessage = null;
+
+  function validateEmailDomain(emailDomain) {
+    const blockedDomains = ['gmail.com', 'aol.com', 'hotmail.com'];
+    return blockedDomains.includes(emailDomain);
+  }
+
+  function showErrorMessage(emailDomain) {
+    if (!errorMessage) {
+      errorMessage = document.createElement('div');
+      errorMessage.className = 'email-validation-error';
+      errorMessage.style.cssText = 'color: #e74c3c; font-size: 14px; margin-top: 5px;';
+      errorMessage.textContent = `Please use a business email address. ${emailDomain} is not allowed.`;
+      emailInput.parentNode.insertBefore(errorMessage, emailInput.nextSibling);
+    }
+    errorMessage.style.display = 'block';
+  }
+
+  function hideErrorMessage() {
+    if (errorMessage) {
+      errorMessage.style.display = 'none';
+    }
+  }
+
+  function setInputError(hasError) {
+    if (hasError) {
+      emailInput.style.outlineColor = '#e74c3c';
+      emailInput.style.outlineWidth = '2px';
+    } else {
+      emailInput.style.outlineColor = '';
+      emailInput.style.outlineWidth = '';
+    }
+  }
+
+  function setSubmitButtonState(disabled) {
+    if (submitButton) {
+      submitButton.disabled = disabled;
+      submitButton.style.opacity = disabled ? '0.5' : '1';
+      submitButton.style.cursor = disabled ? 'not-allowed' : 'pointer';
+    }
+  }
+
+  emailInput.addEventListener('input', (ev) => {
+    const email = ev.target.value.trim();
+    const emailDomain = email.toLowerCase().split('@')[1];
+
+    if (email && email.includes('@')) {
+      const isBlocked = validateEmailDomain(emailDomain);
+
+      if (isBlocked) {
+        showErrorMessage(emailDomain);
+        setInputError(true);
+        setSubmitButtonState(true);
+      } else {
+        hideErrorMessage();
+        setInputError(false);
+        setSubmitButtonState(false);
+      }
+    } else {
+      hideErrorMessage();
+      setInputError(false);
+      setSubmitButtonState(false);
+    }
+  });
+
   // Sync checkboxes with hidden select element
   const checkboxes = form.querySelectorAll('input[name="unused"][type="checkbox"]');
 
