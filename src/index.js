@@ -497,7 +497,6 @@ function setupHookForFormSubmission() {
 
   if (!form) return;
 
-  const select = form.querySelector('select');
   form.action =
     'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Da500001MRD5G';
   form.method = 'POST';
@@ -509,7 +508,7 @@ function setupHookForFormSubmission() {
   iframe.name = 'salesforce-iframe';
   iframe.src = 'about:blank';
   iframe.style.display = 'none';
-  document.body.appendChild(iframe);
+  form.appendChild(iframe);
   form.setAttribute('target', 'salesforce-iframe');
 
   // Show an error for the email input when users use an email from a personal
@@ -581,42 +580,7 @@ function setupHookForFormSubmission() {
     }
   });
 
-  // Sync checkboxes with hidden select element
-  const checkboxes = form.querySelectorAll('input[name="unused"][type="checkbox"]');
-
-  function updateSelectFromCheckboxes() {
-    // Clear all selections
-    Array.from(select.options).forEach((option) => {
-      option.selected = false;
-    });
-    // Set selected options based on checked checkboxes
-    checkboxes.forEach((checkbox) => {
-      if (checkbox.checked) {
-        const matchingOption = Array.from(select.options).find(
-          (option) => option.value === checkbox.value
-        );
-        if (matchingOption) {
-          matchingOption.selected = true;
-        } else {
-          console.log('No matching option found for checkbox', checkbox.value);
-        }
-      }
-    });
-  }
-
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener('change', updateSelectFromCheckboxes);
-  });
-
-  updateSelectFromCheckboxes();
-
   form.addEventListener('submit', async function () {
-    // Ensure select is updated before form submission
-    updateSelectFromCheckboxes();
-    checkboxes.forEach((checkbox) => {
-      checkbox.remove();
-    });
-
     form.parentElement.style.display = 'none';
     $('.contact-form_success').css('display', 'flex');
     window.history.replaceState({}, '', window.location.href.split('?')[0]);
