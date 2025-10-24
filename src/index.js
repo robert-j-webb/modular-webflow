@@ -473,6 +473,28 @@ $(document).ready(function () {
   }, 250);
 
   setupHookForFormSubmission();
+
+  // CTA Button animation
+  const floatingCTA = document.querySelector('.fixed-bottom-right');
+  if (floatingCTA) {
+    floatingCTA.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+    function handleFloatingCTAScroll() {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const viewportHeight = window.innerHeight;
+
+      if (scrollY > viewportHeight) {
+        floatingCTA.style.opacity = 1;
+        floatingCTA.style.transform = 'translateY(0)';
+      } else {
+        floatingCTA.style.opacity = 0;
+        floatingCTA.style.transform = 'translateY(10px)';
+      }
+    }
+
+    window.addEventListener('scroll', handleFloatingCTAScroll);
+    handleFloatingCTAScroll();
+  }
 });
 
 // From https://www.w3schools.com/js/js_cookies.asp
