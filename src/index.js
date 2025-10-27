@@ -475,25 +475,54 @@ $(document).ready(function () {
   setupHookForFormSubmission();
 
   // CTA Button animation
-  const floatingCTA = document.querySelector('.fixed-bottom-right');
-  if (floatingCTA) {
-    floatingCTA.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+  const blogCtaButton = document.querySelector('.blog-cta-button');
+  const contentSection = document.querySelector('.section-content-blog-template');
 
-    function handleFloatingCTAScroll() {
-      const scrollY = window.scrollY || window.pageYOffset;
-      const viewportHeight = window.innerHeight;
+  if (blogCtaButton && contentSection) {
+    blogCtaButton.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    blogCtaButton.style.opacity = 0;
 
-      if (scrollY > viewportHeight) {
-        floatingCTA.style.opacity = 1;
-        floatingCTA.style.transform = 'translateY(0)';
+    let contentSectionVisible = false;
+    let nextSiblingVisible = false;
+
+    function updateCTAVisibility() {
+      if (contentSectionVisible && !nextSiblingVisible) {
+        blogCtaButton.style.opacity = 1;
       } else {
-        floatingCTA.style.opacity = 0;
-        floatingCTA.style.transform = 'translateY(10px)';
+        blogCtaButton.style.opacity = 0;
       }
     }
 
-    window.addEventListener('scroll', handleFloatingCTAScroll);
-    handleFloatingCTAScroll();
+    const contentObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          contentSectionVisible = entry.isIntersecting;
+          updateCTAVisibility();
+        });
+      },
+      {
+        threshold: 0,
+      }
+    );
+
+    contentObserver.observe(contentSection);
+
+    const nextSibling = contentSection.nextElementSibling;
+    if (nextSibling) {
+      const nextSiblingObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            nextSiblingVisible = entry.isIntersecting;
+            updateCTAVisibility();
+          });
+        },
+        {
+          threshold: 0,
+        }
+      );
+
+      nextSiblingObserver.observe(nextSibling);
+    }
   }
 });
 
