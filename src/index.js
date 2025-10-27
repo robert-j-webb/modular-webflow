@@ -475,51 +475,41 @@ $(document).ready(function () {
   setupHookForFormSubmission();
 
   // CTA Button animation
-  const blogCtaButton = document.querySelector('.blog-cta-button');
+  const ctaButton = document.querySelector('.cta-button');
   const contentSection = document.querySelector('.section-content-blog-template');
 
-  if (blogCtaButton && contentSection) {
-    blogCtaButton.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-    blogCtaButton.style.opacity = 0;
+  if (ctaButton && contentSection) {
+    ctaButton.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    ctaButton.style.opacity = 0;
 
     let contentSectionVisible = false;
     let nextSiblingVisible = false;
 
     function updateCTAVisibility() {
       if (contentSectionVisible && !nextSiblingVisible) {
-        blogCtaButton.style.opacity = 1;
+        ctaButton.style.opacity = 1;
       } else {
-        blogCtaButton.style.opacity = 0;
+        ctaButton.style.opacity = 0;
       }
     }
 
-    const contentObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          contentSectionVisible = entry.isIntersecting;
-          updateCTAVisibility();
-        });
-      },
-      {
-        threshold: 0,
-      }
-    );
+    const contentObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        contentSectionVisible = entry.isIntersecting;
+        updateCTAVisibility();
+      });
+    });
 
     contentObserver.observe(contentSection);
 
     const nextSibling = contentSection.nextElementSibling;
     if (nextSibling) {
-      const nextSiblingObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            nextSiblingVisible = entry.isIntersecting;
-            updateCTAVisibility();
-          });
-        },
-        {
-          threshold: 0,
-        }
-      );
+      const nextSiblingObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          nextSiblingVisible = entry.isIntersecting;
+          updateCTAVisibility();
+        });
+      });
 
       nextSiblingObserver.observe(nextSibling);
     }
