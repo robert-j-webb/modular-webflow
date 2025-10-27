@@ -475,25 +475,40 @@ $(document).ready(function () {
   setupHookForFormSubmission();
 
   // CTA Button animation
-  const floatingCTA = document.querySelector('.fixed-bottom-right');
-  if (floatingCTA) {
-    floatingCTA.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+  const ctaButton = document.querySelector('.cta-button');
+  const contentSection = document.querySelector('.section-content-blog-template');
 
-    function handleFloatingCTAScroll() {
-      const scrollY = window.scrollY || window.pageYOffset;
-      const viewportHeight = window.innerHeight;
+  if (ctaButton && contentSection) {
+    ctaButton.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    ctaButton.style.opacity = 0;
 
-      if (scrollY > viewportHeight) {
-        floatingCTA.style.opacity = 1;
-        floatingCTA.style.transform = 'translateY(0)';
+    let contentSectionVisible = false;
+    let nextSiblingVisible = false;
+
+    function updateCTAVisibility() {
+      if (contentSectionVisible && !nextSiblingVisible) {
+        ctaButton.style.opacity = 1;
       } else {
-        floatingCTA.style.opacity = 0;
-        floatingCTA.style.transform = 'translateY(10px)';
+        ctaButton.style.opacity = 0;
       }
     }
 
-    window.addEventListener('scroll', handleFloatingCTAScroll);
-    handleFloatingCTAScroll();
+    const contentObserver = new IntersectionObserver((entries) => {
+      contentSectionVisible = entries[0].isIntersecting;
+      updateCTAVisibility();
+    });
+
+    contentObserver.observe(contentSection);
+
+    const nextSibling = contentSection.nextElementSibling;
+    if (nextSibling) {
+      const nextSiblingObserver = new IntersectionObserver((entries) => {
+        nextSiblingVisible = entries[0].isIntersecting;
+        updateCTAVisibility();
+      });
+
+      nextSiblingObserver.observe(nextSibling);
+    }
   }
 });
 
