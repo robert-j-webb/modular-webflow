@@ -494,10 +494,8 @@ $(document).ready(function () {
     }
 
     const contentObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        contentSectionVisible = entry.isIntersecting;
-        updateCTAVisibility();
-      });
+      contentSectionVisible = entries[0].isIntersecting;
+      updateCTAVisibility();
     });
 
     contentObserver.observe(contentSection);
@@ -505,10 +503,8 @@ $(document).ready(function () {
     const nextSibling = contentSection.nextElementSibling;
     if (nextSibling) {
       const nextSiblingObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          nextSiblingVisible = entry.isIntersecting;
-          updateCTAVisibility();
-        });
+        nextSiblingVisible = entries[0].isIntersecting;
+        updateCTAVisibility();
       });
 
       nextSiblingObserver.observe(nextSibling);
