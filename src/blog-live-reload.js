@@ -19,6 +19,7 @@ async function setUpBlogReload() {
 
     document.querySelector('.text-rich-text').innerHTML = blogPost.html;
     setupBlog();
+    renderMathInElement(document.body);
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 }
