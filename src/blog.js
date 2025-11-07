@@ -1,6 +1,7 @@
 import { createHighlighter } from 'shiki';
 
 let mojoGrammar;
+let highlighter;
 
 async function setupCodeBlocks() {
   // Define the custom mojo language highlighter
@@ -18,13 +19,33 @@ async function setupCodeBlocks() {
     aliases: ['mojo', '🔥'],
   };
 
-  // Create a custom highlighter with languages we want to use
-  const highlighter = await createHighlighter({
-    langs: ['py', 'python', 'mojo', 'bash', 'c', 'cpp', 'yaml', 'markdown', 'json', 'llvm'],
-    themes: ['material-theme-palenight'],
-  });
+  if (!highlighter) {
+    // Create a custom highlighter with languages we want to use
+    highlighter = await createHighlighter({
+      langs: ['py', 'python', 'mojo', 'bash', 'c', 'cpp', 'yaml', 'markdown', 'json', 'llvm'],
+      themes: ['material-theme-palenight'],
+    });
+  }
 
   await highlighter.loadLanguage(mojoLang);
+
+  // For previous version of code highlighting
+  const legacyCodeBlocks = document.querySelectorAll('.text-rich-text .code');
+  for (const codeBlock of legacyCodeBlocks) {
+    let parts = codeBlock.className.split('language-');
+    if (parts.length > 1) {
+      const code = codeBlock.innerText;
+      let language = parts[1].split(/[\s\n]/)[0];
+      try {
+        codeBlock.innerHTML = highlighter.codeToHtml(code, {
+          lang: language,
+          theme: 'material-theme-palenight',
+        });
+      } catch (error) {
+        console.error('Error highting code:', error);
+      }
+    }
+  }
 
   const codeBlocks = document.querySelectorAll('.text-rich-text > p > sub:first-child');
   for (const element of codeBlocks) {
@@ -70,7 +91,7 @@ async function setupCodeBlocks() {
   }
 }
 
-function copyToClipboard(buttonElement) {
+window.copyToClipboard = function copyToClipboard(buttonElement) {
   const codeCell = buttonElement.previousElementSibling;
   const textarea = document.createElement('textarea');
 
@@ -98,7 +119,7 @@ function copyToClipboard(buttonElement) {
   }
 
   document.body.removeChild(textarea);
-}
+};
 
 function addImageZoom() {
   var images = document.querySelectorAll('img');
