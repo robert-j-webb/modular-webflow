@@ -17,6 +17,9 @@ importers:
       gsap:
         specifier: ^3.11.5
         version: 3.12.5
+      morphdom:
+        specifier: ^2.7.7
+        version: 2.7.7
       shiki:
         specifier: ^3.4.2
         version: 3.15.0
@@ -955,6 +958,9 @@ packages:
 
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
+
+  morphdom@2.7.7:
+    resolution: {integrity: sha512-04GmsiBcalrSCNmzfo+UjU8tt3PhZJKzcOy+r1FlGA7/zri8wre3I1WkYN9PT3sIeIKfW9bpyElA+VzOg2E24g==}
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -2305,6 +2311,8 @@ snapshots:
   minimatch@3.1.2:
     dependencies:
       brace-expansion: 1.1.11
+
+  morphdom@2.7.7: {}
 
   mri@1.2.0: {}
 

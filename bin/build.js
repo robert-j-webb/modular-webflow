@@ -20,6 +20,7 @@ const ENTRY_POINTS = [
   'src/careers.js',
   'src/blog.js',
   'src/blog-live-reload.js',
+  'src/blog-code-highlight.js',
 ];
 
 // Config dev serving
