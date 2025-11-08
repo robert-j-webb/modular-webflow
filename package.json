@@ -58,6 +58,7 @@
     "@amplitude/experiment-js-client": "^1.11.0",
     "@finsweet/ts-utils": "^0.39.0",
     "gsap": "^3.11.5",
+    "morphdom": "^2.7.7",
     "shiki": "^3.4.2",
     "swiper": "^9.1.1"
   }

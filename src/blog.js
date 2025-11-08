@@ -1,94 +1,11 @@
-import { createHighlighter } from 'shiki';
-
-let mojoGrammar;
-let highlighter;
-
 async function setupCodeBlocks() {
-  // Define the custom mojo language highlighter
-  if (!mojoGrammar) {
-    mojoGrammar = await fetch(
-      'https://raw.githubusercontent.com/modularml/mojo-syntax/main/syntaxes/mojo.syntax.json'
-    )
-      .then((response) => response.json())
-      .catch((error) => console.error('Error:', error));
-  }
-  const mojoLang = {
-    id: 'mojo',
-    scopeName: 'source.mojo',
-    grammar: mojoGrammar,
-    aliases: ['mojo', '🔥'],
-  };
-
-  if (!highlighter) {
-    // Create a custom highlighter with languages we want to use
-    highlighter = await createHighlighter({
-      langs: ['py', 'python', 'mojo', 'bash', 'c', 'cpp', 'yaml', 'markdown', 'json', 'llvm'],
-      themes: ['material-theme-palenight'],
-    });
-  }
-
-  await highlighter.loadLanguage(mojoLang);
-
-  // For previous version of code highlighting
   const legacyCodeBlocks = document.querySelectorAll('.text-rich-text .code');
-  for (const codeBlock of legacyCodeBlocks) {
-    let parts = codeBlock.className.split('language-');
-    if (parts.length > 1) {
-      const code = codeBlock.innerText;
-      let language = parts[1].split(/[\s\n]/)[0];
-      try {
-        codeBlock.innerHTML = highlighter.codeToHtml(code, {
-          lang: language,
-          theme: 'material-theme-palenight',
-        });
-      } catch (error) {
-        console.error('Error highting code:', error);
-      }
-    }
+
+  const doesNeedHighlighter = legacyCodeBlocks.length > 0;
+  if (!doesNeedHighlighter) {
+    return;
   }
-
-  const codeBlocks = document.querySelectorAll('.text-rich-text > p > sub:first-child');
-  for (const element of codeBlocks) {
-    const codeContent = element.textContent;
-    const [lang, ...codeParts] = codeContent.split(',');
-    const code = codeParts.join(',').trim(); // Rejoin in case there are commas in the code
-
-    try {
-      const highlighted = highlighter.codeToHtml(code, {
-        lang: lang.toLowerCase(),
-        theme: 'material-theme-palenight',
-      });
-      const wEmbedDiv = document.createElement('div');
-      wEmbedDiv.className = 'w-embed';
-
-      const codeContainerDiv = document.createElement('div');
-      codeContainerDiv.className = 'code-container';
-
-      const labelSpan = document.createElement('span');
-      labelSpan.className = `label ${lang.toLowerCase()}`;
-      labelSpan.textContent = lang.charAt(0).toUpperCase() + lang.slice(1);
-
-      const codeDiv = document.createElement('div');
-      codeDiv.className = `code language-${lang.toLowerCase()}`;
-      codeDiv.innerHTML = highlighted;
-
-      const copyButton = document.createElement('button');
-      copyButton.className = 'copy-button';
-      copyButton.textContent = 'Copy';
-      copyButton.addEventListener('click', () => {
-        copyToClipboard(copyButton);
-      });
-
-      codeContainerDiv.appendChild(labelSpan);
-      codeContainerDiv.appendChild(codeDiv);
-      codeContainerDiv.appendChild(copyButton);
-      wEmbedDiv.appendChild(codeContainerDiv);
-
-      element.parentElement.replaceWith(wEmbedDiv);
-    } catch (error) {
-      console.error('Error highting code:', error);
-    }
-  }
+  loadPageScript('blog-code-highlight.js');
 }
 
 window.copyToClipboard = function copyToClipboard(buttonElement) {
