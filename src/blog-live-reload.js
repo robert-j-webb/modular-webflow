@@ -9,7 +9,8 @@ async function setUpBlogReload() {
 
   if (
     renderUrl.hostname !== 'localhost' &&
-    renderUrl.hostname !== 'notion-to-html-ashy.vercel.app'
+    renderUrl.hostname !== 'notion-to-html-ashy.vercel.app' &&
+    !renderUrl.hostname.match(/^notion-to-html-[^-]*-modular-ai.vercel.app$/)
   ) {
     throw new Error('Invalid render URL');
   }
@@ -49,8 +50,8 @@ async function setUpBlogReload() {
     );
     document.querySelector('h1').textContent =
       blogPost.page?.properties?.Title?.rich_text?.[0]?.plain_text ?? blogPost.title;
-    setupBlog();
-    renderMathInElement(document.body);
+    window.setupBlog();
+    window.renderMathInElement(document.body);
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 }
