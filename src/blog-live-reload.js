@@ -64,11 +64,16 @@ async function setUpBlogReload() {
       `<div class="blog-detail_img"><img src="${coverImg}" alt="" class="img-cover"></div>`
     );
 
-    const title = blogPost.page?.properties?.Title?.rich_text?.[0]?.plain_text ?? blogPost.title;
-    document.title = title;
-    document.querySelector('h1').textContent = title;
-
+    document.title = blogPost.title;
+    document.querySelector('h1').textContent = blogPost.title;
     document.querySelector('main').style.opacity = 1;
+    // Formate current date like `October 29, 2020`
+    document.querySelector('.blog-detail_hero > div > p').textContent =
+      new Date().toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
 
     window.setupBlog();
     window.renderMathInElement(document.body);
