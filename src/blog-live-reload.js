@@ -67,11 +67,7 @@ async function setUpBlogReload() {
     const title = blogPost.page?.properties?.Title?.rich_text?.[0]?.plain_text ?? blogPost.title;
     document.title = title;
     document.querySelector('h1').textContent = title;
-    const isStaging = localStorage.getItem('isStagingForMe') === 'true';
-    // Only update the url on refresh in staging
-    if (!isStaging) {
-      history.replaceState({}, '', blogPost.slug);
-    }
+
     document.querySelector('main').style.opacity = 1;
 
     window.setupBlog();
