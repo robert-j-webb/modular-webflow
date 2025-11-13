@@ -24,19 +24,30 @@ async function setUpBlogReload() {
     const blogPost = await fetch(
       `${renderUrl.origin}/api/notion?pageId=${pageId}&isPublish=false&secret=${renderSecret}`
     ).then((response) => response.json());
-    document.querySelector('main').style.opacity = 1;
-    const coverImg =
-      blogPost.page.properties['Cover Photo']?.files?.[0]?.file?.url ?? defaultCoverImg;
-    const authorsHtml = blogPost.page?.properties?.Authors?.multi_select
-      ?.map((a) => a.name)
-      .map(
-        (a) =>
-          `<div role="listitem" class="w-dyn-item"><div scroll="toggle" class="blog-detail_hero-list-item">
+    const properties = blogPost.page?.properties;
+    const coverImg = properties['Cover Photo']?.files?.[0]?.file?.url ?? defaultCoverImg;
+    const category = properties?.Team?.select?.name ?? properties?.Category?.select?.name;
+    const categoryHtml = category
+      ? `<div id="category-tag" class="blog-detail_hero-list-item category w-inline-block">
+  <div class="icon-embed-xxsmall w-embed">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 9 8" height="8" width="9">
+      <rect fill="#f44771" rx="1" height="8" width="8" h="8" x="0.5"></rect>
+    </svg>
+  </div>
+  <p class="n_text-size-label">${category}</p>
+</div>`
+      : `<div></div>`;
+    const authorsHtml =
+      properties?.Authors?.multi_select
+        ?.map((a) => a.name)
+        .map(
+          (a) =>
+            `<div role="listitem" class="w-dyn-item"><div scroll="toggle" class="blog-detail_hero-list-item">
         <img src="${abdulAvatar}" alt="" class="blog-detail_hero-list-img"><p class="n_text-size-label">
         ${a}
         </p></div></div>`
-      )
-      .join('');
+        )
+        .join('') + categoryHtml;
 
     // Update the dom with hand rolled versions of the components.
     const authorContainer = document.querySelector('.blog-detail_hero-list');
@@ -52,10 +63,20 @@ async function setUpBlogReload() {
       document.querySelector('.blog-detail_img'),
       `<div class="blog-detail_img"><img src="${coverImg}" alt="" class="img-cover"></div>`
     );
-    document.querySelector('h1').textContent =
-      blogPost.page?.properties?.Title?.rich_text?.[0]?.plain_text ?? blogPost.title;
+
+    const title = blogPost.page?.properties?.Title?.rich_text?.[0]?.plain_text ?? blogPost.title;
+    document.title = title;
+    document.querySelector('h1').textContent = title;
+    const isStaging = localStorage.getItem('isStagingForMe') === 'true';
+    // Only update the url on refresh in staging
+    if (!isStaging) {
+      history.replaceState({}, '', blogPost.slug);
+    }
+    document.querySelector('main').style.opacity = 1;
+
     window.setupBlog();
     window.renderMathInElement(document.body);
+
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 }
