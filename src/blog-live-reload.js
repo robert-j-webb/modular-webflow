@@ -6,6 +6,7 @@ async function setUpBlogReload() {
   const searchParams = new URLSearchParams(window.location.search);
   const pageId = searchParams.get('pageId');
   const renderUrl = new URL(searchParams.get('renderUrl'));
+  const renderSecret = searchParams.get('secret');
 
   if (
     renderUrl.hostname !== 'localhost' &&
@@ -17,12 +18,15 @@ async function setUpBlogReload() {
   document.querySelector('main').style.opacity = 0;
   const abdulAvatar =
     'https://cdn.prod.website-files.com/6908f9f3e78f544600d4d451/6908f9f3e78f544600d4da0a_64078db03b0c89fc5b658614_Abdul.jpeg';
+  const defaultCoverImg =
+    'https://cdn.prod.website-files.com/63f9f100025c058594957cca/691608a695e069e1dac85e20_404.jpeg';
   while (true) {
     const blogPost = await fetch(
-      `${renderUrl.origin}/api/notion?pageId=${pageId}&isPublish=false`
+      `${renderUrl.origin}/api/notion?pageId=${pageId}&isPublish=false&secret=${renderSecret}`
     ).then((response) => response.json());
     document.querySelector('main').style.opacity = 1;
-    const coverImg = blogPost.page.properties['Cover Photo'].files[0].file.url;
+    const coverImg =
+      blogPost.page.properties['Cover Photo']?.files?.[0]?.file?.url ?? defaultCoverImg;
     const authorsHtml = blogPost.page?.properties?.Authors?.multi_select
       ?.map((a) => a.name)
       .map(
