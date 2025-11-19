@@ -16,8 +16,8 @@ async function setUpBlogReload() {
     throw new Error('Invalid render URL');
   }
   document.querySelector('main').style.opacity = 0;
-  const abdulAvatar =
-    'https://cdn.prod.website-files.com/6908f9f3e78f544600d4d451/6908f9f3e78f544600d4da0a_64078db03b0c89fc5b658614_Abdul.jpeg';
+  const modularTeamAvatar =
+    'https://cdn.prod.website-files.com/64174a9fd03969ab5b930a08/64e6cf7b5444ae4a3f9da106_Frame%203%20(1).png';
   const defaultCoverImg =
     'https://cdn.prod.website-files.com/63f9f100025c058594957cca/691608a695e069e1dac85e20_404.jpeg';
   while (true) {
@@ -43,7 +43,7 @@ async function setUpBlogReload() {
         .map(
           (a) =>
             `<div role="listitem" class="w-dyn-item"><div scroll="toggle" class="blog-detail_hero-list-item">
-        <img src="${abdulAvatar}" alt="" class="blog-detail_hero-list-img"><p class="n_text-size-label">
+        <img src="${modularTeamAvatar}" alt="" class="blog-detail_hero-list-img"><p class="n_text-size-label">
         ${a}
         </p></div></div>`
         )
